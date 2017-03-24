@@ -1,0 +1,11 @@
+header { background-color: aqua; }
+.col-4 { background-color: green; }
+.col-8 { background-color: blue; }
+footer { background-color: yellow; }
+
+.cv { height: 300px; text-align: center;}
+.p { height :500px; }
+.co { height: 200px; }
+.list { background-color: pink; padding-top: 20px; padding-bottom: 20px; }
+.bp { height: 50px; background-color: red; padding-top: 20px; padding-bottom: 20px; }
+.add { height: 150px; background-color: purple; padding-top: 20px; padding-bottom: 20px; }
