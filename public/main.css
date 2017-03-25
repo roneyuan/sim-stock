@@ -3,9 +3,9 @@ header { background-color: aqua; }
 .col-8 { background-color: blue; }
 footer { background-color: yellow; }
 
-.cv { height: 300px; text-align: center;}
-.p { height :500px; }
-.co { height: 200px; }
+.current-value { height: 300px; text-align: center;}
+.portfolio { height :500px; }
+.control { height: 200px; }
 .list { background-color: pink; padding-top: 20px; padding-bottom: 20px; }
-.bp { height: 50px; background-color: red; padding-top: 20px; padding-bottom: 20px; }
+.buying-power { height: 50px; background-color: red; padding-top: 20px; padding-bottom: 20px; }
 .add { height: 150px; background-color: purple; padding-top: 20px; padding-bottom: 20px; }
