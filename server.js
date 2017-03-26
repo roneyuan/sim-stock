@@ -9,7 +9,7 @@ const app = express();
 app.use(bodyParser.json());
 
 // Database models
-const {MarketData} = require('./models');
+//const {MarketData} = require('./models');
 
 // Router
 const portfolioRouter = require('./portfolioRouter');
