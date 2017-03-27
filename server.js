@@ -1,4 +1,4 @@
-const bodyParser = require('body-parse');
+const bodyParser = require('body-parser');
 const express = require('express');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
@@ -56,8 +56,8 @@ function closeServer() {
 				}
 				resolve();
 			})
-		})
-	}
+		});
+	});
 }
 
 if (require.main === module) {
