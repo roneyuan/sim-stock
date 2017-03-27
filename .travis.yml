@@ -2,4 +2,10 @@ language: node_js
 node_js: node
 deploy:
   provider: heroku
+  api_key:
+    secure: fpVzMkHasQvJpYaI5wkUqUjzlrKTsz8m7x0hsazIyQ6Y90PcOQB834NnrBTcgzmxCAQe/P954NdOTE/Hi+vKQebGqsZoNzm+FeP5T4iXcYUYb072qg8sZiZSjuCSrL9mK1bMx9iDBlKmd4ikwxxs79XX16OuIuVMmdo/bQl4WenpPKYwdJuRcK/o9Rogrr4h8YhuYEvtLux2BZUQH5nnIr94t9okmk+OPQOS7FVQM3Jz3Qav1kwCUkmUhgLBC6aLpzfATn0W1C+jzrBvimPCChHZI2pm1M9Flg0uqfZ2np4JyFRBAXPrKUsbJOomPK4/Ppj5MQbMmRxZDXRrYmkW7ISyCl3lVMYO3KmFuiGRkARNsG2NP9N87mTpjcyDIQp/TULX03lOM243I9CH8jwj2X9n2TMxgVIiQzknjCY0S4h6dwHCwml4UC5rwhSUkhgIdZC+jlIJxUbY+AAAggHRn/++nbzIcVxTxWNg0jcdOQX9LC/zRn+tUvfZEJsjUCuTcKIIJTthtSRq+ZIy5lK8MfiS3snILKnzgoaN91sy3jwe6sENR0gtum7LRv3v2N5ZMBLwj1yefASKbEIQN/lV2nQimDFpgobk7ODHhC8l1UdOQfLRu07YENxAxpPSM3K6oBPKXeACVy2tFtwmrbaDjxpfyhZeHrKOfgal9JQoJK8=
   app: lit-basin-78076
+  on:
+    repo: roneyuan/sim-stock
+services:
+- mongodb
