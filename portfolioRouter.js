@@ -8,7 +8,7 @@ const {Portfolio} = require('./models');
 
 
 router.get('/', (req, res) => {
-	res.json(ShoppingList.get());
+	//res.json(ShoppingList.get());
 });
 
 router.post('/', jsonParser, (req, res) => {
