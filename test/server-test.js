@@ -1,9 +1,9 @@
 var chai = require('chai');
 var chaiHttp = require('chai-http');
 var server = require('../server.js');
+var mongoose = require('mongoose');
 
 var should = chai.should();
-var app = server.app;
 
 const {Portfolio} = require('../models');
 const {app, runServer, closeServer} = require('../server');
