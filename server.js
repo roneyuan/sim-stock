@@ -14,14 +14,14 @@ app.use(bodyParser.json());
 // Router
 const portfolioRouter = require('./portfolioRouter');
 
-app.use(morgan('coommon'));
-app.use(express.static('piblic'));
+app.use(morgan('common'));
+app.use(express.static('public'));
 
 
 mongoose.Promise = global.Promise;
 
 app.get('/', (req, res) => {
-	res.sendFile(__dirname + '/views/index.html');
+	res.sendFile(__dirname + '/public/index.html');
 });
 
 app.use('/portfolio', portfolioRouter);
