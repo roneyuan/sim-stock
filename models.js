@@ -14,6 +14,16 @@ const portfolioSchema = mongoose.Schema({
 	}]
 });
 
+portfolioSchema.methods.apiRepr = function() {
+	return {
+		id: this._id;
+		invested: this.invested;
+		buyingPower: this.buyingPower;
+		earned: this.earned;
+		totalValue: this.totalValue;
+		stocks: this.stocks;
+	}
+}
 
 const Portfolio = mongoose.model('Portfolio', portfolioSchema);
 
@@ -32,6 +42,10 @@ const UserSchema = mongoose.Schema({
 
 UserSchema.methods.validatePassword = function(password) {
 	return bcrypt.compare(password, this.password);
+}
+
+UserSchema.static.hashPassword = function(password) {
+	return bcrypt.hash(password, 10);
 }
 
 const User = mongoose.model('User', UserSchema);
