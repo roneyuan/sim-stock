@@ -4,7 +4,8 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "test": "mocha"
+    "test": "nyc mocha --timeout=3000",
+    "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "author": "",
   "license": "ISC",
@@ -16,5 +17,9 @@
     "mocha": "^3.2.0",
     "mongoose": "^4.9.2",
     "morgan": "^1.8.1"
+  },
+  "devDependencies": {
+    "coveralls": "^2.12.0",
+    "nyc": "^10.2.0"
   }
 }
