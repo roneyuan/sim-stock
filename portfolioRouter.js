@@ -11,17 +11,17 @@ const {Portfolio} = require('./models');
 mongoose.Promise = global.Promise;
 
 
-Portfolio
-	.create({
-		invested: 100,
-		buyingPower: 1000,
-		earned: 100,
-		totalValue: 100,
-		stocks: [{
-			symbol: "AAPL",
-			lastPrice: 20
-		}]		
-	})
+// Portfolio
+// 	.create({
+// 		invested: 100,
+// 		buyingPower: 1000,
+// 		earned: 100,
+// 		totalValue: 100,
+// 		stocks: [{
+// 			symbol: "AAPL",
+// 			lastPrice: 20
+// 		}]		
+// 	})
 
 router.get('/', (req, res) => {
 	Portfolio
@@ -38,8 +38,21 @@ router.get('/', (req, res) => {
 );
 
 router.post('/', jsonParser, (req, res) => {
-
-});
+	Portfolio
+		.create({
+			invested: req.body.invested,
+			buyingPower: req.body.buyingPower,
+			earned: req.body.earned,
+			totalValue: req.body.totalValue,
+			stocks: req.body.stocks
+		})
+		.then(portfolio => res.status(201).json(portfolio.apiRepr()))
+		.catch(err => {
+			console.error(err);
+			res.status(500).json({error: 'Error!'});
+		});
+	}
+);
 
 router.delete('/:id', (req, res) => {
 
