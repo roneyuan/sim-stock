@@ -23,9 +23,7 @@ Portfolio
 		}]		
 	})
 
-router.get('/portfolio', (req, res) => {
-	//res.json(ShoppingList.get());
-	console.log(res);
+router.get('/', (req, res) => {
 	Portfolio
 		.find()
 		.exec()
@@ -36,7 +34,8 @@ router.get('/portfolio', (req, res) => {
 			console.error(err);
 			res.status(500).json({error: 'Error!'});
 		});
-});
+	}
+);
 
 router.post('/', jsonParser, (req, res) => {
 
