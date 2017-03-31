@@ -16,12 +16,12 @@ const portfolioSchema = mongoose.Schema({
 
 portfolioSchema.methods.apiRepr = function() {
 	return {
-		id: this._id;
-		invested: this.invested;
-		buyingPower: this.buyingPower;
-		earned: this.earned;
-		totalValue: this.totalValue;
-		stocks: this.stocks;
+		id: this._id,
+		invested: this.invested,
+		buyingPower: this.buyingPower,
+		earned: this.earned,
+		totalValue: this.totalValue,
+		stocks: this.stocks
 	}
 }
 
