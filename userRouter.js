@@ -91,7 +91,7 @@ router.post('/', (req, res) => {
       return User
         .create({
           username: username,
-          password: password,
+          password: hash,
           nickname: nickname
         })
     })
