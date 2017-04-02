@@ -16,7 +16,7 @@ const basicStrategy = new BasicStrategy((username, password, callback) => {
 		.findOne({username: username})
 		.exec()
 		.then(_user => {
-			console.log(password)
+			// console.log(password)
 			user = _user;
 			if (!user) {
 				return callback(null, false, {message: 'Invalid username'});
@@ -39,7 +39,7 @@ router.use(passport.initialize());
 
 
 router.post('/', (req, res) => {
-	console.log(req.body)
+	// console.log(req.body)
   if (!req.body) {
     return res.status(400).json({message: 'No request body'});
   }
@@ -80,12 +80,12 @@ router.post('/', (req, res) => {
     .count()
     .exec()
     .then(count => {
-    	console.log(username);
+    	// console.log(username);
       if (count > 0) {
         return res.status(422).json({message: 'username already taken'});
       }
       // if no existing user, hash password
-      return password
+      return User.hashPassword(password)
     })
     .then(hash => {
       return User
