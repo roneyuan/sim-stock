@@ -37,7 +37,7 @@ const UserSchema = mongoose.Schema({
 		type: String,
 		required: true
 	},
-	nickName: {type: String, default: ''}
+	nickname: {type: String, default: ''}
 });
 
 UserSchema.methods.validatePassword = function(password) {
@@ -45,7 +45,15 @@ UserSchema.methods.validatePassword = function(password) {
 }
 
 UserSchema.static.hashPassword = function(password) {
+	console.log(password);
 	return bcrypt.hash(password, 10);
+}
+
+UserSchema.methods.apiRepr = function() {
+  return {
+    username: this.username || '',
+    nickname: this.nickname || ''
+  };
 }
 
 const User = mongoose.model('User', UserSchema);

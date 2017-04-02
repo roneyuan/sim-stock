@@ -13,6 +13,7 @@ app.use(bodyParser.json());
 
 // Router
 const portfolioRouter = require('./portfolioRouter');
+const userRouter = require('./userRouter');
 
 app.use(morgan('common'));
 app.use(express.static('public'));
@@ -25,6 +26,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/portfolio', portfolioRouter);
+app.use('/users', userRouter)
 
 let server;
 

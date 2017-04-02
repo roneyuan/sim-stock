@@ -11,18 +11,6 @@ const {Portfolio} = require('./models');
 mongoose.Promise = global.Promise;
 
 
-// Portfolio
-// 	.create({
-// 		invested: 100,
-// 		buyingPower: 1000,
-// 		earned: 100,
-// 		totalValue: 100,
-// 		stocks: [{
-// 			symbol: "AAPL",
-// 			lastPrice: 20
-// 		}]		
-// 	})
-
 router.get('/', (req, res) => {
 	Portfolio
 		.find()
