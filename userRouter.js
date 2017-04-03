@@ -6,7 +6,7 @@ const router = express.Router();
 const jsonParser = require('body-parser').json();
 const passport = require('passport');
 
-const {User} = require('./models');
+const {User, Portfolio} = require('./models');
 
 router.use(jsonParser);
 
@@ -118,11 +118,37 @@ router.get('/', (req, res) => {
 
 
 
-
 router.get('/me',
   passport.authenticate('basic', {session: false}),
   (req, res) => res.json({user: req.user.apiRepr()})
 );
+
+router.get('/me/portfolio', (req, res) => {
+	return Portfolio
+		.find({}) // Question 3 How do we display current Id user?
+		.populate('portfolio')
+		.exec(function(err, user) {
+			console.log(user)
+		})
+		.then(portfolio => res.json(portfolio))
+
+		// Question 1. How do we display only for current user?
+		// Question 2. How do we display with password needed?
+})
+
+router.put('/portfolio/:id', jsonParser, (req, res) => {
+	if (req.params.id !== req.body.id) {
+		return res.status(400);
+	}
+
+	const updatedItem = User.update({
+		id: req.params.id,
+		invested: req.body.invested,
+		earned: req.body.earned
+	});
+
+	res.json(updatedItem);
+})
 
 
 module.exports = router;

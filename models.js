@@ -1,10 +1,14 @@
 const bcrypt = require('bcrypt');
-const mongoose = require('mongoose');
+const mongoose = require('mongoose'),
+Schema = mongoose.Schema;
 
 mongoose.Promise = global.Promise;
 
 const portfolioSchema = mongoose.Schema({
-	invested: Number,
+	invested: {
+		type: Number,
+		default: 0
+	},
 	buyingPower: Number,
 	earned: Number,
 	totalValue: Number,
@@ -38,27 +42,28 @@ const UserSchema = mongoose.Schema({
 		required: true
 	},
 	nickname: {type: String, default: ''},
-	//portfolio : [{ type: Schema.Types.ObjectId, ref: 'Portfolio' }] // maybe? but how do we access and manipulate?
-	invested: {
-		type: Number,
-		default: 0
-	},
-	buyingPower: {
-		type: Number,
-		default: 1000000
-	},
-	earned: {
-		type: Number,
-		default: 0
-	},
-	totalValue: {
-		type: Number,
-		default: 1000000
-	},
-	stocks: [{
-		symbol: String,
-		lastPrice: Number
-	}]
+	portfolio : [{ type: Schema.Types.ObjectId, ref: 'Portfolio' }] // maybe? but how do we access and manipulate?
+
+	// invested: {
+	// 	type: Number,
+	// 	default: 0
+	// },
+	// buyingPower: {
+	// 	type: Number,
+	// 	default: 1000000
+	// },
+	// earned: {
+	// 	type: Number,
+	// 	default: 0
+	// },
+	// totalValue: {
+	// 	type: Number,
+	// 	default: 1000000
+	// },
+	// stocks: [{
+	// 	symbol: String,
+	// 	lastPrice: Number
+	// }]
 });
 
 UserSchema.methods.validatePassword = function(password) {
@@ -72,13 +77,10 @@ UserSchema.statics.hashPassword = function(password) {
 
 UserSchema.methods.apiRepr = function() {
   return {
+  	id: this.id,
     username: this.username || '',
     nickname: this.nickname || '',
-		invested: this.invested,
-		buyingPower: this.buyingPower,
-		earned: this.earned,
-		totalValue: this.totalValue,
-		stocks: this.stocks
+    //portfolio: this.portfolio
 
   };
 }
