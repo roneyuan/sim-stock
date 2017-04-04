@@ -12,10 +12,6 @@ const portfolioSchema = mongoose.Schema({
 	buyingPower: Number,
 	earned: Number,
 	totalValue: Number,
-	stocks: [{
-		symbol: String,
-		lastPrice: Number
-	}]
 });
 
 portfolioSchema.methods.apiRepr = function() {
@@ -24,12 +20,27 @@ portfolioSchema.methods.apiRepr = function() {
 		invested: this.invested,
 		buyingPower: this.buyingPower,
 		earned: this.earned,
-		totalValue: this.totalValue,
-		stocks: this.stocks
+		totalValue: this.totalValue
 	}
 }
 
 const Portfolio = mongoose.model('Portfolio', portfolioSchema);
+
+const stockSchema = mongoose.Schema({
+	symbol : String,
+	price: Number
+});
+
+stockSchema.methods.apiRepr = function() {
+	return {
+		id: this._id,
+		symbol: this.symbol,
+		price: this.price
+	}
+}
+
+const Stock = mongoose.model('Stock', stockSchema);
+
 
 const UserSchema = mongoose.Schema({
 	username: {
@@ -42,28 +53,8 @@ const UserSchema = mongoose.Schema({
 		required: true
 	},
 	nickname: {type: String, default: ''},
-	portfolio : [{ type: Schema.Types.ObjectId, ref: 'Portfolio' }] // maybe? but how do we access and manipulate?
-
-	// invested: {
-	// 	type: Number,
-	// 	default: 0
-	// },
-	// buyingPower: {
-	// 	type: Number,
-	// 	default: 1000000
-	// },
-	// earned: {
-	// 	type: Number,
-	// 	default: 0
-	// },
-	// totalValue: {
-	// 	type: Number,
-	// 	default: 1000000
-	// },
-	// stocks: [{
-	// 	symbol: String,
-	// 	lastPrice: Number
-	// }]
+	portfolio : [{ type: Schema.Types.ObjectId, ref: 'Portfolio' }], 
+	stock: [{type: Schema.Types.ObjectId, ref: 'Stock'}]
 });
 
 UserSchema.methods.validatePassword = function(password) {
@@ -92,6 +83,7 @@ const User = mongoose.model('User', UserSchema);
 
 module.exports = {
 	Portfolio: Portfolio,
+	Stock: Stock,
 	User: User
 }
 
