@@ -34,7 +34,7 @@ const basicStrategy = new BasicStrategy((username, password, callback) => {
 		});
 });
 
-passport.use(basicStrategy);
+passport.use(basicStrategy); 
 router.use(passport.initialize());
 
 
@@ -120,21 +120,27 @@ router.get('/', (req, res) => {
 
 router.get('/me',
   passport.authenticate('basic', {session: false}),
-  (req, res) => res.json({user: req.user.apiRepr()})
+  function (req, res) { 
+  	// console.log(req.user.username);
+  	res.json({user: req.user.apiRepr()});
+
+  }
 );
 
-router.get('/me/portfolio', (req, res) => {
-	return Portfolio
-		.find({}) // Question 3 How do we display current Id user?
+router.get('/me/portfolio', passport.authenticate('basic', {session: false}), (req, res) => {
+	console.log(req);
+	return User
+		.find({username: req.user.username}) // Question 3 How do we display current Id user?
 		.populate('portfolio')
 		.exec(function(err, user) {
-			console.log(user)
+			// console.log(err);
+			console.log(user);
 		})
 		.then(portfolio => res.json(portfolio))
 
 		// Question 1. How do we display only for current user?
 		// Question 2. How do we display with password needed?
-})
+});
 
 router.put('/portfolio/:id', jsonParser, (req, res) => {
 	if (req.params.id !== req.body.id) {
