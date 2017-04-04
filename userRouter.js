@@ -6,11 +6,11 @@ const router = express.Router();
 const jsonParser = require('body-parser').json();
 const passport = require('passport');
 
-const {User, Portfolio} = require('./models');
+const {User, Portfolio, Stock} = require('./models');
 
 router.use(jsonParser);
 
-const basicStrategy = new BasicStrategy((username, password, callback) => {
+const basicStrategy = new BasicStrategy((username, password, done) => {
 	let user;
 	User
 		.findOne({username: username})
@@ -19,16 +19,16 @@ const basicStrategy = new BasicStrategy((username, password, callback) => {
 			// console.log(password)
 			user = _user;
 			if (!user) {
-				return callback(null, false, {message: 'Invalid username'});
+				return done(null, false, {message: 'Invalid username'});
 			}
 			return user.validatePassword(password);
 
 		})
 		.then(isValid => {
 			if (!isValid) {
-				return callback(null, false, {message: 'Invalid password'});
+				return done(null, false, {message: 'Invalid password'});
 			} else {
-				return callback(null, user);
+				return done(null, user);
 			}
 
 		});
@@ -108,38 +108,33 @@ router.post('/', (req, res) => {
 // we're just doing this so we have a quick way to see
 // if we're creating users. keep in mind, you can also
 // verify this in the Mongo shell.
-router.get('/', (req, res) => {
-  return User
-    .find()
-    .exec()
-    .then(users => res.json(users.map(user => user.apiRepr())))
-    .catch(err => console.log(err) && res.status(500).json({message: 'Internal server error'}));
-});
+// router.get('/', (req, res) => {
+//   return User
+//     .find()
+//     .exec()
+//     .then(users => res.json(users.map(user => user.apiRepr())))
+//     .catch(err => console.log(err) && res.status(500).json({message: 'Internal server error'}));
+// });
 
 
 
-router.get('/me',
+router.get('/:username',
   passport.authenticate('basic', {session: false}),
   function (req, res) { 
-  	// console.log(req.user.username);
   	res.json({user: req.user.apiRepr()});
-
   }
 );
 
-router.get('/me/portfolio', passport.authenticate('basic', {session: false}), (req, res) => {
+router.get('/user/portfolio', passport.authenticate('basic', {session: false}), (req, res) => {
 	console.log(req);
 	return User
-		.find({username: req.user.username}) // Question 3 How do we display current Id user?
+		.find({username: req.user.username}) //
 		.populate('portfolio')
 		.exec(function(err, user) {
-			// console.log(err);
 			console.log(user);
 		})
 		.then(portfolio => res.json(portfolio))
-
-		// Question 1. How do we display only for current user?
-		// Question 2. How do we display with password needed?
+		// Question portfolio is an empty array
 });
 
 router.put('/portfolio/:id', jsonParser, (req, res) => {
