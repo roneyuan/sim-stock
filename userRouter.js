@@ -74,6 +74,7 @@ router.post('/', (req, res) => {
     return res.status(422).json({message: 'Incorrect field length: password'});
   }
 
+
   // check for existing user
   return User
     .find({username})
@@ -88,35 +89,34 @@ router.post('/', (req, res) => {
       return User.hashPassword(password)
     })
     .then(hash => {
+    	// Check if the user exist
+    	// then create a portfolio and create the user
+    return Portfolio
+  	.create({			
+  		invested: req.body.invested,
+		buyingPower: req.body.buyingPower,
+		earned: req.body.earned,
+		totalValue: req.body.totalValue
+	}).then(portfolio => {
       return User
         .create({
           username: username,
           password: hash,
-          nickname: nickname
+          nickname: nickname,
+          portfolio: portfolio._id
         })
+		})	
+
     })
     .then(user => {
-    	console.log(user);
+    //console.log(user);
       return res.status(201).json(user.apiRepr());
     })
     .catch(err => {
+    	console.log(err)
       res.status(500).json({message: 'Internal server error HERE'})
     });
 });
-
-// never expose all your users like below in a prod application
-// we're just doing this so we have a quick way to see
-// if we're creating users. keep in mind, you can also
-// verify this in the Mongo shell.
-// router.get('/', (req, res) => {
-//   return User
-//     .find()
-//     .exec()
-//     .then(users => res.json(users.map(user => user.apiRepr())))
-//     .catch(err => console.log(err) && res.status(500).json({message: 'Internal server error'}));
-// });
-
-
 
 router.get('/:username',
   passport.authenticate('basic', {session: false}),
@@ -125,16 +125,17 @@ router.get('/:username',
   }
 );
 
-router.get('/user/portfolio', passport.authenticate('basic', {session: false}), (req, res) => {
-	console.log(req);
+router.get('/:username/portfolio', passport.authenticate('basic', {session: false}), (req, res) => {
+	//console.log(req);
 	return User
-		.find({username: req.user.username}) //
-		.populate('portfolio')
+		.findOne({username: req.user.username}) //
+		.populate('portfolio')   
 		.exec(function(err, user) {
-			console.log(user);
-		})
-		.then(portfolio => res.json(portfolio))
-		// Question portfolio is an empty array
+			//console.log(err);
+			console.log(user.portfolio);
+			res.json(user);
+		});
+		// Question portfolio is an empty array because it portfolio did not push when created
 });
 
 router.put('/portfolio/:id', jsonParser, (req, res) => {

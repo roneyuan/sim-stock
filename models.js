@@ -20,7 +20,8 @@ portfolioSchema.methods.apiRepr = function() {
 		invested: this.invested,
 		buyingPower: this.buyingPower,
 		earned: this.earned,
-		totalValue: this.totalValue
+		totalValue: this.totalValue, 
+		// created: [{type: Schema.Types.ObjectId, ref: 'User'}]
 	}
 }
 
@@ -53,7 +54,7 @@ const UserSchema = mongoose.Schema({
 		required: true
 	},
 	nickname: {type: String, default: ''},
-	portfolio : [{ type: Schema.Types.ObjectId, ref: 'Portfolio' }], 
+	portfolio : { type: Schema.Types.ObjectId, ref: 'Portfolio' }, 
 	stock: [{type: Schema.Types.ObjectId, ref: 'Stock'}]
 });
 
@@ -77,9 +78,6 @@ UserSchema.methods.apiRepr = function() {
 }
 
 const User = mongoose.model('User', UserSchema);
-
-
-
 
 module.exports = {
 	Portfolio: Portfolio,
