@@ -9,9 +9,18 @@ const portfolioSchema = mongoose.Schema({
 		type: Number,
 		default: 0
 	},
-	buyingPower: Number,
-	earned: Number,
-	totalValue: Number,
+	buyingPower: {
+		type: Number,
+		default: 1000000
+	},
+	earned: {
+		type: Number,
+		default: 0
+	},
+	totalValue: {
+		type: Number,
+		default: 1000000
+	}
 });
 
 portfolioSchema.methods.apiRepr = function() {
@@ -20,8 +29,7 @@ portfolioSchema.methods.apiRepr = function() {
 		invested: this.invested,
 		buyingPower: this.buyingPower,
 		earned: this.earned,
-		totalValue: this.totalValue, 
-		// created: [{type: Schema.Types.ObjectId, ref: 'User'}]
+		totalValue: this.totalValue,
 	}
 }
 
@@ -72,8 +80,6 @@ UserSchema.methods.apiRepr = function() {
   	id: this.id,
     username: this.username || '',
     nickname: this.nickname || '',
-    //portfolio: this.portfolio
-
   };
 }
 

@@ -91,30 +91,26 @@ router.post('/', (req, res) => {
     .then(hash => {
     	// Check if the user exist
     	// then create a portfolio and create the user
-    return Portfolio
-  	.create({			
-  		invested: req.body.invested,
-		buyingPower: req.body.buyingPower,
-		earned: req.body.earned,
-		totalValue: req.body.totalValue
-	}).then(portfolio => {
-      return User
-        .create({
-          username: username,
-          password: hash,
-          nickname: nickname,
-          portfolio: portfolio._id
-        })
-		})	
-
-    })
-    .then(user => {
-    //console.log(user);
-      return res.status(201).json(user.apiRepr());
-    })
-    .catch(err => {
-    	console.log(err)
-      res.status(500).json({message: 'Internal server error HERE'})
+	    return Portfolio
+	  	.create({			
+	  		invested: req.body.invested,
+				buyingPower: req.body.buyingPower,
+				earned: req.body.earned,
+				totalValue: req.body.totalValue
+			}).then(portfolio => {
+	      return User
+	        .create({
+	          username: username,
+	          password: hash,
+	          nickname: nickname,
+	          portfolio: portfolio._id
+	        })
+			}).then(user => {
+	      return res.status(201).json(user.apiRepr());
+	    }).catch(err => {
+	    	console.log(err)
+	      res.status(500).json({message: 'Internal server error'})
+	    });	
     });
 });
 
