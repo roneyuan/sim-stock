@@ -122,7 +122,6 @@ router.get('/:username',
 );
 
 router.get('/:username/portfolio', passport.authenticate('basic', {session: false}), (req, res) => {
-	//console.log(req);
 	return User
 		.findOne({username: req.user.username}) //
 		.populate('portfolio')   
@@ -131,22 +130,51 @@ router.get('/:username/portfolio', passport.authenticate('basic', {session: fals
 			console.log(user.portfolio);
 			res.json(user);
 		});
-		// Question portfolio is an empty array because it portfolio did not push when created
 });
 
-router.put('/portfolio/:id', jsonParser, (req, res) => {
-	if (req.params.id !== req.body.id) {
-		return res.status(400);
-	}
-
-	const updatedItem = User.update({
-		id: req.params.id,
-		invested: req.body.invested,
-		earned: req.body.earned
-	});
-
-	res.json(updatedItem);
+// How does it knows which /:username? So I can use /:username/stock/:symbol?
+router.get('/:username/stock', passport.authenticate('basic', {session: false}), (req, res) => {
+	return Stock
+		.find()
+		.exec()
+		.then(stock => {
+			console.log(stock)
+		})
+		.catch(err => {
+			console.log(err)
+		})
 })
+
+router.post('/:username/stocks', passport.authenticate('basic', {session: false}), (req, res) => {
+	Stock
+		.create({
+			symbol: req.body.symbol,
+			price: req.body.price
+		})
+		.then(stock => res.status(201).json(stock.apiRepr()))
+		.catch(err => {
+			console.error(err);
+			res.status(500).json({error: 'Error!'});
+		});
+	}
+);
+
+router.put('/:username/stocks/:symbol', passport.authenticate('basic', {session: false}), (req, res) => {
+	}
+);
+// router.put('/portfolio/:id', jsonParser, (req, res) => {
+// 	if (req.params.id !== req.body.id) {
+// 		return res.status(400);
+// 	}
+
+// 	const updatedItem = User.update({
+// 		id: req.params.id,
+// 		invested: req.body.invested,
+// 		earned: req.body.earned
+// 	});
+
+// 	res.json(updatedItem);
+// })
 
 
 module.exports = router;

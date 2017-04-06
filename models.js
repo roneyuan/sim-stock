@@ -30,6 +30,7 @@ portfolioSchema.methods.apiRepr = function() {
 		buyingPower: this.buyingPower,
 		earned: this.earned,
 		totalValue: this.totalValue,
+
 	}
 }
 
@@ -37,16 +38,18 @@ const Portfolio = mongoose.model('Portfolio', portfolioSchema);
 
 const stockSchema = mongoose.Schema({
 	symbol : String,
-	price: Number
+	price: Number,
+	quantity: Number
 });
 
 stockSchema.methods.apiRepr = function() {
 	return {
 		id: this._id,
 		symbol: this.symbol,
-		price: this.price
+		price: this.price,
+		quantity: this.quantity
 	}
-}
+} // Question: How to bind to user so everytime login it will load this
 
 const Stock = mongoose.model('Stock', stockSchema);
 
