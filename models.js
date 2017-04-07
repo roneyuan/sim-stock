@@ -37,7 +37,10 @@ portfolioSchema.methods.apiRepr = function() {
 const Portfolio = mongoose.model('Portfolio', portfolioSchema);
 
 const stockSchema = mongoose.Schema({
-	symbol : String,
+	symbol : {
+		type: String,
+		unique: true
+	},
 	price: Number,
 	quantity: Number
 });
@@ -50,6 +53,7 @@ stockSchema.methods.apiRepr = function() {
 		quantity: this.quantity
 	}
 } // Question: How to bind to user so everytime login it will load this
+// Stock should have CRUD and bind to User
 
 const Stock = mongoose.model('Stock', stockSchema);
 
