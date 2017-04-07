@@ -132,15 +132,6 @@ router.get('/:username/portfolio', passport.authenticate('basic', {session: fals
 		});
 });
 
-// Bon and Joe
-// router.get('/bob')
-// router.get('/:username') // if you type joe then it will go here
-// It about you need to specify the name of the route
-// router.get('/bob/stock', (req, res) => {
-// 	console.log("bob");
-// });
-
-// How does it knows which /:username? So I can use /:username/stock/:symbol?
 router.get('/:username/stock', passport.authenticate('basic', {session: false}), (req, res) => {
 	return Stock
 		.find()
@@ -152,8 +143,6 @@ router.get('/:username/stock', passport.authenticate('basic', {session: false}),
 			console.log(err)
 		})
 })
-
-
 
 router.post('/:username/stock', passport.authenticate('basic', {session: false}), (req, res) => {
 	Stock
@@ -171,51 +160,29 @@ router.post('/:username/stock', passport.authenticate('basic', {session: false})
 );
 
 router.put('/:username/stocks/:symbol', passport.authenticate('basic', {session: false}), (req, res) => {
-		if (req.params.symbol !== req.body.symbol) {
-			return res.status(400).send("Request field does not match");
-		}
+	if (req.params.symbol !== req.body.symbol) {
+		return res.status(400).send("Request field does not match");
+	}
 
-		const toUpdate = {};
-		const updateableFields = ['symbol', 'price', 'quantity'];
-
-		updateableFields.forEach(field => {
-			if (field in req.body) {
-				toUpdate[field] = req.body[field];
-			}
-		})
-
-		Stock
-			.findOneAndUpdate({symbol: req.body.symbol}, {quantity: req.body.quantity, price: req.body.price})
-			.exec()
-			.then(stock => {
-				res.status(204).end()
-			})
-			.catch(err => {
-				console.log(err);
-				res.status(500).json({error: 'Error'})
-			})
+	Stock
+		.findOneAndUpdate({symbol: req.body.symbol}, {quantity: req.body.quantity, price: req.body.price})
+		.exec()
+		.then(stock => res.status(204).end()) // Question: Why not return a object? A tradition?
+		.catch(err => {
+			console.log(err);
+			res.status(500).json({error: 'Error'})
+		});
 	}
 );
 
 router.delete('/:username/stocks/:symbol', passport.authenticate('basic', {session: false}), (req, res) => {
-	
+		Stock
+			.findOneAndRemove({symbol: req.params.symbol})
+			.exec()
+			.then(stock => res.status(204).end())
+			.catch(err => res.status(500).json({error: 'Error'}));
 	}
 );
-
-
-// router.put('/portfolio/:id', jsonParser, (req, res) => {
-// 	if (req.params.id !== req.body.id) {
-// 		return res.status(400);
-// 	}
-
-// 	const updatedItem = User.update({
-// 		id: req.params.id,
-// 		invested: req.body.invested,
-// 		earned: req.body.earned
-// 	});
-
-// 	res.json(updatedItem);
-// })
 
 
 module.exports = router;
