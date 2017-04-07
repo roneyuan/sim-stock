@@ -74,23 +74,18 @@ router.post('/', (req, res) => {
     return res.status(422).json({message: 'Incorrect field length: password'});
   }
 
-
-  // check for existing user
   return User
     .find({username})
     .count()
     .exec()
     .then(count => {
-    	// console.log(username);
       if (count > 0) {
         return res.status(422).json({message: 'username already taken'});
       }
-      // if no existing user, hash password
+
       return User.hashPassword(password)
     })
     .then(hash => {
-    	// Check if the user exist
-    	// then create a portfolio and create the user
 	    return Portfolio
 	  	.create({			
 	  		invested: req.body.invested,
@@ -126,12 +121,13 @@ router.get('/:username/portfolio', passport.authenticate('basic', {session: fals
 		.findOne({username: req.user.username}) //
 		.populate('portfolio')   
 		.exec(function(err, user) {
-			//console.log(err);
+			console.log(err);
 			console.log(user.portfolio);
 			res.status(200).json(user);
 		});
 });
 
+// Question: Stock is not bind to the account. Every user can manipulate the account
 router.get('/:username/stock', passport.authenticate('basic', {session: false}), (req, res) => {
 	return Stock
 		.find()
