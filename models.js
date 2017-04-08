@@ -45,10 +45,10 @@ const stockSchema = mongoose.Schema({
 		type: Number,
 		required: true
 	},
-	quantity: {
-		type: Number,
-		required: true
-	}
+	// quantity: {
+	// 	type: Number,
+	// 	required: true
+	// }
 });
 
 stockSchema.methods.apiRepr = function() {
@@ -56,7 +56,7 @@ stockSchema.methods.apiRepr = function() {
 		id: this._id,
 		symbol: this.symbol,
 		price: this.price,
-		quantity: this.quantity
+		//quantity: this.quantity
 	}
 }
 
@@ -73,9 +73,35 @@ const UserSchema = mongoose.Schema({
 		type: String,
 		required: true
 	},
-	nickname: {type: String, default: ''},
-	portfolio : { type: Schema.Types.ObjectId, ref: 'Portfolio' }, 
-	stock: [{type: Schema.Types.ObjectId, ref: 'Stock'}]
+	nickname: {type: String, default: ''}, // Reference is only benefit when the router is trying to use it again and again.  Like rebuilding over and over again
+	// Depends on operation, we can decide whether to use reference.
+	// Reference is the form of optimizaton
+
+	//portfolio : { type: Schema.Types.ObjectId, ref: 'Portfolio' }, 
+	portfolio: {
+		invested: {
+			type: Number,
+			default: 0
+		},
+		buyingPower: {
+			type: Number,
+			default: 1000000
+		},
+		earned: {
+			type: Number,
+			default: 0
+		},
+		totalValue: {
+			type: Number,
+			default: 1000000
+		},
+		investedStocks: [{
+			stock: {type: Schema.Types.ObjectId, ref: 'Stock'},
+			quantity: Number
+		}]
+	}
+
+
 });
 
 UserSchema.methods.validatePassword = function(password) {
@@ -92,6 +118,7 @@ UserSchema.methods.apiRepr = function() {
   	id: this.id,
     username: this.username || '',
     nickname: this.nickname || '',
+    portfolio: this.portfolio
   };
 }
 

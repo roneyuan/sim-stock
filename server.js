@@ -8,16 +8,11 @@ const app = express();
 
 app.use(bodyParser.json());
 
-// Database models
-//const {MarketData} = require('./models');
-
-// Router
 const portfolioRouter = require('./portfolioRouter');
 const userRouter = require('./userRouter');
 
 app.use(morgan('common'));
 app.use(express.static('public'));
-
 
 mongoose.Promise = global.Promise;
 
@@ -27,6 +22,7 @@ app.get('/', (req, res) => {
 
 app.use('/portfolio', portfolioRouter);
 app.use('/users', userRouter)
+//app.user('/stock', userRouter) // DRY with password.js? How ?
 
 let server;
 

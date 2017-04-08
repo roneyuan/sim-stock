@@ -39,7 +39,6 @@ router.use(passport.initialize());
 
 
 router.post('/', (req, res) => {
-	// console.log(req.body)
   if (!req.body) {
     return res.status(400).json({message: 'No request body'});
   }
@@ -86,26 +85,20 @@ router.post('/', (req, res) => {
       return User.hashPassword(password)
     })
     .then(hash => {
-	    return Portfolio
-	  	.create({			
-	  		invested: req.body.invested,
-				buyingPower: req.body.buyingPower,
-				earned: req.body.earned,
-				totalValue: req.body.totalValue
-			}).then(portfolio => {
-	      return User
-	        .create({
-	          username: username,
-	          password: hash,
-	          nickname: nickname,
-	          portfolio: portfolio._id
-	        })
-			}).then(user => {
-	      return res.status(201).json(user.apiRepr());
-	    }).catch(err => {
-	    	console.log(err)
-	      res.status(500).json({message: 'Internal server error'})
-	    });	
+	    return User
+		  	.create({			
+		  		username: username,
+		      password: hash,
+		      nickname: nickname,
+		      portfolio: req.body.portfolio
+				})
+				.then(user => {
+		      return res.status(201).json(user.apiRepr());
+		    })
+		    .catch(err => {
+		    	console.log(err)
+		      res.status(500).json({message: 'Internal server error'})
+		    });	
     });
 });
 
