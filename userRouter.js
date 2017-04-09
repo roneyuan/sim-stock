@@ -143,24 +143,30 @@ router.get('/:username/stock', passport.authenticate('basic', {session: false}),
 })
 
 router.post('/:username/stock/', passport.authenticate('basic', {session: false}), (req, res) => {
-	User
-		.findOneAndUpdate({username:req.user.username}, 
-		{
-			$push: {
-				investedStocks: {		
-					symbol: req.body.symbol,
-					price: req.body.price,
-					quantity: req.body.quantity
-				}			
-			}
+	Stock
+		.create({
+			symbol: req.body.symbol,
+			price: req.body.price
 		})
-		.exec()
-		.then(user => {
-			console.log(user);
-			res.status(204).end();
-		})
-		.catch(err => {
-			console.log(err);
+		.then(stock => {
+			return User
+				.findOneAndUpdate({username:req.user.username}, 
+				{
+					$push: { 
+						"portfolio.investedStocks": { // Use dot notation to push ! USe double quote!
+								stock: stock.id,
+								quantity: req.body.quantity			
+						}	
+					}
+				})
+				.exec()
+				.then(user => {
+					console.log(user);
+					res.status(204).end();
+				})
+				.catch(err => {
+					console.log(err);
+				})
 		})
 	}
 );

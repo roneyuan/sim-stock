@@ -95,18 +95,19 @@ const UserSchema = mongoose.Schema({
 			type: Number,
 			default: 1000000
 		},
-		// investedStocks: [{
-		// 	stock: {type: Schema.Types.ObjectId, ref: 'Stock'},
-		// 	quantity: Number
-		// }]
-
-
-	},
 		investedStocks: [{
-			symbol: String,
-			price: Number,
-			quantity: Number
+		 	stock: {type: Schema.Types.ObjectId, ref: 'Stock'},
+		 	quantity: Number
 		}]
+	}
+
+
+	// },
+	// 	investedStocks: [{
+	// 		symbol: String,
+	// 		price: Number,
+	// 		quantity: Number
+	// 	}]
 });
 
 UserSchema.methods.validatePassword = function(password) {
