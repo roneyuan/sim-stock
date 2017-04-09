@@ -4,39 +4,40 @@ Schema = mongoose.Schema;
 
 mongoose.Promise = global.Promise;
 
-const portfolioSchema = mongoose.Schema({
-	invested: {
-		type: Number,
-		default: 0
-	},
-	buyingPower: {
-		type: Number,
-		default: 1000000
-	},
-	earned: {
-		type: Number,
-		default: 0
-	},
-	totalValue: {
-		type: Number,
-		default: 1000000
-	}
-});
+// const portfolioSchema = mongoose.Schema({
+// 	invested: {
+// 		type: Number,
+// 		default: 0
+// 	},
+// 	buyingPower: {
+// 		type: Number,
+// 		default: 1000000
+// 	},
+// 	earned: {
+// 		type: Number,
+// 		default: 0
+// 	},
+// 	totalValue: {
+// 		type: Number,
+// 		default: 1000000
+// 	}
+// });
 
-portfolioSchema.methods.apiRepr = function() {
-	return {
-		id: this._id,
-		invested: this.invested,
-		buyingPower: this.buyingPower,
-		earned: this.earned,
-		totalValue: this.totalValue,
+// portfolioSchema.methods.apiRepr = function() {
+// 	return {
+// 		id: this._id,
+// 		invested: this.invested,
+// 		buyingPower: this.buyingPower,
+// 		earned: this.earned,
+// 		totalValue: this.totalValue,
 
-	}
-}
+// 	}
+// }
 
-const Portfolio = mongoose.model('Portfolio', portfolioSchema);
+// const Portfolio = mongoose.model('Portfolio', portfolioSchema);
 
 const stockSchema = mongoose.Schema({
+	_user: { type: String, ref: 'User' },
 	symbol : {
 		type: String,
 		unique: true
@@ -73,11 +74,10 @@ const UserSchema = mongoose.Schema({
 		type: String,
 		required: true
 	},
-	nickname: {type: String, default: ''}, // Reference is only benefit when the router is trying to use it again and again.  Like rebuilding over and over again
-	// Depends on operation, we can decide whether to use reference.
-	// Reference is the form of optimizaton
-
-	//portfolio : { type: Schema.Types.ObjectId, ref: 'Portfolio' }, 
+	nickname: {
+		type: String, 
+		default: ''
+	}, 
 	portfolio: {
 		invested: {
 			type: Number,
@@ -95,13 +95,18 @@ const UserSchema = mongoose.Schema({
 			type: Number,
 			default: 1000000
 		},
+		// investedStocks: [{
+		// 	stock: {type: Schema.Types.ObjectId, ref: 'Stock'},
+		// 	quantity: Number
+		// }]
+
+
+	},
 		investedStocks: [{
-			stock: {type: Schema.Types.ObjectId, ref: 'Stock'},
+			symbol: String,
+			price: Number,
 			quantity: Number
 		}]
-	}
-
-
 });
 
 UserSchema.methods.validatePassword = function(password) {
@@ -125,7 +130,7 @@ UserSchema.methods.apiRepr = function() {
 const User = mongoose.model('User', UserSchema);
 
 module.exports = {
-	Portfolio: Portfolio,
+	//Portfolio: Portfolio,
 	Stock: Stock,
 	User: User
 }

@@ -102,14 +102,22 @@ router.post('/', (req, res) => {
     });
 });
 
+
+/*
+By default, if authentication fails, Passport will respond with a 401 Unauthorized status, 
+and any additional route handlers will not be invoked. 
+If authentication succeeds, the next handler will be invoked 
+and the req.user property will be set to the authenticated user.
+*/
 router.get('/:username',
   passport.authenticate('basic', {session: false}),
   function (req, res) { 
-  	res.json({user: req.user.apiRepr()});
+  	res.json({user: req.user.apiRepr()}); // Question: Where is req.user came from? Ans: It is part of passport.js
   }
 );
 
-router.get('/:username/portfolio', passport.authenticate('basic', {session: false}), (req, res) => {
+/*
+router.get('/:username/stocks', passport.authenticate('basic', {session: false}), (req, res) => {
 	return User
 		.findOne({username: req.user.username}) //
 		.populate('portfolio')   
@@ -119,6 +127,7 @@ router.get('/:username/portfolio', passport.authenticate('basic', {session: fals
 			res.status(200).json(user);
 		});
 });
+*/
 
 // Question: Stock is not bind to the account. Every user can manipulate the account
 router.get('/:username/stock', passport.authenticate('basic', {session: false}), (req, res) => {
@@ -133,18 +142,26 @@ router.get('/:username/stock', passport.authenticate('basic', {session: false}),
 		})
 })
 
-router.post('/:username/stock', passport.authenticate('basic', {session: false}), (req, res) => {
-	Stock
-		.create({
-			symbol: req.body.symbol,
-			price: req.body.price,
-			quantity: req.body.quantity
+router.post('/:username/stock/', passport.authenticate('basic', {session: false}), (req, res) => {
+	User
+		.findOneAndUpdate({username:req.user.username}, 
+		{
+			$push: {
+				investedStocks: {		
+					symbol: req.body.symbol,
+					price: req.body.price,
+					quantity: req.body.quantity
+				}			
+			}
 		})
-		.then(stock => res.status(201).json(stock.apiRepr()))
+		.exec()
+		.then(user => {
+			console.log(user);
+			res.status(204).end();
+		})
 		.catch(err => {
-			console.error(err);
-			res.status(500).json({error: 'Error!'});
-		});
+			console.log(err);
+		})
 	}
 );
 
