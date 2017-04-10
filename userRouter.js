@@ -148,7 +148,7 @@ router.post('/:username/stock', passport.authenticate('basic', {session: false})
 				})
 				.exec()
 				.then(user => {
-					console.log(user);
+					//console.log(user);
 					res.status(204).end();
 				})
 				.catch(err => {
@@ -163,19 +163,40 @@ router.put('/:username/stock/:symbol', passport.authenticate('basic', {session: 
 		return res.status(400).send("Request field does not match");
 	}
 
+	// return User.findOneAndUpdate(
+	// 	{username: req.user.username, 'portfolio.investedStocks.stock._id': stock.id},
+	// 	{$set: {
+	// 		'stock.$.quantity': req.body.quantity
+	// 	}})
+
+
 	return User
 		.findOne({username: req.user.username}) //
 		.populate('portfolio.investedStocks.stock')   
 		.exec(function(err, user) {
-			console.log(err);
-			console.log(user.portfolio.investedStocks);
+			//console.log(err);
+			console.log("User: " + user.portfolio.investedStocks);
 			//res.status(200).json(user);
 			return Stock
-				.findOne({symbol: req.body.symbol})
-				.exec()
-				.then(stock => {
-					console.log(stock)
+				.findOne({symbol: req.body.symbol//}//,
+					// {$set: {
+					// 	'stock.$.quantity': req.body.quantity
+					// 	}
+					// }
 				})
+				.then(user => {
+					console.log("Find: " + user)
+				})
+
+
+
+
+			// Stock
+			// 	.find({stock: {$elemMatch: {symbol: req.body.symbol}}})
+			// 	.exec()
+			// 	.then(stock => {
+			// 		console.log(stock)
+			// 	})
 		});
 
 
@@ -196,7 +217,7 @@ router.put('/:username/stock/:symbol', passport.authenticate('basic', {session: 
 	// 	.catch(err => {
 	// 		console.log(err);
 	// 	})
-}
+//}
 	// Stock
 	// 	.findOneAndUpdate({symbol: req.body.symbol}, {quantity: req.body.quantity, price: req.body.price})
 	// 	.exec()
@@ -206,7 +227,7 @@ router.put('/:username/stock/:symbol', passport.authenticate('basic', {session: 
 	// 		res.status(500).json({error: 'Error'})
 	// 	});
 	// }
-);
+});
 
 router.delete('/:username/stocks/:symbol', passport.authenticate('basic', {session: false}), (req, res) => {
 		Stock
