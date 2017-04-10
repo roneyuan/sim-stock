@@ -116,37 +116,24 @@ router.get('/:username',
   }
 );
 
-/*
-router.get('/:username/stocks', passport.authenticate('basic', {session: false}), (req, res) => {
-	return User
-		.findOne({username: req.user.username}) //
-		.populate('portfolio')   
-		.exec(function(err, user) {
-			console.log(err);
-			console.log(user.portfolio);
-			res.status(200).json(user);
-		});
-});
-*/
-
 // Question: Stock is not bind to the account. Every user can manipulate the account
 router.get('/:username/stock', passport.authenticate('basic', {session: false}), (req, res) => {
-	return Stock
-		.find()
-		.exec()
-		.then(stock => {
-			res.status(200).json(stock)
-		})
-		.catch(err => {
-			console.log(err)
-		})
+	return User
+		.findOne({username: req.user.username}) //
+		.populate('portfolio.investedStocks.stock')   
+		.exec(function(err, user) {
+			console.log(err);
+			console.log(user.portfolio.investedStocks);
+			res.status(200).json(user);
+		});
 })
 
-router.post('/:username/stock/', passport.authenticate('basic', {session: false}), (req, res) => {
+router.post('/:username/stock', passport.authenticate('basic', {session: false}), (req, res) => {
 	Stock
 		.create({
 			symbol: req.body.symbol,
-			price: req.body.price
+			price: req.body.price,
+			quantity: req.body.quantity	
 		})
 		.then(stock => {
 			return User
@@ -154,8 +141,8 @@ router.post('/:username/stock/', passport.authenticate('basic', {session: false}
 				{
 					$push: { 
 						"portfolio.investedStocks": { // Use dot notation to push ! USe double quote!
-								stock: stock.id,
-								quantity: req.body.quantity			
+								stock: stock._id,
+								//quantity: req.body.quantity			
 						}	
 					}
 				})
@@ -171,20 +158,54 @@ router.post('/:username/stock/', passport.authenticate('basic', {session: false}
 	}
 );
 
-router.put('/:username/stocks/:symbol', passport.authenticate('basic', {session: false}), (req, res) => {
+router.put('/:username/stock/:symbol', passport.authenticate('basic', {session: false}), (req, res) => {
 	if (req.params.symbol !== req.body.symbol) {
 		return res.status(400).send("Request field does not match");
 	}
 
-	Stock
-		.findOneAndUpdate({symbol: req.body.symbol}, {quantity: req.body.quantity, price: req.body.price})
-		.exec()
-		.then(stock => res.status(204).end()) // Question: Why not return a object? A tradition?
-		.catch(err => {
+	return User
+		.findOne({username: req.user.username}) //
+		.populate('portfolio.investedStocks.stock')   
+		.exec(function(err, user) {
 			console.log(err);
-			res.status(500).json({error: 'Error'})
+			console.log(user.portfolio.investedStocks);
+			//res.status(200).json(user);
+			return Stock
+				.findOne({symbol: req.body.symbol})
+				.exec()
+				.then(stock => {
+					console.log(stock)
+				})
 		});
-	}
+
+
+
+	// User
+	// 	.findOne({"portfolio.investedStocks": {$elemMatch: {"stock.id": req.body.symbol}}})
+	// 	.exec()
+	// 	.then(user => {
+	// 		console.log("User: " + user)
+	// 		return Stock
+	// 			.findOne({symbol: req.body.symbol})
+	// 			.exec()
+	// 			.then(stock => {
+	// 				console.log("Stock: "+stock);
+	// 				res.status(204).end();
+	// 			})
+	// 	})
+	// 	.catch(err => {
+	// 		console.log(err);
+	// 	})
+}
+	// Stock
+	// 	.findOneAndUpdate({symbol: req.body.symbol}, {quantity: req.body.quantity, price: req.body.price})
+	// 	.exec()
+	// 	.then(stock => res.status(204).end()) // Question: Why not return a object? A tradition?
+	// 	.catch(err => {
+	// 		console.log(err);
+	// 		res.status(500).json({error: 'Error'})
+	// 	});
+	// }
 );
 
 router.delete('/:username/stocks/:symbol', passport.authenticate('basic', {session: false}), (req, res) => {
