@@ -53,10 +53,10 @@ const stockSchema = mongoose.Schema({
 		type: Number,
 		required: true
 	},
-	// quantity: {
-	// 	type: Number,
-	// 	required: true
-	// }
+	quantity: {
+		type: Number,
+		required: true
+	}
 });
 
 stockSchema.methods.apiRepr = function() {
@@ -104,7 +104,7 @@ const UserSchema = mongoose.Schema({
 		},
 		investedStocks: [{
 		 	stock: {type: Schema.Types.ObjectId, ref: 'Stock'},
-		 	quantity: Number
+		 	//quantity: Number
 		}]
 	}
 

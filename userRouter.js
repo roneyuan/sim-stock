@@ -142,7 +142,7 @@ router.post('/:username/stock', passport.authenticate('basic', {session: false})
 					$push: { 
 						"portfolio.investedStocks": { // Use dot notation to push ! USe double quote!
 								stock: stock._id,
-								quantity: req.body.quantity			
+								//quantity: req.body.quantity			
 						}	
 					}
 				})
@@ -163,63 +163,65 @@ router.put('/:username/stock/:symbol', passport.authenticate('basic', {session: 
 		return res.status(400).send("Request field does not match");
 	}
 
-	// return User.findOneAndUpdate(
-	// 	{username: req.user.username, 'portfolio.investedStocks.stock._id': stock.id},
-	// 	{$set: {
-	// 		'stock.$.quantity': req.body.quantity
-	// 	}})
 
-	// 1
 	// return User
-	// 	.findOne({username: req.user.username}) //
-	// 	.populate('portfolio.investedStocks.stock')   
-	// 	.exec(function(err, user) {
-	// 		console.log(user.portfolio.investedStocks);
+	// 	.find({'portfolio.investedStocks.stock': '58ec3d4bd999eb44eb602f3e'})
+	// 	.exec()
+	// 	.then(user => {
+	// 		console.log(user[0].portfolio.investedStocks);
+	// 	}) // then how to update quantity?
 
-	// 		let stocks = user.portfolio.investedStocks;
-	// 		//find and update here?
-	// 		console.log(stocks);
-	// 		for (let i=0; i<stocks.length;i++) {
-	// 			console.log("Stock: " + stocks[i]);
-	// 			if (stocks[i].stock.symbol === req.body.symbol) {
-	// 				user.portfolio.investedStocks[i].stock.quantity = req.body.quantity;
-	// 			}
-	// 		}
-	// 		console.log(user);
-	// 		user.save((err) => {
-	// 			if (err) {
-	// 				console.log(err)
-	// 			}
-	// 		})
+	return User
+	.findOne({username: req.user.username})
+	.populate('portfolio.investedStocks.stock')
+	.exec((err, user) => {
+		//console.log("Find User: " + user.portfolio.investedStocks);
+		let stocks = user.portfolio.investedStocks;
+		let selectedId;
+		console.log("Stocks " + stocks)
+		for (let i=0; i<stocks.length; i++) {
+			if (stocks[i].stock.symbol === req.body.symbol) {
+				selectedId = stocks[i].stock._id;
+			}
+		} 
+		// Then we can use this id to update quantity
+		console.log("ID " + selectedId);
+		return Stock
+			.findOneAndUpdate({_id: selectedId}, {quantity:req.body.quantity})
+			.exec()
+			.then(stock => { 
+				res.status(204).end();
+				console.log("Find: " + stock);
+				return User
+					.findOne({username: req.user.username})
+					.populate('portfolio.investedStocks.stock')
+					.exec((err, user) => {
+						//console.log("Find User: " + user.portfolio.investedStocks);
+					})
+			})
+			.catch(err => {
+				console.log(err);
+				res.status(500).json({error: 'Error'})
+			});					
+	})
 
-	// 		res.status(204).json(user);
-	// 	});
-
-	// 2
-	// return User
-	// 	.findOne({username: req.user.username}) //
-	// 	.populate('portfolio.investedStocks.stock')   
-	// 	.exec(function(err, user) {
-			return Stock
-				.findOneAndUpdate({stock: {symbol: req.body.symbol}}, {quantity: req.body.quantity})
-				.exec()
-				.then(user => { // Stock is updated, but need to update to the user!
-					res.status(204).end();
-					// When update next time, it will show??? Need to update back to User? 
-					// Best way to update?
-					console.log("Find: " + user.quantity);
-					return User
-						.findOne({username: req.user.username})
-						.populate('portfolio.investedStocks.stock')
-						.exec((err, user) => {
-							console.log("Find User: " + user.portfolio.investedStocks);
-						})
-				})
-				.catch(err => {
-					console.log(err);
-					res.status(500).json({error: 'Error'})
-				});				
-		//});
+	// return Stock
+	// 	.findOneAndUpdate({_id: "58ec4895a21ed4456634b600"}, {quantity:req.body.quantity})
+	// 	.exec()
+	// 	.then(stock => { 
+	// 		res.status(204).end();
+	// 		console.log("Find: " + stock);
+	// 		return User
+	// 			.findOne({username: req.user.username})
+	// 			.populate('portfolio.investedStocks.stock')
+	// 			.exec((err, user) => {
+	// 				console.log("Find User: " + user.portfolio.investedStocks);
+	// 			})
+	// 	})
+	// 	.catch(err => {
+	// 		console.log(err);
+	// 		res.status(500).json({error: 'Error'})
+	// 	});				
 });
 
 router.delete('/:username/stocks/:symbol', passport.authenticate('basic', {session: false}), (req, res) => {
