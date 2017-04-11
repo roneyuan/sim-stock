@@ -122,8 +122,8 @@ router.get('/:username/stock', passport.authenticate('basic', {session: false}),
 		.findOne({username: req.user.username}) //
 		.populate('portfolio.investedStocks.stock')   
 		.exec(function(err, user) {
-			console.log(err);
-			console.log(user.portfolio.investedStocks);
+			//console.log(err);
+			//console.log(user.portfolio.investedStocks);
 			res.status(200).json(user);
 		});
 })
@@ -142,7 +142,7 @@ router.post('/:username/stock', passport.authenticate('basic', {session: false})
 					$push: { 
 						"portfolio.investedStocks": { // Use dot notation to push ! USe double quote!
 								stock: stock._id,
-								//quantity: req.body.quantity			
+								quantity: req.body.quantity			
 						}	
 					}
 				})
@@ -169,64 +169,57 @@ router.put('/:username/stock/:symbol', passport.authenticate('basic', {session: 
 	// 		'stock.$.quantity': req.body.quantity
 	// 	}})
 
+	// 1
+	// return User
+	// 	.findOne({username: req.user.username}) //
+	// 	.populate('portfolio.investedStocks.stock')   
+	// 	.exec(function(err, user) {
+	// 		console.log(user.portfolio.investedStocks);
 
-	return User
-		.findOne({username: req.user.username}) //
-		.populate('portfolio.investedStocks.stock')   
-		.exec(function(err, user) {
-			//console.log(err);
-			console.log("User: " + user.portfolio.investedStocks);
-			//res.status(200).json(user);
-			return Stock
-				.findOne({symbol: req.body.symbol//}//,
-					// {$set: {
-					// 	'stock.$.quantity': req.body.quantity
-					// 	}
-					// }
-				})
-				.then(user => {
-					console.log("Find: " + user)
-				})
+	// 		let stocks = user.portfolio.investedStocks;
+	// 		//find and update here?
+	// 		console.log(stocks);
+	// 		for (let i=0; i<stocks.length;i++) {
+	// 			console.log("Stock: " + stocks[i]);
+	// 			if (stocks[i].stock.symbol === req.body.symbol) {
+	// 				user.portfolio.investedStocks[i].stock.quantity = req.body.quantity;
+	// 			}
+	// 		}
+	// 		console.log(user);
+	// 		user.save((err) => {
+	// 			if (err) {
+	// 				console.log(err)
+	// 			}
+	// 		})
 
-
-
-
-			// Stock
-			// 	.find({stock: {$elemMatch: {symbol: req.body.symbol}}})
-			// 	.exec()
-			// 	.then(stock => {
-			// 		console.log(stock)
-			// 	})
-		});
-
-
-
-	// User
-	// 	.findOne({"portfolio.investedStocks": {$elemMatch: {"stock.id": req.body.symbol}}})
-	// 	.exec()
-	// 	.then(user => {
-	// 		console.log("User: " + user)
-	// 		return Stock
-	// 			.findOne({symbol: req.body.symbol})
-	// 			.exec()
-	// 			.then(stock => {
-	// 				console.log("Stock: "+stock);
-	// 				res.status(204).end();
-	// 			})
-	// 	})
-	// 	.catch(err => {
-	// 		console.log(err);
-	// 	})
-//}
-	// Stock
-	// 	.findOneAndUpdate({symbol: req.body.symbol}, {quantity: req.body.quantity, price: req.body.price})
-	// 	.exec()
-	// 	.then(stock => res.status(204).end()) // Question: Why not return a object? A tradition?
-	// 	.catch(err => {
-	// 		console.log(err);
-	// 		res.status(500).json({error: 'Error'})
+	// 		res.status(204).json(user);
 	// 	});
-	// }
+
+	// 2
+	// return User
+	// 	.findOne({username: req.user.username}) //
+	// 	.populate('portfolio.investedStocks.stock')   
+	// 	.exec(function(err, user) {
+			return Stock
+				.findOneAndUpdate({stock: {symbol: req.body.symbol}}, {quantity: req.body.quantity})
+				.exec()
+				.then(user => { // Stock is updated, but need to update to the user!
+					res.status(204).end();
+					// When update next time, it will show??? Need to update back to User? 
+					// Best way to update?
+					console.log("Find: " + user.quantity);
+					return User
+						.findOne({username: req.user.username})
+						.populate('portfolio.investedStocks.stock')
+						.exec((err, user) => {
+							console.log("Find User: " + user.portfolio.investedStocks);
+						})
+				})
+				.catch(err => {
+					console.log(err);
+					res.status(500).json({error: 'Error'})
+				});				
+		//});
 });
 
 router.delete('/:username/stocks/:symbol', passport.authenticate('basic', {session: false}), (req, res) => {

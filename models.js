@@ -20,7 +20,12 @@ mongoose.Promise = global.Promise;
 // 	totalValue: {
 // 		type: Number,
 // 		default: 1000000
-// 	}
+// 	},
+
+		// investedStocks: [{
+		//  	stock: {type: Schema.Types.ObjectId, ref: 'Stock'},
+		//  	quantity: {type}
+		// }]
 // });
 
 // portfolioSchema.methods.apiRepr = function() {
@@ -40,16 +45,18 @@ const stockSchema = mongoose.Schema({
 	_user: { type: String, ref: 'User' },
 	symbol : {
 		type: String,
-		unique: true
+		//unique: true // It is unique globally, so if another people want to buy AAPL, then it will prevent you to buy it since
+		// it is unique
+		required: true
 	},
 	price: {
 		type: Number,
 		required: true
 	},
-	quantity: {
-		type: Number,
-		required: true
-	}
+	// quantity: {
+	// 	type: Number,
+	// 	required: true
+	// }
 });
 
 stockSchema.methods.apiRepr = function() {
@@ -57,7 +64,7 @@ stockSchema.methods.apiRepr = function() {
 		id: this._id,
 		symbol: this.symbol,
 		price: this.price,
-		quantity: this.quantity
+		//quantity: this.quantity
 	}
 }
 
@@ -97,7 +104,7 @@ const UserSchema = mongoose.Schema({
 		},
 		investedStocks: [{
 		 	stock: {type: Schema.Types.ObjectId, ref: 'Stock'},
-		 	//quantity: Number
+		 	quantity: Number
 		}]
 	}
 
