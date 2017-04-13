@@ -187,44 +187,14 @@ router.put('/:username/stock/:symbol', passport.authenticate('basic', {session: 
 			if (err) {
 				console.log(err)
 			}
-		}) 
-		// Then we can use this id to update quantity
-		console.log("ID " + selectedId);
-		console.log(req.body.quantity)
-		User
-			.update({
-				portfolio: {
-					investedStocks: {
-						stockId: {
-							_id: selectedId }
-						}
-					}
-				}, {"$set": {
-						'portfolio.$.investedStocks.stockId.quantity': req.body.quantity
-					}})
-			.exec()
-			.then(user => {
-				//res.status(204).end();
-				console.log(user);
-			})
-		// return Stock
-		// 	.findOneAndUpdate({_id: selectedId}, {quantity:req.body.quantity})
-		// 	.exec()
-		// 	.then(stock => { 
-		// 		res.status(204).end();
-		// 		console.log("Find: " + stock);
-		// 		return User
-		// 			.findOne({username: req.user.username})
-		// 			.populate('portfolio.investedStocks.stock')
-		// 			.exec((err, user) => {
-		// 				//console.log("Find User: " + user.portfolio.investedStocks);
-		// 			})
-		// 	})
-			.catch(err => {
-				console.log(err);
-				res.status(500).json({error: 'Error'})
-			});					
-	})		
+		})
+
+		res.status(204).json(user);
+	}) 
+	.catch(err => {
+		console.log(err);
+		res.status(500).json({error: 'Error'})
+	});						
 });
 
 router.delete('/:username/stocks/:symbol', passport.authenticate('basic', {session: false}), (req, res) => {
