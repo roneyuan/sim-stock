@@ -6,7 +6,7 @@ const router = express.Router();
 const jsonParser = require('body-parser').json();
 const passport = require('passport');
 
-const {User, Portfolio, Stock} = require('./models');
+const {User, Stock} = require('./models');
 
 router.use(jsonParser);
 
@@ -30,7 +30,6 @@ const basicStrategy = new BasicStrategy((username, password, done) => {
 			} else {
 				return done(null, user);
 			}
-
 		});
 });
 
@@ -116,14 +115,11 @@ router.get('/:username',
   }
 );
 
-// Question: Stock is not bind to the account. Every user can manipulate the account
 router.get('/:username/stock', passport.authenticate('basic', {session: false}), (req, res) => {
 	return User
 		.findOne({username: req.user.username}) //
 		.populate('portfolio.investedStocks.stockId.stock')   
 		.exec(function(err, user) {
-			//console.log(err);
-			//console.log(user.portfolio.investedStocks.stockId.stock);
 			res.status(200).json(user);
 		});
 })
@@ -140,7 +136,7 @@ router.post('/:username/stock', passport.authenticate('basic', {session: false})
 				.findOneAndUpdate({username:req.user.username}, 
 				{
 					$push: { 
-						"portfolio.investedStocks": { // Use dot notation to push ! USe double quote!
+						"portfolio.investedStocks": {
 								'stockId.stock': stock._id,
 								'stockId.quantity': req.body.quantity			
 						}	
@@ -164,32 +160,27 @@ router.put('/:username/stock/:symbol', passport.authenticate('basic', {session: 
 	}
 
 	return User
-	.findOne({username: req.user.username})
-	.populate('portfolio.investedStocks.stockId.stock') 
-	.exec((err, user) => {
-		//console.log("Find User: " + user.portfolio.investedStocks);
-		//console.log(user.portfolio.investedStocks.stockId.stock)
-		let stocks = user.portfolio.investedStocks;
-		let selectedId;
-		console.log("Stocks " + stocks);
-		for (let i=0; i<stocks.length; i++) {
-			console.log(stocks[i]._id)
-			if (stocks[i].stockId.stock.symbol === req.body.symbol) {
-				selectedId = stocks[i].id;
-				//user.portfolio.investedStocks[i].stockId
-				// update quantity
-				user.portfolio.investedStocks[i].stockId.quantity = req.body.quantity;
-
+		.findOne({username: req.user.username})
+		.populate('portfolio.investedStocks.stockId.stock') 
+		.exec((err, user) => {
+			let stocks = user.portfolio.investedStocks;
+			let selectedId;
+			console.log("Stocks " + stocks);
+			for (let i=0; i<stocks.length; i++) {
+				console.log(stocks[i]._id)
+				if (stocks[i].stockId.stock.symbol === req.body.symbol) {
+					selectedId = stocks[i].id;
+					user.portfolio.investedStocks[i].stockId.quantity = req.body.quantity;
+				}
 			}
-		}
 
-		user.save((err) => {
-			if (err) {
-				console.log(err)
-			}
-		})
+			user.save((err) => {
+				if (err) {
+					console.log(err)
+				}
+			})
 
-		res.status(204).json(user);
+			res.json(user);
 	}) 
 	.catch(err => {
 		console.log(err);
