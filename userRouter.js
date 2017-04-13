@@ -120,10 +120,10 @@ router.get('/:username',
 router.get('/:username/stock', passport.authenticate('basic', {session: false}), (req, res) => {
 	return User
 		.findOne({username: req.user.username}) //
-		.populate('portfolio.investedStocks.stock')   
+		.populate('portfolio.investedStocks.stockId.stock')   
 		.exec(function(err, user) {
 			//console.log(err);
-			//console.log(user.portfolio.investedStocks);
+			//console.log(user.portfolio.investedStocks.stockId.stock);
 			res.status(200).json(user);
 		});
 })
@@ -141,8 +141,8 @@ router.post('/:username/stock', passport.authenticate('basic', {session: false})
 				{
 					$push: { 
 						"portfolio.investedStocks": { // Use dot notation to push ! USe double quote!
-								stock: stock._id,
-								//quantity: req.body.quantity			
+								'stockId.stock': stock._id,
+								'stockId.quantity': req.body.quantity			
 						}	
 					}
 				})
@@ -163,25 +163,18 @@ router.put('/:username/stock/:symbol', passport.authenticate('basic', {session: 
 		return res.status(400).send("Request field does not match");
 	}
 
-
-	// return User
-	// 	.find({'portfolio.investedStocks.stock': '58ec3d4bd999eb44eb602f3e'})
-	// 	.exec()
-	// 	.then(user => {
-	// 		console.log(user[0].portfolio.investedStocks);
-	// 	}) // then how to update quantity?
-
 	return User
 	.findOne({username: req.user.username})
-	.populate('portfolio.investedStocks.stock')
+	.populate('portfolio.investedStocks.stockId.stock') 
 	.exec((err, user) => {
 		//console.log("Find User: " + user.portfolio.investedStocks);
+		//console.log(user.portfolio.investedStocks.stockId.stock)
 		let stocks = user.portfolio.investedStocks;
 		let selectedId;
-		console.log("Stocks " + stocks)
+		console.log("Stocks " + stocks);
 		for (let i=0; i<stocks.length; i++) {
-			if (stocks[i].stock.symbol === req.body.symbol) {
-				selectedId = stocks[i].stock._id;
+			if (stocks[i].stockId.stock.symbol === req.body.symbol) {
+				selectedId = stocks[i].stockId._id;
 			}
 		} 
 		// Then we can use this id to update quantity
@@ -203,25 +196,7 @@ router.put('/:username/stock/:symbol', passport.authenticate('basic', {session: 
 				console.log(err);
 				res.status(500).json({error: 'Error'})
 			});					
-	})
-
-	// return Stock
-	// 	.findOneAndUpdate({_id: "58ec4895a21ed4456634b600"}, {quantity:req.body.quantity})
-	// 	.exec()
-	// 	.then(stock => { 
-	// 		res.status(204).end();
-	// 		console.log("Find: " + stock);
-	// 		return User
-	// 			.findOne({username: req.user.username})
-	// 			.populate('portfolio.investedStocks.stock')
-	// 			.exec((err, user) => {
-	// 				console.log("Find User: " + user.portfolio.investedStocks);
-	// 			})
-	// 	})
-	// 	.catch(err => {
-	// 		console.log(err);
-	// 		res.status(500).json({error: 'Error'})
-	// 	});				
+	})		
 });
 
 router.delete('/:username/stocks/:symbol', passport.authenticate('basic', {session: false}), (req, res) => {

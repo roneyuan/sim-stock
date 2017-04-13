@@ -53,10 +53,10 @@ const stockSchema = mongoose.Schema({
 		type: Number,
 		required: true
 	},
-	quantity: {
-		type: Number,
-		required: true
-	}
+	// quantity: {
+	// 	type: Number,
+	// 	required: true
+	// }
 });
 
 stockSchema.methods.apiRepr = function() {
@@ -64,7 +64,7 @@ stockSchema.methods.apiRepr = function() {
 		id: this._id,
 		symbol: this.symbol,
 		price: this.price,
-		//quantity: this.quantity
+		quantity: this.quantity
 	}
 }
 
@@ -103,18 +103,12 @@ const UserSchema = mongoose.Schema({
 			default: 1000000
 		},
 		investedStocks: [{
-		 	stock: {type: Schema.Types.ObjectId, ref: 'Stock'},
-		 	//quantity: Number
+		 	stockId: {
+		 		stock: {type: Schema.Types.ObjectId, ref: 'Stock'},
+		 		quantity: Number
+		 	}
 		}]
 	}
-
-
-	// },
-	// 	investedStocks: [{
-	// 		symbol: String,
-	// 		price: Number,
-	// 		quantity: Number
-	// 	}]
 });
 
 UserSchema.methods.validatePassword = function(password) {
