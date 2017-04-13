@@ -173,25 +173,53 @@ router.put('/:username/stock/:symbol', passport.authenticate('basic', {session: 
 		let selectedId;
 		console.log("Stocks " + stocks);
 		for (let i=0; i<stocks.length; i++) {
+			console.log(stocks[i]._id)
 			if (stocks[i].stockId.stock.symbol === req.body.symbol) {
-				selectedId = stocks[i].stockId._id;
+				selectedId = stocks[i].id;
+				//user.portfolio.investedStocks[i].stockId
+				// update quantity
+				user.portfolio.investedStocks[i].stockId.quantity = req.body.quantity;
+
 			}
-		} 
+		}
+
+		user.save((err) => {
+			if (err) {
+				console.log(err)
+			}
+		}) 
 		// Then we can use this id to update quantity
 		console.log("ID " + selectedId);
-		return Stock
-			.findOneAndUpdate({_id: selectedId}, {quantity:req.body.quantity})
+		console.log(req.body.quantity)
+		User
+			.update({
+				portfolio: {
+					investedStocks: {
+						stockId: {
+							_id: selectedId }
+						}
+					}
+				}, {"$set": {
+						'portfolio.$.investedStocks.stockId.quantity': req.body.quantity
+					}})
 			.exec()
-			.then(stock => { 
-				res.status(204).end();
-				console.log("Find: " + stock);
-				return User
-					.findOne({username: req.user.username})
-					.populate('portfolio.investedStocks.stock')
-					.exec((err, user) => {
-						//console.log("Find User: " + user.portfolio.investedStocks);
-					})
+			.then(user => {
+				//res.status(204).end();
+				console.log(user);
 			})
+		// return Stock
+		// 	.findOneAndUpdate({_id: selectedId}, {quantity:req.body.quantity})
+		// 	.exec()
+		// 	.then(stock => { 
+		// 		res.status(204).end();
+		// 		console.log("Find: " + stock);
+		// 		return User
+		// 			.findOne({username: req.user.username})
+		// 			.populate('portfolio.investedStocks.stock')
+		// 			.exec((err, user) => {
+		// 				//console.log("Find User: " + user.portfolio.investedStocks);
+		// 			})
+		// 	})
 			.catch(err => {
 				console.log(err);
 				res.status(500).json({error: 'Error'})
