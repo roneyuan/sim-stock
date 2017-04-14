@@ -1,6 +1,6 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
-const faker = require('faker');
+//const faker = require('faker');
 const server = require('../server.js');
 const mongoose = require('mongoose');
 
@@ -64,7 +64,7 @@ function generateInvestedStocks() {
 	const symbol = ["AAPL", "KO", "UAA", "MSFT", "VZ"];
 	const price = [100, 50, 90, 200, 30];
 	return {
-		symbol:symbol[Math.floor(Math.random() * symbol.length)]
+		symbol:symbol[Math.floor(Math.random() * symbol.length)],
 		price: price[Math.floor(Math.random() * price.length)]
 	}
 }
