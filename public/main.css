@@ -9,3 +9,13 @@ footer { background-color: yellow; }
 .list { background-color: pink; padding-top: 20px; padding-bottom: 20px; }
 .buying-power { height: 50px; background-color: red; padding-top: 20px; padding-bottom: 20px; }
 .add { height: 150px; background-color: purple; padding-top: 20px; padding-bottom: 20px; }
+
+
+
+.login, .signup {
+	margin: 20% auto;
+}
+
+form {
+	text-align: center;
+}
