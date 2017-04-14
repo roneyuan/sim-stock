@@ -8,8 +8,7 @@ const app = express();
 
 app.use(bodyParser.json());
 
-const portfolioRouter = require('./portfolioRouter');
-const userRouter = require('./userRouter');
+const {router: userRouter} = require('./users');
 
 app.use(morgan('common'));
 app.use(express.static('public'));
@@ -20,9 +19,7 @@ app.get('/', (req, res) => {
 	res.sendFile(__dirname + '/public/index.html');
 });
 
-app.use('/portfolio', portfolioRouter);
-app.use('/users', userRouter)
-//app.user('/stock', userRouter) // DRY with password.js? How ?
+app.use('/users/', userRouter)
 
 let server;
 
