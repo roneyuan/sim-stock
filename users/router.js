@@ -189,6 +189,39 @@ router.put('/:username/stock/:symbol', passport.authenticate('basic', {session: 
 	});						
 });
 
+router.put('/:username/stock/:symbol/:price', passport.authenticate('basic', {session: false}), (req, res) => {
+	if (req.params.price !== req.body.price || req.params.symbol !== req.body.symbol) {
+			return res.status(400).send("Request field does not match");	
+	}
+
+	return User
+		.findOne({username: req.user.username})
+		.populate('portfolio.investedStocks.stockId.stock')
+		.exec((err, user) => {
+			let stocks = user.portfolio.investedStocks;
+			console.log("Stocks " + stocks);
+			for (let i=0; i<stocks.length; i++) {
+				console.log(stocks[i]._id)
+				if (stocks[i].stockId.stock.symbol === req.body.symbol) {
+					selectedId = stocks[i].id;
+					user.portfolio.investedStocks[i].stockId.stock.price = req.body.price;
+				}
+			}
+
+			user.save((err) => {
+				if (err) {
+					console.log(err)
+				}
+			})
+
+			res.json(user);
+	}) 
+	.catch(err => {
+		console.log(err);
+		res.status(500).json({error: 'Error'})
+	});		
+});
+
 router.delete('/:username/stocks/:symbol', passport.authenticate('basic', {session: false}), (req, res) => {
 		Stock
 			.findOneAndRemove({symbol: req.params.symbol})
