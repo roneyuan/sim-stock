@@ -65,6 +65,4 @@ UserSchema.methods.apiRepr = function() {
 
 const User = mongoose.model('User', UserSchema);
 
-module.exports = {
-	User: User
-}
+module.exports = {User};

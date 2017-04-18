@@ -6,12 +6,14 @@ const mongoose = require('mongoose');
 
 const should = chai.should();
 
-const {user: User} = require('../users');
-const {stock: Stock} = require('../users');
+const {User} = require('../users');
+const {Stock} = require('../users');
 const {app, runServer, closeServer} = require('../server');
 const {TEST_DATABASE_URL} = require('../config');
 
 chai.use(chaiHttp);
+
+// Question: Are we creating another Stock Schema for testing?
 
 function seedPortfolioData() {
 	console.info('seeding Portfolio data');
@@ -21,13 +23,15 @@ function seedPortfolioData() {
 		seedData.push(generatePortfolioData());
 	}
 
-	return User.insertMany(seedData)
+	console.log("data " + seedData)
+	console.log("User " + User)
+	return User.insertMany(seedData); // Question: Cannot Insert? 
 }
 
 function generateUsername() {
 	const username = [
 		'user1', 'usesr2', 'user3', 'user4', 'user5'];
-	return username[Math.floor(Math.random() * username.length)];
+	return Math.floor(Math.random() * 1000000);
 }
 
 function generatePassword() {
@@ -64,7 +68,7 @@ function generateInvestedStocks() {
 	const symbol = ["AAPL", "KO", "UAA", "MSFT", "VZ"];
 	const price = [100, 50, 90, 200, 30];
 	return {
-		symbol:symbol[Math.floor(Math.random() * symbol.length)],
+		symbol: symbol[Math.floor(Math.random() * symbol.length)],
 		price: price[Math.floor(Math.random() * price.length)]
 	}
 }
@@ -79,7 +83,7 @@ function generatePortfolioData() {
 			buyingPower: generateBuiyingPower(),
 			earned: generateEarned(),
 			totalValue: generateTotalValue(),
-			investedStocks: generateInvested() // Question here? How do we test with refs and population?
+			investedStocks: generateInvestedStocks() // Question here? How do we test with refs and population?
 		}
 	}
 }
@@ -87,7 +91,7 @@ function generatePortfolioData() {
 
 function tearDownDb() {
 	console.warn('Deleting database');
-	return mongoose.connection.dropDatabase();
+	//return mongoose.connection.dropDatabase();
 }
 
 describe('Portfolio API resource', function() {

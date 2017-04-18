@@ -27,7 +27,5 @@ stockSchema.methods.apiRepr = function() {
 
 const Stock = mongoose.model('Stock', stockSchema);
 
-module.exports = {
-	Stock: Stock
-}
+module.exports = {Stock};
 

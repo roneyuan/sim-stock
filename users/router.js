@@ -123,7 +123,7 @@ router.get('/:username/stock', passport.authenticate('basic', {session: false}),
 		.exec(function(err, user) {
 			res.status(200).json(user);
 		});
-})
+});
 
 router.post('/:username/stock', passport.authenticate('basic', {session: false}), (req, res) => {
 	Stock
@@ -145,7 +145,6 @@ router.post('/:username/stock', passport.authenticate('basic', {session: false})
 				})
 				.exec()
 				.then(user => {
-					//console.log(user);
 					res.status(204).end();
 				})
 				.catch(err => {
@@ -199,9 +198,7 @@ router.put('/:username/stock/:symbol/:price', passport.authenticate('basic', {se
 		.populate('portfolio.investedStocks.stockId.stock')
 		.exec((err, user) => {
 			let stocks = user.portfolio.investedStocks;
-			console.log("Stocks " + stocks);
 			for (let i=0; i<stocks.length; i++) {
-				console.log(stocks[i]._id)
 				if (stocks[i].stockId.stock.symbol === req.body.symbol) {
 					selectedId = stocks[i].id;
 					user.portfolio.investedStocks[i].stockId.stock.price = req.body.price;
@@ -215,21 +212,27 @@ router.put('/:username/stock/:symbol/:price', passport.authenticate('basic', {se
 			})
 
 			res.json(user);
-	}) 
-	.catch(err => {
-		console.log(err);
-		res.status(500).json({error: 'Error'})
-	});		
+		}) 
+		.catch(err => {
+			console.log(err);
+			res.status(500).json({error: 'Error'})
+		});		
 });
 
-router.delete('/:username/stocks/:symbol', passport.authenticate('basic', {session: false}), (req, res) => {
-		Stock
-			.findOneAndRemove({symbol: req.params.symbol})
-			.exec()
-			.then(stock => res.status(204).end())
-			.catch(err => res.status(500).json({error: 'Error'}));
-	}
-);
+// GET all the stock price
+
+// GET total value
+
+
+
+// router.delete('/:username/stocks/:symbol', passport.authenticate('basic', {session: false}), (req, res) => {
+// 		Stock
+// 			.findOneAndRemove({symbol: req.params.symbol})
+// 			.exec()
+// 			.then(stock => res.status(204).end())
+// 			.catch(err => res.status(500).json({error: 'Error'}));
+// 	}
+// );
 
 
 module.exports = {router};
