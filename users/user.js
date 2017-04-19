@@ -9,7 +9,7 @@ const UserSchema = mongoose.Schema({
 	username: {
 		type: String,
 		required: true,
-		unique: true
+		//unique: true // Question - When to use unique?
 	},
 	password: {
 		type: String,

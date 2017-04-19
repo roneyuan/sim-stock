@@ -16,19 +16,19 @@ chai.use(chaiHttp);
 // Question: Are we creating another Stock Schema for testing?
 
 function seedPortfolioData() {
-	console.info('seeding Portfolio data');
+	//console.info('seeding Portfolio data');
 	const seedData = [];
 
 	for (let i=1; i<=10; i++) {
 		seedData.push(generatePortfolioData());
 	}
 
-	console.log("data " + seedData)
-	console.log("User " + User)
+	//console.log("data " + seedData)
+	//console.log("User " + User)
 	return User.insertMany(seedData); // Question: Cannot Insert? 
 }
 
-function generateUsername() {
+function generateUsername() { // Username need to be unique
 	const username = [
 		'user1', 'usesr2', 'user3', 'user4', 'user5'];
 	return Math.floor(Math.random() * 1000000);
@@ -75,8 +75,8 @@ function generateInvestedStocks() {
 
 function generatePortfolioData() {
 	return {
-		username: generateUsername(),
-		password: generatePassword(),
+		username: 'user1',
+		password: '123',
 		nickname: generateNickname(),
 		portfolio: {
 			invested: generateInvested(),
@@ -91,7 +91,7 @@ function generatePortfolioData() {
 
 function tearDownDb() {
 	console.warn('Deleting database');
-	//return mongoose.connection.dropDatabase();
+	return mongoose.connection.dropDatabase();
 }
 
 describe('Portfolio API resource', function() {
@@ -113,8 +113,16 @@ describe('Portfolio API resource', function() {
 	});
 
 	describe('GET endpoint', function() {
+		let res;
 		it('should return all existing portfolios', function() {
-
+			return chai.request(app)
+				.get('/users/user1') // Question Authorize Error?
+				.auth('user1', '123')
+				.then(function(res) {
+					res.should.have.status(200);
+					res.should.be.json;
+					res.body.should.be.a('array');
+				})
 		});
 	});
 

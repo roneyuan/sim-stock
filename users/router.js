@@ -112,7 +112,7 @@ and the req.user property will be set to the authenticated user.
 router.get('/:username',
   passport.authenticate('basic', {session: false}),
   function (req, res) { 
-  	res.json({user: req.user.apiRepr()}); // Question: Where is req.user came from? Ans: It is part of passport.js
+  	res.json({user: req.user.apiRepr()}); 
   }
 );
 
