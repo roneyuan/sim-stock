@@ -1,12 +1,38 @@
-header { background-color: aqua; }
+* {
+	font-family: 'Source Sans Pro', sans-serif;
+}
+header { 
+	background-color: #589bef; 
+	padding-top:50px;
+	padding-bottom: 50px;
+	color: white;
+}
 .col-4 { background-color: green; }
-.col-8 { background-color: blue; }
+/*.col-8 { background-color: blue; }*/
 footer { background-color: yellow; }
 
-.current-value { height: 300px; text-align: center;}
+.current-value { 
+	/*height: 300px; */
+	text-align: center;
+	padding-top: 30px;
+	font-size: 20px;
+}
+
+.invested {
+	text-align: center;
+}
+
+.earned {
+	text-align: center;
+}
 .portfolio { height :500px; }
 .control { height: 200px; }
-.list { background-color: pink; padding-top: 20px; padding-bottom: 20px; }
+.list { 
+	/*background-color: pink; */
+	padding-top: 20px; 
+	padding-bottom: 20px; 
+	border-bottom: solid 1px;
+}
 .buying-power { height: 50px; background-color: red; padding-top: 20px; padding-bottom: 20px; }
 .add { height: 150px; background-color: purple; padding-top: 20px; padding-bottom: 20px; }
 

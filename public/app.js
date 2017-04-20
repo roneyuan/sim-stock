@@ -16,6 +16,9 @@ function displayLatestStockUpdates(data) {
        $('.portfolio').append(`
        		<div class="list">
 						<div class="stock">${data.stocks[i].symbol}</div>
+						<div class="quantity">Quantity: ${data.stocks[i].quantity}</div>
+						<div class="buyinPrice">Buy in: ${data.stocks[i].price}</div>
+						<div class="currentPrice">Current: ${data.stocks[i].price}</div>
 						<button class="buy-more">more</button>
 						<button class="sell">sell</button>
 					</div>`);

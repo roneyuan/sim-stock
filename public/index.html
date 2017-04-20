@@ -2,13 +2,23 @@
 	<head>
 		<link rel="stylesheet" href="grid.css">
 		<link rel="stylesheet" href="main.css">		
+		<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
 	</head>
 	<body>
 		<header>
 			<div class="current-value">
-				<h1>$12345</h1>
+				<h1>Total Value:</h1>
+				<h1>$1100000.00</h1>
 				<!-- READ AND UPDATE -->
 				<!-- Call API and do some calculation -->
+			</div>
+			<div class="invested">
+				<h2>Invested:</h2>
+				<h2>$100000.00</h2>
+			</div>
+			<div class="earned">
+				<h2>Earned:</h2>
+				<h2>$100000.00</h2>
 			</div>
 		</header>
 		<main>
@@ -22,18 +32,21 @@
 					<div class="control">
 						<div class="buying-power">
 							<!-- READ AND UPDATE -->
-							$123.56
+							Buying Power: <br>
+							$900000.00
 							<!-- Calculation Here -->
 						</div>
 						<div class="add">
 							<!-- CREATE -->
 							<div class="search">
 								<label> Enter Stock Symbol</label>
+								<br>
 								<input type="text" name="" />
 								<!-- Call API to get the quote -->
 							</div>
 							<div class="amount">
 								<label> Enter number</label>
+								<br>
 								<input type="text" name="" />
 							</div>
 						</div>
