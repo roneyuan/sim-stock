@@ -15,12 +15,15 @@ function displayLatestStockUpdates(data) {
     for (let i=0; i<data.stocks.length; i++) {
        $('.portfolio').append(`
        		<div class="list">
-						<div class="stock">${data.stocks[i].symbol}</div>
-						<div class="quantity">Quantity: ${data.stocks[i].quantity}</div>
-						<div class="buyinPrice">Buy in: ${data.stocks[i].price}</div>
-						<div class="currentPrice">Current: ${data.stocks[i].price}</div>
-						<button class="buy-more">more</button>
-						<button class="sell">sell</button>
+						<div class="col-4 stock">${data.stocks[i].symbol}</div>
+						<div class="col-4 quantity">Quantity: ${data.stocks[i].quantity}</div>
+						<div class="col-4 buyinPrice">Buy in: ${data.stocks[i].price}</div>
+						<div class="col-4 currentPrice">Current: ${data.stocks[i].price}</div>
+						<div class="list-button">
+							<button class="buy-more">More</button>
+							<button class="sell">Sell</button>
+							<input class="list-button-quantity" type="number" />
+						</div>
 					</div>`);
     }
 }
