@@ -6,7 +6,17 @@ var MOCK_DATA = {
 }
 
 function getLatestStockUpdates(callbackFn) {
-    setTimeout(function(){ callbackFn(MOCK_DATA)}, 100);
+
+    $.ajax({
+        url: 'users/test30/stock/',
+        method: 'GET',
+    }).done(function(result) {
+        callbackFn(result.portfolio.investedStocks);
+    }).fail(function(err) {
+        throw err;
+    });
+
+    //setTimeout(function(){ callbackFn(MOCK_DATA)}, 100);
 }
 
 // this function stays the same when we connect
