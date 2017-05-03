@@ -67,7 +67,7 @@ body {
 	padding: 5px 5px;
 	border-radius: 5px;
 	border: 0.5px solid black;
-	background-color: rgba(63, 85, 247, 0.88);
+	background-color: rgba(33, 206, 133, 0.75);
 	color:white;
 	cursor: pointer;
 }
@@ -88,14 +88,15 @@ body {
 }
 
 .buy-more, .sell {
-	width: 60px;
-	height: 28px;
+	width: 80px;
+	height: 30px;
 	font-size: 18px;
 	background-color: aqua;
 	/*padding: 5px 5px;*/
+	margin: auto 10px;
 	border-radius: 5px;
-	border: 0.5px solid black;
-	background-color: rgba(63, 85, 247, 0.88);
+	border: none;
+	background-color: rgba(84, 98, 199, 0.88);
 	color:white;
 	outline: none;
 	cursor: pointer;
@@ -103,7 +104,7 @@ body {
 
 .list-button-quantity {
 	width: 120px;
-	font-size: 25px;
+	font-size: 20px;
 	padding-left: 5px;
 	border-radius: 5px;
 	/*background-color: gray;*/
@@ -112,6 +113,7 @@ body {
 	background-color: rgba(241, 241, 241, 0.80);
 	border: 1px solid black;
 	font: black;
+	margin-left: 10px;
 }
 
 .buying-power { 
