@@ -76,14 +76,14 @@ function generateInvestedStocks() {
 function generatePortfolioData() {
 	return {
 		username: 'user1',
-		password: '123',
-		nickname: generateNickname(),
+		password: '$2a$10$UAqZpsv1pJukO7WbMGkeR.zs2t07jlbZQ/hKl22zUdPwciqFJTgWq',
+		nickname: 'user',
 		portfolio: {
-			invested: generateInvested(),
-			buyingPower: generateBuiyingPower(),
-			earned: generateEarned(),
-			totalValue: generateTotalValue(),
-			investedStocks: generateInvestedStocks() // Question here? How do we test with refs and population?
+			invested: 200000,
+			buyingPower: 800000,
+			earned: 100000,
+			totalValue: 1100000,
+			investedStocks: [{symbol: "AAPL", price:100}] // Question here? How do we test with refs and population?
 		}
 	}
 }
@@ -91,7 +91,7 @@ function generatePortfolioData() {
 
 function tearDownDb() {
 	console.warn('Deleting database');
-	return mongoose.connection.dropDatabase();
+	//return mongoose.connection.dropDatabase();
 }
 
 describe('Portfolio API resource', function() {
@@ -116,8 +116,8 @@ describe('Portfolio API resource', function() {
 		let res;
 		it('should return all existing portfolios', function() {
 			return chai.request(app)
-				.get('/users/user1') // Question Authorize Error?
-				.auth('user1', '123')
+				.get('/users/user1') // Question Authorize Error? Any encryotion or hash is going on?
+				.auth('user1', '1') // password is hash
 				.then(function(res) {
 					res.should.have.status(200);
 					res.should.be.json;
@@ -128,19 +128,16 @@ describe('Portfolio API resource', function() {
 
 	describe('POST endpoint', function() {
 		it('should return all existing portfolios', function() {
-
 		});
 	});
 
 	describe('PUT endpoint', function() {
 		it('should return all existing portfolios', function() {
-
 		});
 	});
 
 	describe('DELETE endpoint', function() {
 		it('should return all existing portfolios', function() {
-
 		});
 	});			
 });
