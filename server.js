@@ -7,6 +7,7 @@ const {DATABASE_URL, PORT} 	= require('./config');
 const app = express();
 
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true })); // Need this in order to get the data from form
 
 const {router: userRouter} = require('./users');
 

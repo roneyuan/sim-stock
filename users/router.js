@@ -109,7 +109,7 @@ and any additional route handlers will not be invoked.
 If authentication succeeds, the next handler will be invoked 
 and the req.user property will be set to the authenticated user.
 */
-router.get('/:username',
+router.get('/:username', //compare password?
   passport.authenticate('basic', {session: false}),
   function (req, res) { 
   	res.json({user: req.user.apiRepr()}); 
@@ -129,7 +129,7 @@ router.post('/:username/stock', passport.authenticate('basic', {session: false})
 	Stock
 		.create({
 			symbol: req.body.symbol,
-			price: req.body.price,
+			price: 10,//req.body.price,
 			quantity: req.body.quantity	
 		})
 		.then(stock => {
