@@ -9,6 +9,9 @@ const {User} = require('../users');
 //const {Stock} = require('../users');
 //const {app, runServer, closeServer} = require('../server');
 const {TEST_DATABASE_URL} = require('../config');
+const chaiAsPromised = require('chai-as-promised');
+
+chai.use(chaiAsPromised);
 
 mongoose.Promise = global.Promise;
 
@@ -18,7 +21,7 @@ function tearDownDb() {
 }
 
 
-xdescribe('Hash password', function() {
+describe('Hash password', function() {
 
 	before(function() {
 		return connectDB(TEST_DATABASE_URL);
@@ -31,13 +34,21 @@ xdescribe('Hash password', function() {
 	after(function() {
 		return closeDB();
 	});
-
-	xdescribe('hash-password', function() {
-		it('should return hashed password', function() {
+	// Make promise work here
+	describe('hash-password', function() {
+		it('should return hashed password', function() { // If you put done in the parameter, it will give you For async tests and hooks, ensure "done()" is called; if returning a Promise, ensure it resolves.
+			//this.timeout(1000);
 			console.log("Password: " + User.hashPassword("1").then((password) => console.log(password)));
-			User.hashPassword("1").should.be.a('string');
-			User.hashPassword("1").should.equal("1")
-		})
+			return User.hashPassword("1").should.eventually.be.a('string') //(function(password) {
+ 				//return password.should.be.a('string')
+ 				//console.log("PW:"+password);
+				//return password.should.equal('1');
+				//done(); // similar like next(), it will be able to do or call next function after done();
+			//}); // Question WHY?
+			//User.hashPassword("1").should.equal("1")
+		});
+
+
 	});
 
 });
