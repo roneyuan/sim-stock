@@ -88,6 +88,14 @@ function generatePortfolioData() {
 	}
 }
 
+function generateOneUser() {
+	return {
+		username: 'user2',
+		password: '123',
+		nickname: 'user2'
+	}
+}
+
 
 function tearDownDb() {
 	console.warn('Deleting database');
@@ -127,8 +135,17 @@ describe('Portfolio API resource', function() {
 	});
 
 	describe('POST endpoint', function() {
-		it('should return all existing portfolios', function() {
-		});
+		let res;
+		it('should add a new user', function() {
+			return chai.request(app)
+				.post('/users/')
+				.send(generateOneUser())
+				.then(function(res) {
+					console.log("POST: " + res);
+					res.should.have.status(201);
+					res.should.be.json;
+				})
+		});		
 	});
 
 	describe('PUT endpoint', function() {
