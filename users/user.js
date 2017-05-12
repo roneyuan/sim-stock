@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
-const mongoose = require('mongoose'),
+const mongoose = require('mongoose');
+const findOrCreate = require('mongoose-find-or-create');
 Schema = mongoose.Schema;
 
 mongoose.Promise = global.Promise;
@@ -44,6 +45,8 @@ const UserSchema = mongoose.Schema({
 		}]
 	}
 });
+
+UserSchema.plugin(findOrCreate)
 
 UserSchema.methods.validatePassword = function(password) {
 	return bcrypt.compare(password, this.password);

@@ -1,4 +1,4 @@
-const {BasicStrategy} = require('passport-http');
+const {LocalStrategy} = require('passport-local').Strategy;
 const express = require('express');
 const mongoose = require('mongoose');
 const morgan = require('morgan');

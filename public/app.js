@@ -22,20 +22,21 @@ function getLatestStockUpdates(callbackFn) {
 // this function stays the same when we connect
 // to real API later
 function displayLatestStockUpdates(data) {
-    for (let i=0; i<data.length; i++) {
-       $('.portfolio').append(`
-       		<div class="list">
-						<div class="col-4 stock">${data[i].stockId.stock.symbol}</div>
-						<div class="col-4 quantity">Quantity: ${data[i].stockId.quantity}</div>
-						<div class="col-4 buyinPrice">Buy in: ${data[i].stockId.stock.price}</div>
-						<div class="col-4 currentPrice">Current: ${data[i].stockId.stock.price}</div>
-						<div class="list-button">
-							<button class="buy-more">More</button>
-							<button class="sell">Sell</button>
-							<input class="list-button-quantity" type="number" />
-						</div>
-					</div>`);
-    }
+	$('.list').remove();		
+  for (let i=0; i<data.length; i++) {
+     $('.portfolio').append(`
+     		<div class="list">
+					<div class="col-4 stock">${data[i].stockId.stock.symbol}</div>
+					<div class="col-4 quantity">Quantity: ${data[i].stockId.quantity}</div>
+					<div class="col-4 buyinPrice">Buy in: ${data[i].stockId.stock.price}</div>
+					<div class="col-4 currentPrice">Current: ${data[i].stockId.stock.price}</div>
+					<div class="list-button">
+						<button class="buy-more">More</button>
+						<button class="sell">Sell</button>
+						<input class="list-button-quantity" type="number" />
+					</div>
+				</div>`);
+  }
 }
 
 // this function can stay the same even when we
@@ -43,6 +44,31 @@ function displayLatestStockUpdates(data) {
 function getAndDisplayLatestStockUpdates() {
     getLatestStockUpdates(displayLatestStockUpdates);
 }
+
+$('#addStock').on('click', function(event) {
+
+	// Use jQuery to get the input value and use ajax to send the value to node
+	// Then we can call the function after the callback is finsihed from back-end
+	let symbol = $('#searchSymbol').val();
+	let quantity = $('#enterQuantity').val();
+
+    $.ajax({
+        url: 'users/test30/stock/',
+        method: 'POST',
+        data: {
+        	symbol: symbol,
+        	quantity: quantity,
+        	price: 50
+        },
+         dataType: "json"
+    }).done(function(result) {
+        getAndDisplayLatestStockUpdates();
+    }).fail(function(err) {
+        getAndDisplayLatestStockUpdates(); // WHY going here???
+    });
+
+  //setTimeout(() => getAndDisplayLatestStockUpdates(), 100);	// Any other best way???
+});
 
 $(function() {
     getAndDisplayLatestStockUpdates();

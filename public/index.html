@@ -36,22 +36,22 @@
 							$900000.00</h3>
 							<!-- Calculation Here -->
 						</div>
-						<form method="POST" action="/users/test30/stock/">
+						<form method="POST">
 							<div class="add">
 								<!-- CREATE -->
 								<div class="search">
 									<label> Enter Stock Symbol</label>
 									<br>
-									<input class="searchSymbol" type="text" name="symbol" required />
+									<input class="searchSymbol" type="text" id="searchSymbol" name="symbol" required />
 									<!-- Call API to get the quote -->
 								</div>
 								<div class="amount">
-									<label> Enter number</label>
+									<label> Enter quantity</label>
 									<br>
-									<input class="enterAmount" type="number" name="quantity" required />
+									<input class="enterAmount" type="number" id="enterQuantity" name="quantity" required />
 								</div>
 							</div>
-							<button class="buyNew" type="submit">Buy</button>
+							<button id="addStock" class="buyNew" type="button" >Buy</button>
 						</form>
 					</div>
 				</div>
