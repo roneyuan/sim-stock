@@ -19,7 +19,7 @@ app.use(express.static('public'));
 mongoose.Promise = global.Promise;
 
 app.get('/', (req, res) => {
-	res.sendFile(__dirname + '/public/login.html');
+	res.sendFile(__dirname + '/public/index.html');
 });
 
 //console.log(loginRouter)

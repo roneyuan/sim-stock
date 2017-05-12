@@ -13,6 +13,8 @@ router.use(jsonParser);
 router.use(passport.initialize());
 
 const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
+// var BearerStrategy = require('passport-http-bearer').Strategy;
+
 
 passport.use(new GoogleStrategy({
     clientID:  '603515610903-ov1hu4kjoghb028raqlmb2ndd4761re1.apps.googleusercontent.com',
@@ -20,38 +22,51 @@ passport.use(new GoogleStrategy({
     callbackURL: "http://localhost:8080/users/auth/google/callback"
   },
   function(accessToken, refreshToken, profile, done) {
-  		return User
+  		console.log("Callback");
+  		User
 		  	.create({			
 		  		username: profile.id,
-		      password: "google",
+		      password: accessToken,
 		      nickname: profile.displayName,
 				})
 				.then(user => {
-		      return done(user);
+					console.log("SUCCESS: " + user)
+		      return done(null, user);// Need a null in order to successfully redirect. Wow! WHY?
 		    })
 		    .catch(err => {
-		    	console.log(err)
+		    	console.log("ERROR: "+  err)
 		      //res.status(500).json({message: 'Internal server error'})
 		    });	
     // User.findOrCreate({ username: profile.id }, {nickname: profile.displayName},
     // 	function (err, user) {
     //   return done(err, user);
     // });
-  }
+  } 
 ));
+
+// passport.use(new BearerStrategy(
+//   function(token, done) {
+//       if (!(token in database)) {
+//           return done(null, false);
+//       }
+//       return done(null, database[token]);
+//   }
+// ));
 
 // Go to login page from Google
 router.get('/auth/google',
   passport.authenticate('google', { scope: ['email profile'] }));
 
-// Callback from Google
+// Callback from , but stuck here
 router.get('/auth/google/callback',
-  passport.authenticate('google', { failureRedirect: '/login' }),
+  passport.authenticate('google',{failureRedirect: '/login', session: false}),
   function(req, res) {
     // Authenticated successfully
-    res.redirect('/users');
+    console.log("SUCCESS");
+    res.redirect('/index.html');
     //return res.status(201).json(user.apiRepr());
   });
+
 // const basicStrategy = new BasicStrategy((username, password, done) => {
 // 	let user;
 // 	User
@@ -149,7 +164,7 @@ and any additional route handlers will not be invoked.
 If authentication succeeds, the next handler will be invoked 
 and the req.user property will be set to the authenticated user.
 */
-router.get('/', //compare password?
+router.get('/:username', //compare password?
   passport.authenticate('google', { failureRedirect: '/login' }),
   function (req, res) { 
   	res.json({user: req.user.apiRepr()}); 
