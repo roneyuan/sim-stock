@@ -9,7 +9,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); // Need this in order to get the data from form
 
-const {router: userRouter} = require('./users');
+const {router: userRouter, login: loginRouter, signup: signupRouter} = require('./users');
 
 app.use(morgan('common'));
 app.use(express.static('public'));
@@ -17,10 +17,13 @@ app.use(express.static('public'));
 mongoose.Promise = global.Promise;
 
 app.get('/', (req, res) => {
-	res.sendFile(__dirname + '/public/index.html');
+	res.sendFile(__dirname + '/public/login.html');
 });
 
-app.use('/users/', userRouter)
+app.use('/users/', userRouter);
+
+app.use('/login', loginRouter);
+app.use('/signup', signupRouter)
 
 let server;
 

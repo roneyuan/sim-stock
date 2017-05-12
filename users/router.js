@@ -38,7 +38,7 @@ passport.use(basicStrategy);
 router.use(passport.initialize());
 
 
-router.post('/', (req, res) => {
+router.post('/addUser', (req, res) => {
   if (!req.body) {
     return res.status(400).json({message: 'No request body'});
   }
@@ -102,6 +102,10 @@ router.post('/', (req, res) => {
     });
 });
 
+router.get('/logout', function(req, res) {
+  req.logout();
+  res.redirect('/'); 
+});
 
 /*
 By default, if authentication fails, Passport will respond with a 401 Unauthorized status, 
@@ -126,6 +130,7 @@ router.get('/:username/stock', passport.authenticate('basic', {session: false}),
 });
 
 router.post('/:username/stock', passport.authenticate('basic', {session: false}), (req, res) => {
+	console.log(req.body.symbol)
 	Stock
 		.create({
 			symbol: req.body.symbol,
@@ -145,7 +150,8 @@ router.post('/:username/stock', passport.authenticate('basic', {session: false})
 				})
 				.exec()
 				.then(user => {
-					res.status(204).end();
+					console.log("SucCESS")
+					res.status(201).end();
 				})
 				.catch(err => {
 					console.log(err);
@@ -233,6 +239,9 @@ router.put('/:username/stock/:symbol/:price', passport.authenticate('basic', {se
 // 			.catch(err => res.status(500).json({error: 'Error'}));
 // 	}
 // );
+
+//router.
+
 
 
 module.exports = {router};
