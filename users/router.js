@@ -20,10 +20,23 @@ passport.use(new GoogleStrategy({
     callbackURL: "http://localhost:8080/users/auth/google/callback"
   },
   function(accessToken, refreshToken, profile, done) {
-    User.findOrCreate({ username: profile.id }, {nickname: profile.displayName},
-    	function (err, user) {
-      return done(err, user);
-    });
+  		return User
+		  	.create({			
+		  		username: profile.id,
+		      password: "google",
+		      nickname: profile.displayName,
+				})
+				.then(user => {
+		      return done(user);
+		    })
+		    .catch(err => {
+		    	console.log(err)
+		      //res.status(500).json({message: 'Internal server error'})
+		    });	
+    // User.findOrCreate({ username: profile.id }, {nickname: profile.displayName},
+    // 	function (err, user) {
+    //   return done(err, user);
+    // });
   }
 ));
 
@@ -36,8 +49,8 @@ router.get('/auth/google/callback',
   passport.authenticate('google', { failureRedirect: '/login' }),
   function(req, res) {
     // Authenticated successfully
-    //res.redirect('/');
-    return res.status(201).json(user.apiRepr());
+    res.redirect('/users');
+    //return res.status(201).json(user.apiRepr());
   });
 // const basicStrategy = new BasicStrategy((username, password, done) => {
 // 	let user;
@@ -136,14 +149,14 @@ and any additional route handlers will not be invoked.
 If authentication succeeds, the next handler will be invoked 
 and the req.user property will be set to the authenticated user.
 */
-router.get('/:username', //compare password?
-  passport.authenticate('basic', {session: false}),
+router.get('/', //compare password?
+  passport.authenticate('google', { failureRedirect: '/login' }),
   function (req, res) { 
   	res.json({user: req.user.apiRepr()}); 
   }
 );
 
-router.get('/:username/stock', passport.authenticate('basic', {session: false}), (req, res) => {
+router.get('/:username/stock', passport.authenticate('google', { failureRedirect: '/login' }), (req, res) => {
 	return User
 		.findOne({username: req.user.username}) //
 		.populate('portfolio.investedStocks.stockId.stock')   
@@ -152,7 +165,7 @@ router.get('/:username/stock', passport.authenticate('basic', {session: false}),
 		});
 });
 
-router.post('/:username/stock', passport.authenticate('basic', {session: false}), (req, res) => {
+router.post('/:username/stock', passport.authenticate('google', { failureRedirect: '/login' }), (req, res) => {
 	console.log(req.body.symbol)
 	Stock
 		.create({
@@ -183,7 +196,7 @@ router.post('/:username/stock', passport.authenticate('basic', {session: false})
 	}
 );
 
-router.put('/:username/stock/:symbol', passport.authenticate('basic', {session: false}), (req, res) => {
+router.put('/:username/stock/:symbol', passport.authenticate('google', { failureRedirect: '/login' }), (req, res) => {
 	if (req.params.symbol !== req.body.symbol) {
 		return res.status(400).send("Request field does not match");
 	}
@@ -217,7 +230,7 @@ router.put('/:username/stock/:symbol', passport.authenticate('basic', {session: 
 	});						
 });
 
-router.put('/:username/stock/:symbol/:price', passport.authenticate('basic', {session: false}), (req, res) => {
+router.put('/:username/stock/:symbol/:price', passport.authenticate('google', { failureRedirect: '/login' }), (req, res) => {
 	if (req.params.price !== req.body.price || req.params.symbol !== req.body.symbol) {
 			return res.status(400).send("Request field does not match");	
 	}
