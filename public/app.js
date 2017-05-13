@@ -7,9 +7,9 @@ var MOCK_DATA = {
 
 
 function getLatestStockUpdates(callbackFn) {
-
+    let access_token = qs["access_token"];
     $.ajax({
-        url: 'users/104638216487363687391/stock/',
+        url: 'users/104638216487363687391/stock?access_token='+access_token,
         method: 'GET',
     }).done(function(result) {
         callbackFn(result.portfolio.investedStocks);
@@ -52,9 +52,9 @@ $('#addStock').on('click', function(event) {
 	// Then we can call the function after the callback is finsihed from back-end
 	let symbol = $('#searchSymbol').val();
 	let quantity = $('#enterQuantity').val();
-
+    let access_token = qs["access_token"];
     $.ajax({
-        url: 'users/104638216487363687391/stock/',
+        url: 'users/104638216487363687391/stock?access_token='+access_token,
         method: 'POST',
         data: {
         	symbol: symbol,
@@ -70,6 +70,20 @@ $('#addStock').on('click', function(event) {
 
   //setTimeout(() => getAndDisplayLatestStockUpdates(), 100);	// Any other best way???
 });
+
+var qs = (function(a) {
+    if (a == "") return {};
+    var b = {};
+    for (var i = 0; i < a.length; ++i)
+    {
+        var p=a[i].split('=', 2);
+        if (p.length == 1)
+            b[p[0]] = "";
+        else
+            b[p[0]] = decodeURIComponent(p[1].replace(/\+/g, " "));
+    }
+    return b;
+})(window.location.search.substr(1).split('&'));
 
 $(function() {
     getAndDisplayLatestStockUpdates();

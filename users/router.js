@@ -16,15 +16,11 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const BearerStrategy = require('passport-http-bearer').Strategy;
 
 
-var database = {}
-
 passport.serializeUser(function(user, done) {
-  // done(null, user.id);
   done(null, user);
 });
 
 passport.deserializeUser(function(obj, done) {
-  // Users.findById(obj, done);
   done(null, obj);
 });
 
@@ -42,7 +38,6 @@ passport.use(new GoogleStrategy({
 		      nickname: profile.displayName,
 				})
 				.then(user => {
-					//console.log("SUCCESS: " + user)
 		      return done(null, user);// Need a null in order to successfully redirect. Wow! WHY?
 		    })
 		    .catch(err => {
@@ -50,25 +45,12 @@ passport.use(new GoogleStrategy({
 		      //res.status(500).json({message: 'Internal server error'})
 		    });	
 
-		   database[accessToken] = {
-        googleId: profile.id,
-        accessToken: accessToken
-    	}; 
     // User.findOrCreate({ username: profile.id }, {nickname: profile.displayName},
     // 	function (err, user) {
     //   return done(err, user);
     // });
   } 
 ));
-
-// passport.use(new BearerStrategy(
-//   function(token, done) {
-//       if (!(token in database)) {
-//           return done(null, false);
-//       }
-//       return done(null, database[token]);
-//   }
-// ));
 
 // Go to login page from Google
 router.get('/auth/google',
@@ -85,7 +67,7 @@ router.get('/auth/google/callback',
     //     html = html.replace('<!--AUTHCODE-->', '<script>var AUTH_TOKEN="' + req.user.password + '"; history.replaceState(null, null, "/index.html");</script>');
     //     //res.send(html);
     // });
-    res.redirect("/users/" + req.user.username+ "?access_token="+req.user.password);
+    res.redirect("/index.html?access_token="+req.user.password);
     //res.redirect('/index.html'); // Question - Access Origin error! if I use redirect, what other method?
     //return res.status(201).json(req.body.user);
   });
@@ -120,119 +102,11 @@ passport.use(
     )
 );
 
-// passport.serializeUser(function(user, done) {
-//   // done(null, user.id);
-//   done(null, user);
-// });
-
-// passport.deserializeUser(function(obj, done) {
-//   // Users.findById(obj, done);
-//   done(null, obj);
-// });
-
-
-// const basicStrategy = new BasicStrategy((username, password, done) => {
-// 	let user;
-// 	User
-// 		.findOne({username: username})
-// 		.exec()
-// 		.then(_user => {
-// 			// console.log(password)
-// 			user = _user;
-// 			if (!user) {
-// 				return done(null, false, {message: 'Invalid username'});
-// 			}
-// 			return user.validatePassword(password);
-
-// 		})
-// 		.then(isValid => {
-// 			if (!isValid) {
-// 				return done(null, false, {message: 'Invalid password'});
-// 			} else {
-// 				return done(null, user);
-// 			}
-// 		});
-// });
-
-// passport.use(basicStrategy); 
-// router.use(passport.initialize());
-
-
-// router.post('/', (req, res) => {
-//   if (!req.body) {
-//     return res.status(400).json({message: 'No request body'});
-//   }
-
-//   if (!('username' in req.body)) {
-//     return res.status(422).json({message: 'Missing field: username'});
-//   }
-
-//   let {username, password, nickname} = req.body;
-
-//   if (typeof username !== 'string') {
-//     return res.status(422).json({message: 'Incorrect field type: username'});
-//   }
-
-//   username = username.trim();
-
-//   if (username === '') {
-//     return res.status(422).json({message: 'Incorrect field length: username'});
-//   }
-
-//   if (!(password)) {
-//     return res.status(422).json({message: 'Missing field: password'});
-//   }
-
-//   if (typeof password !== 'string') {
-//     return res.status(422).json({message: 'Incorrect field type: password'});
-//   }
-
-//   password = password.trim();
-
-//   if (password === '') {
-//     return res.status(422).json({message: 'Incorrect field length: password'});
-//   }
-
-//   return User
-//     .find({username})
-//     .count()
-//     .exec()
-//     .then(count => {
-//       if (count > 0) {
-//         return res.status(422).json({message: 'username already taken'});
-//       }
-
-//       return User.hashPassword(password)
-//     })
-//     .then(hash => {
-// 	    return User
-// 		  	.create({			
-// 		  		username: username,
-// 		      password: hash,
-// 		      nickname: nickname,
-// 		      portfolio: req.body.portfolio
-// 				})
-// 				.then(user => {
-// 		      return res.status(201).json(user.apiRepr());
-// 		    })
-// 		    .catch(err => {
-// 		    	console.log(err)
-// 		      res.status(500).json({message: 'Internal server error'})
-// 		    });	
-//     });
-// });
-
-/*
-By default, if authentication fails, Passport will respond with a 401 Unauthorized status, 
-and any additional route handlers will not be invoked. 
-If authentication succeeds, the next handler will be invoked 
-and the req.user property will be set to the authenticated user.
-*/
 router.get('/:username', //compare password?
   passport.authenticate('bearer', {session: true}),
   function (req, res) { 
-  	//res.json({user: req.user.apiRepr()}); 
-  	res.redirect('/index.html');
+  	res.json({user: req.user.apiRepr()}); 
+  	// res.redirect('/index.html');
   }
 );
 
