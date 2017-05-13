@@ -62,5 +62,22 @@
 		</footer>
 		<script src="https://code.jquery.com/jquery-3.0.0.js"></script>
 		<script type="text/javascript" src="app.js"></script>
+<!--AUTHCODE-->
+<!-- <script>
+
+var headers = new Headers();
+headers.append('Authorization', 'Bearer ' + AUTH_TOKEN);
+fetch('http://localhost:8080/', {
+    headers: headers
+}).then(function(response) {
+    if (response.status < 200 || response.status >= 300) {
+        console.error(response);
+        return;
+    }
+    return response.text();
+}).then(function(text) {
+    // console.log(text);
+});
+</script> -->
 	</body>
 </html>

@@ -5,10 +5,11 @@ var MOCK_DATA = {
 	{"_id":"58e6e9f91b78dc352d1664aa","symbol":"UAA","price":100,"quantity":10,"__v":0}]
 }
 
+
 function getLatestStockUpdates(callbackFn) {
 
     $.ajax({
-        url: 'users/test30/stock/',
+        url: 'users/104638216487363687391/stock/',
         method: 'GET',
     }).done(function(result) {
         callbackFn(result.portfolio.investedStocks);
@@ -53,7 +54,7 @@ $('#addStock').on('click', function(event) {
 	let quantity = $('#enterQuantity').val();
 
     $.ajax({
-        url: 'users/test30/stock/',
+        url: 'users/104638216487363687391/stock/',
         method: 'POST',
         data: {
         	symbol: symbol,

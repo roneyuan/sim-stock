@@ -5,16 +5,28 @@ const morgan = require('morgan');
 const router = express.Router();
 const jsonParser = require('body-parser').json();
 const passport = require('passport');
-
+const fs = require('fs');
 const {User} = require('./user');
 const {Stock} = require('./stock');
 
 router.use(jsonParser);
 router.use(passport.initialize());
 
-const GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
-// var BearerStrategy = require('passport-http-bearer').Strategy;
+const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const BearerStrategy = require('passport-http-bearer').Strategy;
 
+
+var database = {}
+
+passport.serializeUser(function(user, done) {
+  // done(null, user.id);
+  done(null, user);
+});
+
+passport.deserializeUser(function(obj, done) {
+  // Users.findById(obj, done);
+  done(null, obj);
+});
 
 passport.use(new GoogleStrategy({
     clientID:  '603515610903-ov1hu4kjoghb028raqlmb2ndd4761re1.apps.googleusercontent.com',
@@ -30,13 +42,18 @@ passport.use(new GoogleStrategy({
 		      nickname: profile.displayName,
 				})
 				.then(user => {
-					console.log("SUCCESS: " + user)
+					//console.log("SUCCESS: " + user)
 		      return done(null, user);// Need a null in order to successfully redirect. Wow! WHY?
 		    })
 		    .catch(err => {
 		    	console.log("ERROR: "+  err)
 		      //res.status(500).json({message: 'Internal server error'})
 		    });	
+
+		   database[accessToken] = {
+        googleId: profile.id,
+        accessToken: accessToken
+    	}; 
     // User.findOrCreate({ username: profile.id }, {nickname: profile.displayName},
     // 	function (err, user) {
     //   return done(err, user);
@@ -59,13 +76,60 @@ router.get('/auth/google',
 
 // Callback from , but stuck here
 router.get('/auth/google/callback',
-  passport.authenticate('google',{failureRedirect: '/login', session: false}),
+  passport.authenticate('google',{failureRedirect: '/login', session: true}),
   function(req, res) {
     // Authenticated successfully
-    console.log("SUCCESS");
-    res.redirect('/index.html');
-    //return res.status(201).json(user.apiRepr());
+    // console.log("SUCCESS");
+    // fs.readFile('./public/index.html', function(err, html) {
+    //     html = html.toString();
+    //     html = html.replace('<!--AUTHCODE-->', '<script>var AUTH_TOKEN="' + req.user.password + '"; history.replaceState(null, null, "/index.html");</script>');
+    //     //res.send(html);
+    // });
+    res.redirect("/users/" + req.user.username+ "?access_token="+req.user.password);
+    //res.redirect('/index.html'); // Question - Access Origin error! if I use redirect, what other method?
+    //return res.status(201).json(req.body.user);
   });
+
+// Bearer Strategy
+// passport.use(new BearerStrategy(
+//   function(token, done) {
+//   		console.log("Token: "+ token);
+//   		console.log("DB: " + database);
+//       if (!(token in database)) {
+//           return done(null, false);
+//       }
+//       return done(null, database[token]);
+//   }
+// ));
+passport.use(
+    new BearerStrategy(
+        function(token, done) {
+            User.findOne({ password: token },
+                function(err, user) {
+                    if(err) {
+                        return done(err)
+                    }
+                    if(!user) {
+                        return done(null, false)
+                    }
+
+                    return done(null, user, { scope: 'all' })
+                }
+            );
+        }
+    )
+);
+
+// passport.serializeUser(function(user, done) {
+//   // done(null, user.id);
+//   done(null, user);
+// });
+
+// passport.deserializeUser(function(obj, done) {
+//   // Users.findById(obj, done);
+//   done(null, obj);
+// });
+
 
 // const basicStrategy = new BasicStrategy((username, password, done) => {
 // 	let user;
@@ -165,13 +229,14 @@ If authentication succeeds, the next handler will be invoked
 and the req.user property will be set to the authenticated user.
 */
 router.get('/:username', //compare password?
-  passport.authenticate('google', { failureRedirect: '/login' }),
+  passport.authenticate('bearer', {session: true}),
   function (req, res) { 
-  	res.json({user: req.user.apiRepr()}); 
+  	//res.json({user: req.user.apiRepr()}); 
+  	res.redirect('/index.html');
   }
 );
 
-router.get('/:username/stock', passport.authenticate('google', { failureRedirect: '/login' }), (req, res) => {
+router.get('/:username/stock', passport.authenticate('bearer', {session: true}), (req, res) => {
 	return User
 		.findOne({username: req.user.username}) //
 		.populate('portfolio.investedStocks.stockId.stock')   
@@ -180,7 +245,7 @@ router.get('/:username/stock', passport.authenticate('google', { failureRedirect
 		});
 });
 
-router.post('/:username/stock', passport.authenticate('google', { failureRedirect: '/login' }), (req, res) => {
+router.post('/:username/stock', passport.authenticate('bearer', {session: true}), (req, res) => {
 	console.log(req.body.symbol)
 	Stock
 		.create({
@@ -211,7 +276,7 @@ router.post('/:username/stock', passport.authenticate('google', { failureRedirec
 	}
 );
 
-router.put('/:username/stock/:symbol', passport.authenticate('google', { failureRedirect: '/login' }), (req, res) => {
+router.put('/:username/stock/:symbol', passport.authenticate('bearer', {session: true}), (req, res) => {
 	if (req.params.symbol !== req.body.symbol) {
 		return res.status(400).send("Request field does not match");
 	}
@@ -245,7 +310,7 @@ router.put('/:username/stock/:symbol', passport.authenticate('google', { failure
 	});						
 });
 
-router.put('/:username/stock/:symbol/:price', passport.authenticate('google', { failureRedirect: '/login' }), (req, res) => {
+router.put('/:username/stock/:symbol/:price', passport.authenticate('bearer', {session: true}), (req, res) => {
 	if (req.params.price !== req.body.price || req.params.symbol !== req.body.symbol) {
 			return res.status(400).send("Request field does not match");	
 	}
