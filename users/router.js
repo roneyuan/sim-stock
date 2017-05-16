@@ -15,14 +15,14 @@ router.use(passport.initialize());
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const BearerStrategy = require('passport-http-bearer').Strategy;
 
+// It is working, but why we need this?
+// passport.serializeUser(function(user, done) {
+//   done(null, user);
+// });
 
-passport.serializeUser(function(user, done) {
-  done(null, user);
-});
-
-passport.deserializeUser(function(obj, done) {
-  done(null, obj);
-});
+// passport.deserializeUser(function(obj, done) {
+//   done(null, obj);
+// });
 
 passport.use(new GoogleStrategy({
     clientID:  '603515610903-ov1hu4kjoghb028raqlmb2ndd4761re1.apps.googleusercontent.com',
@@ -31,24 +31,24 @@ passport.use(new GoogleStrategy({
   },
   function(accessToken, refreshToken, profile, done) {
   		console.log("Callback");
-  		User
-		  	.create({			
+  		// It is working without using find? Why?
+  		return User
+		  	.findOrCreate({			
 		  		username: profile.id,
-		      password: accessToken,
+				}, 
+				{
+					password: accessToken,
 		      nickname: profile.displayName,
-				})
-				.then(user => {
-		      return done(null, user);// Need a null in order to successfully redirect. Wow! WHY?
-		    })
-		    .catch(err => {
-		    	console.log("ERROR: "+  err)
-		      //res.status(500).json({message: 'Internal server error'})
-		    });	
-
-    // User.findOrCreate({ username: profile.id }, {nickname: profile.displayName},
-    // 	function (err, user) {
-    //   return done(err, user);
-    // });
+				}, (err, user) => {
+					return done(null, user);
+				});
+				// .then(user => {
+		  //     return done(null, user);// Need a null in order to successfully redirect. Wow! WHY?
+		  //   })
+		  //   .catch(err => {
+		  //   	console.log("ERROR: "+  err)
+		  //     //res.status(500).json({message: 'Internal server error'})
+		  //   });	
   } 
 ));
 
@@ -58,31 +58,13 @@ router.get('/auth/google',
 
 // Callback from , but stuck here
 router.get('/auth/google/callback',
-  passport.authenticate('google',{failureRedirect: '/login', session: true}),
+  passport.authenticate('google',{failureRedirect: '/login', session: false}),
   function(req, res) {
     // Authenticated successfully
-    // console.log("SUCCESS");
-    // fs.readFile('./public/index.html', function(err, html) {
-    //     html = html.toString();
-    //     html = html.replace('<!--AUTHCODE-->', '<script>var AUTH_TOKEN="' + req.user.password + '"; history.replaceState(null, null, "/index.html");</script>');
-    //     //res.send(html);
-    // });
     res.redirect("/index.html?access_token="+req.user.password);
-    //res.redirect('/index.html'); // Question - Access Origin error! if I use redirect, what other method?
-    //return res.status(201).json(req.body.user);
   });
 
 // Bearer Strategy
-// passport.use(new BearerStrategy(
-//   function(token, done) {
-//   		console.log("Token: "+ token);
-//   		console.log("DB: " + database);
-//       if (!(token in database)) {
-//           return done(null, false);
-//       }
-//       return done(null, database[token]);
-//   }
-// ));
 passport.use(
     new BearerStrategy(
         function(token, done) {
@@ -103,14 +85,14 @@ passport.use(
 );
 
 router.get('/:username', //compare password?
-  passport.authenticate('bearer', {session: true}),
+  passport.authenticate('bearer', {session: false}),
   function (req, res) { 
   	res.json({user: req.user.apiRepr()}); 
   	// res.redirect('/index.html');
   }
 );
 
-router.get('/:username/stock', passport.authenticate('bearer', {session: true}), (req, res) => {
+router.get('/:username/stock', passport.authenticate('bearer', {session: false}), (req, res) => {
 	return User
 		.findOne({username: req.user.username}) //
 		.populate('portfolio.investedStocks.stockId.stock')   
@@ -119,7 +101,7 @@ router.get('/:username/stock', passport.authenticate('bearer', {session: true}),
 		});
 });
 
-router.post('/:username/stock', passport.authenticate('bearer', {session: true}), (req, res) => {
+router.post('/:username/stock', passport.authenticate('bearer', {session: false}), (req, res) => {
 	console.log(req.body.symbol)
 	Stock
 		.create({
@@ -150,7 +132,7 @@ router.post('/:username/stock', passport.authenticate('bearer', {session: true})
 	}
 );
 
-router.put('/:username/stock/:symbol', passport.authenticate('bearer', {session: true}), (req, res) => {
+router.put('/:username/stock/:symbol', passport.authenticate('bearer', {session: false}), (req, res) => {
 	if (req.params.symbol !== req.body.symbol) {
 		return res.status(400).send("Request field does not match");
 	}
@@ -184,7 +166,7 @@ router.put('/:username/stock/:symbol', passport.authenticate('bearer', {session:
 	});						
 });
 
-router.put('/:username/stock/:symbol/:price', passport.authenticate('bearer', {session: true}), (req, res) => {
+router.put('/:username/stock/:symbol/:price', passport.authenticate('bearer', {session: false}), (req, res) => {
 	if (req.params.price !== req.body.price || req.params.symbol !== req.body.symbol) {
 			return res.status(400).send("Request field does not match");	
 	}
