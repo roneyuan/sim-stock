@@ -23,20 +23,20 @@ function getLatestStockUpdates(callbackFn) {
 // this function stays the same when we connect
 // to real API later
 function displayLatestStockUpdates(data) {
-	$('.list').remove();		
-  for (let i=0; i<data.length; i++) {
-     $('.portfolio').append(`
-     		<div class="list">
-					<div class="col-4 stock">${data[i].stockId.stock.symbol}</div>
-					<div class="col-4 quantity">Quantity: ${data[i].stockId.quantity}</div>
-					<div class="col-4 buyinPrice">Buy in: ${data[i].stockId.stock.price}</div>
-					<div class="col-4 currentPrice">Current: ${data[i].stockId.stock.price}</div>
-					<div class="list-button">
-						<button class="buy-more">More</button>
-						<button class="sell">Sell</button>
-						<input class="list-button-quantity" type="number" />
-					</div>
-				</div>`);
+    $('.list').remove();		
+    for (let i=0; i<data.length; i++) {
+    $('.portfolio').append(`
+        <div class="list">
+            <div class="col-4 stock">${data[i].stockId.stock.symbol}</div>
+            <div class="col-4 quantity">Quantity: ${data[i].stockId.quantity}</div>
+            <div class="col-4 buyinPrice">Buy in: ${data[i].stockId.stock.price}</div>
+            <div class="col-4 currentPrice">Current: ${data[i].stockId.stock.price}</div>
+            <div class="list-button">
+                <button id="buy-more" class="buy-more">More</button>
+                <button class="sell">Sell</button>
+                <input class="list-button-quantity" type="number" />
+            </div>
+        </div>`);
   }
 }
 
@@ -47,7 +47,7 @@ function getAndDisplayLatestStockUpdates() {
 }
 
 $('#addStock').on('click', function(event) {
-
+    event.preventDefault();
 	// Use jQuery to get the input value and use ajax to send the value to node
 	// Then we can call the function after the callback is finsihed from back-end
 	let symbol = $('#searchSymbol').val();
@@ -71,6 +71,31 @@ $('#addStock').on('click', function(event) {
   //setTimeout(() => getAndDisplayLatestStockUpdates(), 100);	// Any other best way???
 });
 
+$('.portfolio').on('click', '.buy-more',function(event) {
+    console.log($(event.target).parent()[0]['lastElementChild']['value']);
+    //console.log($(event.target).closest('.stock').text()); // Does not work?
+    // Use State might be a better choice
+    // Reviewing Model Pattern
+    // Or using classless OOP pattern or class free pattern
+    console.log($(event.target).parent().parent().find('.stock').text());
+    let buyingQuantity = $(event.target).parent()[0]['lastElementChild']['value']; // Easier way?
+    let symbol = $(event.target).parent()
+    let price = 30;
+    if (buyingQuantity >= 0) {
+        
+    } else {
+        alert("Please enter quantity");
+    }
+
+});
+
+
+function sellOrBuyStock() {
+
+}
+
+
+/* Need to update */
 var qs = (function(a) {
     if (a == "") return {};
     var b = {};
@@ -84,6 +109,10 @@ var qs = (function(a) {
     }
     return b;
 })(window.location.search.substr(1).split('&'));
+
+
+
+
 
 $(function() {
     getAndDisplayLatestStockUpdates();

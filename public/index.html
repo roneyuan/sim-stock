@@ -35,24 +35,22 @@
 							<h3>Buying Power: <br>
 							$900000.00</h3>
 							<!-- Calculation Here -->
-						</div>
-						<form method="POST">
-							<div class="add">
-								<!-- CREATE -->
-								<div class="search">
-									<label> Enter Stock Symbol</label>
-									<br>
-									<input class="searchSymbol" type="text" id="searchSymbol" name="symbol" required />
-									<!-- Call API to get the quote -->
-								</div>
-								<div class="amount">
-									<label> Enter quantity</label>
-									<br>
-									<input class="enterAmount" type="number" id="enterQuantity" name="quantity" required />
-								</div>
+						</div>	
+						<div class="add">
+							<!-- CREATE -->
+							<div class="search">
+								<label> Enter Stock Symbol</label>
+								<br>
+								<input class="searchSymbol" type="text" id="searchSymbol" name="symbol" required />
+								<!-- Call API to get the quote -->
 							</div>
-							<button id="addStock" class="buyNew" type="button" >Buy</button>
-						</form>
+							<div class="amount">
+								<label> Enter quantity</label>
+								<br>
+								<input class="enterAmount" type="number" id="enterQuantity" name="quantity" required />
+							</div>
+						</div>
+						<button id="addStock" class="buyNew" type="button" >Buy</button>
 					</div>
 				</div>
 			</div>
@@ -62,22 +60,5 @@
 		</footer>
 		<script src="https://code.jquery.com/jquery-3.0.0.js"></script>
 		<script type="text/javascript" src="app.js"></script>
-<!--AUTHCODE-->
-<!-- <script>
-
-var headers = new Headers();
-headers.append('Authorization', 'Bearer ' + AUTH_TOKEN);
-fetch('http://localhost:8080/', {
-    headers: headers
-}).then(function(response) {
-    if (response.status < 200 || response.status >= 300) {
-        console.error(response);
-        return;
-    }
-    return response.text();
-}).then(function(text) {
-    // console.log(text);
-});
-</script> -->
 	</body>
 </html>
