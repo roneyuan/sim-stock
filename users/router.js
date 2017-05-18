@@ -71,6 +71,7 @@ router.get('/:username/stock', passport.authenticate('bearer', {session: false})
 		.findOne({username: req.user.username}) //
 		.populate('portfolio.investedStocks.stockId.stock')   
 		.exec(function(err, user) {
+			console.log(user.portfolio.investedStocks[0].stockId.stock)
 			res.status(200).json(user);
 		});
 });
@@ -80,7 +81,7 @@ router.post('/:username/stock', passport.authenticate('bearer', {session: false}
 	Stock
 		.create({
 			symbol: req.body.symbol,
-			price: 10,//req.body.price,
+			price: req.body.price,
 			quantity: req.body.quantity	
 		})
 		.then(stock => {
@@ -96,7 +97,7 @@ router.post('/:username/stock', passport.authenticate('bearer', {session: false}
 				})
 				.exec()
 				.then(user => {
-					console.log("SucCESS")
+					//console.log("SucCESS")
 					res.status(201).end();
 				})
 				.catch(err => {
@@ -111,8 +112,6 @@ router.put('/:username/stock/:symbol', passport.authenticate('bearer', {session:
 		return res.status(400).send("Request field does not match");
 	}
 
-	//console.log("REQ");
-
 	return User
 		.findOne({username: req.user.username})
 		.populate('portfolio.investedStocks.stockId.stock') 
@@ -125,6 +124,13 @@ router.put('/:username/stock/:symbol', passport.authenticate('bearer', {session:
 				if (stocks[i].stockId.stock.symbol === req.body.symbol) {
 					selectedId = stocks[i].id;
 					user.portfolio.investedStocks[i].stockId.quantity = req.body.quantity;
+					
+					//console.log("Before: " + user.portfolio.investedStocks[i].stockId.stock.price);
+					
+					//user.portfolio.investedStocks[i].stockId.stock.price = req.body.price;
+					
+					//console.log("After: " + user.portfolio.investedStocks[i].stockId.stock.price);
+					console.log("Check: " + user.portfolio.investedStocks[i].stockId)
 				}
 			}
 
@@ -132,9 +138,29 @@ router.put('/:username/stock/:symbol', passport.authenticate('bearer', {session:
 				if (err) {
 					console.log(err)
 				}
-			})
+			});
 
-			res.json(user);
+			let updateStockId = user.portfolio.investedStocks[0].stockId.stock["_id"]
+			return Stock
+				.findById(updateStockId)
+				.exec()
+				.then(stock => {
+					console.log("Stock: " + stock)
+					stock.price = req.body.price;
+
+					stock.save((err) => {
+						if (err) {
+							console.log(err)
+						}
+					});
+					res.status(204).json(stock);
+				})
+				.catch(err => {
+					console.log("Update Stock Error: " + err);
+				});
+
+			//console.log("After save: " + user.portfolio.investedStocks[0].stockId.stock["_id"])
+			//res.json(user);
 	}) 
 	.catch(err => {
 		console.log(err);

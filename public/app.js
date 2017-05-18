@@ -28,9 +28,9 @@ function displayLatestStockUpdates(data) {
     $('.portfolio').append(`
         <div class="list">
             <div class="col-4 stock">${data[i].stockId.stock.symbol}</div>
-            <div class="col-4 quantity">${data[i].stockId.quantity}</div>
-            <div class="col-4 buyinPrice">Buy in: ${data[i].stockId.stock.price}</div>
-            <div class="col-4 currentPrice">Current: ${data[i].stockId.stock.price}</div>
+            <div class="col-4">Quantity: <div class="quantity">${data[i].stockId.quantity}</div></div>
+            <div class="col-4">Buy in: <div class="buyinPrice">${data[i].stockId.stock.price}</div></div>
+            <div class="col-4">Current: <div class="currentPrice">${data[i].stockId.stock.price}</div></div>
             <div class="list-button">
                 <button id="buy-more" class="buy-more">More</button>
                 <button class="sell">Sell</button>
@@ -124,7 +124,7 @@ function sellOrBuyStock(symbol, quantity, price) {
         },
          dataType: "json"
     }).done(function(result) {
-        getAndDisplayLatestStockUpdates();
+        getAndDisplayLatestStockUpdates()
     }).fail(function(err) {
         console.log("ERR: " + err)
     });
@@ -146,9 +146,6 @@ var qs = (function(a) {
     }
     return b;
 })(window.location.search.substr(1).split('&'));
-
-
-
 
 
 $(function() {
