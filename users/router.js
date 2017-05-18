@@ -15,14 +15,6 @@ router.use(passport.initialize());
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const BearerStrategy = require('passport-http-bearer').Strategy;
 
-// It is working, but why we need this?
-// passport.serializeUser(function(user, done) {
-//   done(null, user);
-// });
-
-// passport.deserializeUser(function(obj, done) {
-//   done(null, obj);
-// });
 
 passport.use(new GoogleStrategy({
     clientID:  '603515610903-ov1hu4kjoghb028raqlmb2ndd4761re1.apps.googleusercontent.com',
@@ -30,25 +22,16 @@ passport.use(new GoogleStrategy({
     callbackURL: "http://localhost:8080/users/auth/google/callback"
   },
   function(accessToken, refreshToken, profile, done) {
-  		console.log("Callback");
-  		// It is working without using find? Why?
-  		return User
-		  	.findOrCreate({			
-		  		username: profile.id,
-				}, 
-				{
-					password: accessToken,
-		      nickname: profile.displayName,
-				}, (err, user) => {
-					return done(null, user);
-				});
-				// .then(user => {
-		  //     return done(null, user);// Need a null in order to successfully redirect. Wow! WHY?
-		  //   })
-		  //   .catch(err => {
-		  //   	console.log("ERROR: "+  err)
-		  //     //res.status(500).json({message: 'Internal server error'})
-		  //   });	
+		return User
+	  	.findOrCreate({			
+	  		username: profile.id,
+			}, 
+			{
+				password: accessToken,
+	      nickname: profile.displayName,
+			}, (err, user) => {
+				return done(null, user);
+			});
   } 
 ));
 
@@ -61,30 +44,21 @@ router.get('/auth/google/callback',
   passport.authenticate('google',{failureRedirect: '/login', session: false}),
   function(req, res) {
     // Authenticated successfully
-    res.redirect("/index.html?access_token="+req.user.password);
+    res.redirect("/index.html?access_token=" + req.user.password);
   });
 
 // Bearer Strategy
-passport.use(
-    new BearerStrategy(
-        function(token, done) {
-            User.findOne({ password: token },
-                function(err, user) {
-                    if(err) {
-                        return done(err)
-                    }
-                    if(!user) {
-                        return done(null, false)
-                    }
+passport.use(new BearerStrategy(
+  function(token, done) {
+    User.findOne({ password: token }, function (err, user) {
+      if (err) { return done(err); }
+      if (!user) { return done(null, false); }
+      return done(null, user, { scope: 'all' });
+    });
+  }
+));
 
-                    return done(null, user, { scope: 'all' })
-                }
-            );
-        }
-    )
-);
-
-router.get('/:username', //compare password?
+router.get('/:username',
   passport.authenticate('bearer', {session: false}),
   function (req, res) { 
   	res.json({user: req.user.apiRepr()}); 

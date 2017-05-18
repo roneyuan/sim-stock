@@ -34,18 +34,15 @@ describe('Hash password', function() {
 	after(function() {
 		return closeDB();
 	});
-	// Make promise work here
-	describe('hash-password', function() {
+
+	// How do I do for Google Oauth?
+
+
+	// Does not need for Google Strategy
+	xdescribe('hash-password', function() {
 		it('should return hashed password', function() { // If you put done in the parameter, it will give you For async tests and hooks, ensure "done()" is called; if returning a Promise, ensure it resolves.
-			//this.timeout(1000);
 			console.log("Password: " + User.hashPassword("1").then((password) => console.log(password)));
-			return User.hashPassword("1").should.eventually.be.a('string') //(function(password) {
- 				//return password.should.be.a('string')
- 				//console.log("PW:"+password);
-				//return password.should.equal('1');
-				//done(); // similar like next(), it will be able to do or call next function after done();
-			//}); // Question WHY?
-			//User.hashPassword("1").should.equal("1")
+			return User.hashPassword("1").should.eventually.be.a('string');
 		});
 
 
