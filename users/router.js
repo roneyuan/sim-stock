@@ -111,15 +111,17 @@ router.put('/:username/stock/:symbol', passport.authenticate('bearer', {session:
 		return res.status(400).send("Request field does not match");
 	}
 
+	//console.log("REQ");
+
 	return User
 		.findOne({username: req.user.username})
 		.populate('portfolio.investedStocks.stockId.stock') 
 		.exec((err, user) => {
 			let stocks = user.portfolio.investedStocks;
 			let selectedId;
-			console.log("Stocks " + stocks);
+			//console.log("Stocks " + stocks);
 			for (let i=0; i<stocks.length; i++) {
-				console.log(stocks[i]._id)
+				//console.log(stocks[i]._id)
 				if (stocks[i].stockId.stock.symbol === req.body.symbol) {
 					selectedId = stocks[i].id;
 					user.portfolio.investedStocks[i].stockId.quantity = req.body.quantity;

@@ -28,7 +28,7 @@ function displayLatestStockUpdates(data) {
     $('.portfolio').append(`
         <div class="list">
             <div class="col-4 stock">${data[i].stockId.stock.symbol}</div>
-            <div class="col-4 quantity">Quantity: ${data[i].stockId.quantity}</div>
+            <div class="col-4 quantity">${data[i].stockId.quantity}</div>
             <div class="col-4 buyinPrice">Buy in: ${data[i].stockId.stock.price}</div>
             <div class="col-4 currentPrice">Current: ${data[i].stockId.stock.price}</div>
             <div class="list-button">
@@ -72,25 +72,62 @@ $('#addStock').on('click', function(event) {
 });
 
 $('.portfolio').on('click', '.buy-more',function(event) {
-    console.log($(event.target).parent()[0]['lastElementChild']['value']);
-    //console.log($(event.target).closest('.stock').text()); // Does not work?
+    event.preventDefault();
+    //console.log($(event.target).parent()[0]['lastElementChild']['value']);
+    // console.log($(event.target).closest('.stock').text()); // Does not work?
     // Use State might be a better choice
     // Reviewing Model Pattern
     // Or using classless OOP pattern or class free pattern
-    console.log($(event.target).parent().parent().find('.stock').text());
+    //console.log($(event.target).parent().parent().find('.stock').text());
     let buyingQuantity = $(event.target).parent()[0]['lastElementChild']['value']; // Easier way?
-    let symbol = $(event.target).parent()
+    let symbol = $(event.target).parent().parent().find('.stock').text();
+    let currentQuantity = $(event.target).parent().parent().find('.quantity').text();
+    let totalQuantity = +buyingQuantity + +currentQuantity;
     let price = 30;
     if (buyingQuantity >= 0) {
-        
+        sellOrBuyStock(symbol, totalQuantity, price)
     } else {
         alert("Please enter quantity");
     }
+});
+
+$('.portfolio').on('click', '.sell',function(event) {
+    event.preventDefault();
+    let sellingQuantity = $(event.target).parent()[0]['lastElementChild']['value']; // Easier way?
+    let symbol = $(event.target).parent().parent().find('.stock').text();
+    let currentQuantity = $(event.target).parent().parent().find('.quantity').text();
+    if (+sellingQuantity > +currentQuantity) {
+        alert("Invalid: Your are selling more than you have");
+    } else {
+        let price = 30;
+        totalQuantity = +currentQuantity - +sellingQuantity;
+        if (sellingQuantity >= 0) {
+            sellOrBuyStock(symbol, totalQuantity, price)
+        } else {
+            alert("Please enter quantity");
+        }       
+    }
+
 
 });
 
 
-function sellOrBuyStock() {
+function sellOrBuyStock(symbol, quantity, price) {
+    let access_token = qs["access_token"];
+    $.ajax({
+        url: 'users/104638216487363687391/stock/' + symbol + '?access_token=' + access_token,
+        method: 'PUT',
+        data: {
+            symbol: symbol,
+            quantity: quantity,
+            price: price
+        },
+         dataType: "json"
+    }).done(function(result) {
+        getAndDisplayLatestStockUpdates();
+    }).fail(function(err) {
+        console.log("ERR: " + err)
+    });
 
 }
 
