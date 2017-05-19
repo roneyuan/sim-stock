@@ -118,13 +118,14 @@ router.put('/:username/stock/:symbol', passport.authenticate('bearer', {session:
 		.exec((err, user) => {
 			let stocks = user.portfolio.investedStocks;
 			let selectedId;
+			let updateStockId;
 			//console.log("Stocks " + stocks);
 			for (let i=0; i<stocks.length; i++) {
 				//console.log(stocks[i]._id)
 				if (stocks[i].stockId.stock.symbol === req.body.symbol) {
 					selectedId = stocks[i].id;
 					user.portfolio.investedStocks[i].stockId.quantity = req.body.quantity;
-					
+					updateStockId = user.portfolio.investedStocks[i].stockId.stock["_id"]
 					//console.log("Before: " + user.portfolio.investedStocks[i].stockId.stock.price);
 					
 					//user.portfolio.investedStocks[i].stockId.stock.price = req.body.price;
@@ -140,7 +141,6 @@ router.put('/:username/stock/:symbol', passport.authenticate('bearer', {session:
 				}
 			});
 
-			let updateStockId = user.portfolio.investedStocks[0].stockId.stock["_id"]
 			return Stock
 				.findById(updateStockId)
 				.exec()
