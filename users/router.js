@@ -75,7 +75,6 @@ router.get('/:username/stock', passport.authenticate('bearer', {session: false})
 });
 
 router.post('/:username/stock', passport.authenticate('bearer', {session: false}), (req, res) => {
-	console.log("Get Price: " + req.body.price)
 	Stock
 		.create({
 			symbol: req.body.symbol,
@@ -95,11 +94,14 @@ router.post('/:username/stock', passport.authenticate('bearer', {session: false}
 				})
 				.exec()
 				.then(user => {
-					res.status(201).end();
+					res.status(201).json(user);
 				})
 				.catch(err => {
 					console.log(err);
 				})
+		})
+		.catch(err => {
+			console.log(err);
 		})
 	}
 );
