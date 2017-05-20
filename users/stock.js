@@ -14,6 +14,10 @@ const stockSchema = mongoose.Schema({
 		type: Number,
 		required: true
 	},
+	currentPrice: {
+		type: Number,
+		required: true
+	}
 });
 
 stockSchema.methods.apiRepr = function() {
@@ -21,6 +25,7 @@ stockSchema.methods.apiRepr = function() {
 		id: this._id,
 		symbol: this.symbol,
 		price: this.price,
+		currentPrice: this.currentPrice,
 		quantity: this.quantity
 	}
 }

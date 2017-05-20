@@ -58,6 +58,9 @@ passport.use(new BearerStrategy(
   }
 ));
 
+/***
+For test only
+***/
 router.get('/:username',
   passport.authenticate('bearer', {session: false}),
   function (req, res) { 
@@ -65,6 +68,10 @@ router.get('/:username',
   }
 );
 
+
+/***
+Get stock list
+***/
 router.get('/:username/stock', passport.authenticate('bearer', {session: false}), (req, res) => {
 	return User
 		.findOne({username: req.user.username}) //
@@ -74,11 +81,16 @@ router.get('/:username/stock', passport.authenticate('bearer', {session: false})
 		});
 });
 
+
+/***
+Buy new stock
+***/
 router.post('/:username/stock', passport.authenticate('bearer', {session: false}), (req, res) => {
 	Stock
 		.create({
 			symbol: req.body.symbol,
 			price: req.body.price,
+			currentPrice: req.body.price,
 			quantity: req.body.quantity	
 		})
 		.then(stock => {
@@ -106,6 +118,10 @@ router.post('/:username/stock', passport.authenticate('bearer', {session: false}
 	}
 );
 
+
+/***
+Buy and Sell update
+***/
 router.put('/:username/stock/:symbol', passport.authenticate('bearer', {session: false}), (req, res) => {
 	if (req.params.symbol !== req.body.symbol) {
 		return res.status(400).send("Request field does not match");
@@ -136,7 +152,7 @@ router.put('/:username/stock/:symbol', passport.authenticate('bearer', {session:
 				.findById(updateStockId)
 				.exec()
 				.then(stock => {
-					stock.price = req.body.price;
+					stock.currentPrice = req.body.price;
 
 					stock.save((err) => {
 						if (err) {
@@ -155,6 +171,10 @@ router.put('/:username/stock/:symbol', passport.authenticate('bearer', {session:
 	});						
 });
 
+
+/***
+Update current price for stock TODO
+***/
 router.put('/:username/stock/:symbol/:price', passport.authenticate('bearer', {session: false}), (req, res) => {
 	if (req.params.price !== req.body.price || req.params.symbol !== req.body.symbol) {
 			return res.status(400).send("Request field does not match");	

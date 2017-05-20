@@ -19,7 +19,7 @@ function displayLatestStockUpdates(data) {
         <div class="col-4 stock">${data[i].stockId.stock.symbol}</div>
         <div class="col-4">Quantity: <div class="quantity">${data[i].stockId.quantity}</div></div>
         <div class="col-4">Buy in: <div class="buyinPrice">${data[i].stockId.stock.price}</div></div>
-        <div class="col-4">Current: <div class="currentPrice">${"To be update"}</div></div>
+        <div class="col-4">Current: <div class="currentPrice">${data[i].stockId.stock.currentPrice}</div></div>
         <div class="list-button">
           <button id="buy-more" class="buy-more">More</button>
           <button class="sell">Sell</button>
@@ -78,47 +78,6 @@ function sellOrBuyStock(symbol, quantity, price) {
     console.log("Sell or buy error: " + err)
   });
 }
-
-// function displayStockData(data, quantity, access_token) {
-//   if (data.Status !== "SUCCESS") {
-//     alert("Unable to find the symbol. Try Use Symbol Finder!"); /* TODO Symbo Finder */
-//   } else {
-//      price = data.LastPrice;
-//      $.ajax({
-//       url: 'users/104638216487363687391/stock?access_token='+access_token,
-//       method: 'POST',
-//       data: {
-//           symbol: symbol,
-//           quantity: quantity,
-//           price: price
-//       },
-//        dataType: "json"
-//     }).done(function(result) {
-//       getAndDisplayLatestStockUpdates();
-//     }).fail(function(err) {
-//       getAndDisplayLatestStockUpdates(); // WHY going here???
-//     });           
-//   }
-// }
-
-// function getCurrentStockPrice(searchTerm) {
-//   var MARKITONDEMAND_URL = "http://dev.markitondemand.com/Api/v2/Quote/jsonp"; 
-//   var currentStockPrice;
-//   return $.ajax({
-//     data: { symbol: searchTerm },
-//     url: MARKITONDEMAND_URL,
-//     dataType: "jsonp",
-//     success: function(data) {
-//       if (data.Status !== "SUCCESS") {
-//         alert("Unable to find the symbol. Try Use Symbol Finder!");
-//       } else {
-//         currentStockPrice = data.LastPrice;
-//         return currentStockPrice;
-//       }
-//     },
-//     error: handleError
-//   }); 
-// }
 
 function handleError(err) {
   console.log(err);
