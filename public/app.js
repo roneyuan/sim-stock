@@ -1,13 +1,3 @@
-// var MOCK_DATA = {
-// 	stocks: [{"_id":"58e5b781d51a5c34330e00d9","symbol":"KO","price":123,"__v":0,"quantity":20},
-// 	{"_id":"58e6e489d181ae3517f9ffc4","symbol":"AAPL","price":100,"quantity": 20,"__v":0},
-// 	{"_id":"58e6e6bd7d34d735288b7d84","symbol":"MSFT","price":100,"quantity":10,"__v":0},
-// 	{"_id":"58e6e9f91b78dc352d1664aa","symbol":"UAA","price":100,"quantity":10,"__v":0}]
-// }
-
-// var getStockPrice = 0;
-
-
 function getLatestStockUpdates(callbackFn) {
     let access_token = qs["access_token"];
     $.ajax({
@@ -18,8 +8,6 @@ function getLatestStockUpdates(callbackFn) {
     }).fail(function(err) {
         throw err;
     });
-
-    //setTimeout(function(){ callbackFn(MOCK_DATA)}, 100);
 }
 
 // this function stays the same when we connect
@@ -51,23 +39,15 @@ function getAndDisplayLatestStockUpdates() {
 
 $('#addStock').on('click', function(event) {
     event.preventDefault();
-	// Use jQuery to get the input value and use ajax to send the value to node
-	// Then we can call the function after the callback is finsihed from back-end
+
 	let symbol = $('#searchSymbol').val();
 	let quantity = $('#enterQuantity').val();
     let access_token = qs["access_token"];
     callMarkitOnDemandApi(symbol, quantity, access_token);
-  //setTimeout(() => getAndDisplayLatestStockUpdates(), 100);	// Any other best way???
 });
 
 $('.portfolio').on('click', '.buy-more',function(event) {
     event.preventDefault();
-    //console.log($(event.target).parent()[0]['lastElementChild']['value']);
-    // console.log($(event.target).closest('.stock').text()); // Does not work?
-    // Use State might be a better choice
-    // Reviewing Model Pattern
-    // Or using classless OOP pattern or class free pattern
-    //console.log($(event.target).parent().parent().find('.stock').text());
     let buyingQuantity = $(event.target).parent()[0]['lastElementChild']['value']; // Easier way?
     let symbol = $(event.target).parent().parent().find('.stock').text();
     let currentQuantity = $(event.target).parent().parent().find('.quantity').text();
@@ -96,8 +76,6 @@ $('.portfolio').on('click', '.sell',function(event) {
             alert("Please enter quantity");
         }       
     }
-
-
 });
 
 
@@ -173,8 +151,6 @@ function displayStockData(data, quantity, access_token) {
             getAndDisplayLatestStockUpdates(); // WHY going here???
         });           
     }
-
-    // return stockPrice;
 }
 
 function getCurrentStockPrice(searchTerm) {
@@ -186,7 +162,7 @@ function getCurrentStockPrice(searchTerm) {
         dataType: "jsonp",
         success: function(data) {
             if (data.Status !== "SUCCESS") {
-                alert("Unable to find the symbol. Try Use Symbol Finder!");  //TODO Symbo Finder 
+                alert("Unable to find the symbol. Try Use Symbol Finder!");
             } else {
                 currentStockPrice = data.LastPrice;
                 return currentStockPrice;
@@ -195,16 +171,11 @@ function getCurrentStockPrice(searchTerm) {
         },
         error: handleError
     }); 
-
-
-    //return currentStockPrice;
 }
 
 function handleError(err) {
     console.log(err);
 }
-
-
 
 /* Need to update */
 var qs = (function(a) {

@@ -62,7 +62,6 @@ router.get('/:username',
   passport.authenticate('bearer', {session: false}),
   function (req, res) { 
   	res.json({user: req.user.apiRepr()}); 
-  	// res.redirect('/index.html');
   }
 );
 
@@ -71,13 +70,12 @@ router.get('/:username/stock', passport.authenticate('bearer', {session: false})
 		.findOne({username: req.user.username}) //
 		.populate('portfolio.investedStocks.stockId.stock')   
 		.exec(function(err, user) {
-			console.log(user.portfolio.investedStocks[0].stockId.stock)
 			res.status(200).json(user);
 		});
 });
 
 router.post('/:username/stock', passport.authenticate('bearer', {session: false}), (req, res) => {
-	console.log(req.body.symbol)
+	console.log("Get Price: " + req.body.price)
 	Stock
 		.create({
 			symbol: req.body.symbol,
@@ -97,7 +95,6 @@ router.post('/:username/stock', passport.authenticate('bearer', {session: false}
 				})
 				.exec()
 				.then(user => {
-					//console.log("SucCESS")
 					res.status(201).end();
 				})
 				.catch(err => {
@@ -119,19 +116,11 @@ router.put('/:username/stock/:symbol', passport.authenticate('bearer', {session:
 			let stocks = user.portfolio.investedStocks;
 			let selectedId;
 			let updateStockId;
-			//console.log("Stocks " + stocks);
 			for (let i=0; i<stocks.length; i++) {
-				//console.log(stocks[i]._id)
 				if (stocks[i].stockId.stock.symbol === req.body.symbol) {
 					selectedId = stocks[i].id;
 					user.portfolio.investedStocks[i].stockId.quantity = req.body.quantity;
-					updateStockId = user.portfolio.investedStocks[i].stockId.stock["_id"]
-					//console.log("Before: " + user.portfolio.investedStocks[i].stockId.stock.price);
-					
-					//user.portfolio.investedStocks[i].stockId.stock.price = req.body.price;
-					
-					//console.log("After: " + user.portfolio.investedStocks[i].stockId.stock.price);
-					console.log("Check: " + user.portfolio.investedStocks[i].stockId)
+					updateStockId = user.portfolio.investedStocks[i].stockId.stock["_id"];
 				}
 			}
 
@@ -145,7 +134,6 @@ router.put('/:username/stock/:symbol', passport.authenticate('bearer', {session:
 				.findById(updateStockId)
 				.exec()
 				.then(stock => {
-					console.log("Stock: " + stock)
 					stock.price = req.body.price;
 
 					stock.save((err) => {
@@ -158,9 +146,6 @@ router.put('/:username/stock/:symbol', passport.authenticate('bearer', {session:
 				.catch(err => {
 					console.log("Update Stock Error: " + err);
 				});
-
-			//console.log("After save: " + user.portfolio.investedStocks[0].stockId.stock["_id"])
-			//res.json(user);
 	}) 
 	.catch(err => {
 		console.log(err);
@@ -198,24 +183,6 @@ router.put('/:username/stock/:symbol/:price', passport.authenticate('bearer', {s
 			res.status(500).json({error: 'Error'})
 		});		
 });
-
-// GET all the stock price
-
-// GET total value
-
-
-
-// router.delete('/:username/stocks/:symbol', passport.authenticate('basic', {session: false}), (req, res) => {
-// 		Stock
-// 			.findOneAndRemove({symbol: req.params.symbol})
-// 			.exec()
-// 			.then(stock => res.status(204).end())
-// 			.catch(err => res.status(500).json({error: 'Error'}));
-// 	}
-// );
-
-//router.
-
 
 
 module.exports = {router};

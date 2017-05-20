@@ -1,19 +1,3 @@
-// Create an array with object
-// const state = {
-// 	totalValue: 0,
-// 	invested: 0,
-// 	earned: 0
-// }
-
-// const stock = {
-// 	symbol: "",
-// 	buyInPrice: 0,
-// 	currentPrice: 0,
-// 	quantity: 0
-// }
-
-//var stocksList = [];
-
 function makeUserState(spec) {
 	const state = {
 		totalValue: 0,
@@ -46,7 +30,11 @@ function makeUserState(spec) {
 
 		};	
 
-		return Object.freeze({stock});
+		return Object.freeze({
+			updateStock,
+			addStock,
+			deleteStock
+		});
 	};
 
 	function addStock(spec) {
