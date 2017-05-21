@@ -182,28 +182,37 @@ router.put('/:username/stock/:symbol/:price', passport.authenticate('bearer', {s
 
 	return User
 		.findOne({username: req.user.username})
-		.populate('portfolio.investedStocks.stockId.stock')
+		.populate('portfolio.investedStocks.stockId.stock') 
 		.exec((err, user) => {
 			let stocks = user.portfolio.investedStocks;
+			let updateStockId;
 			for (let i=0; i<stocks.length; i++) {
 				if (stocks[i].stockId.stock.symbol === req.body.symbol) {
-					selectedId = stocks[i].id;
-					user.portfolio.investedStocks[i].stockId.stock.price = req.body.price;
+					updateStockId = user.portfolio.investedStocks[i].stockId.stock["_id"];
 				}
 			}
 
-			user.save((err) => {
-				if (err) {
-					console.log(err)
-				}
-			})
+			return Stock
+				.findById(updateStockId)
+				.exec()
+				.then(stock => {
+					stock.currentPrice = req.body.price;
 
-			res.json(user);
-		}) 
-		.catch(err => {
-			console.log(err);
-			res.status(500).json({error: 'Error'})
-		});		
+					stock.save((err) => {
+						if (err) {
+							console.log(err)
+						}
+					});
+					res.status(204).json(stock);
+				})
+				.catch(err => {
+					console.log("Update Stock Price Error: " + err);
+				});
+	}) 
+	.catch(err => {
+		console.log(err);
+		res.status(500).json({error: 'Error'})
+	});				
 });
 
 

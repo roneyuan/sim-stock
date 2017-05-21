@@ -19,87 +19,85 @@ function makeStock(spec) {
  		}, spec.length);
   }
 
+	function getLatestPrice(data, len) {
+		var MARKITONDEMAND_URL = "http://dev.markitondemand.com/Api/v2/Quote/jsonp";
 
-function getLatestPrice(data, len) {
-	var MARKITONDEMAND_URL = "http://dev.markitondemand.com/Api/v2/Quote/jsonp";
-
-  $.ajax({
-    data: { symbol: data.symbol },
-    url: MARKITONDEMAND_URL,
-    dataType: "jsonp",
-    success: function(price) {
-    	$('body').trigger('updateCurrentPrice', [{
-    		symbol: data.symbol, 
-    		buyInPrice: data.buyInPrice, 
-    		currentPrice: price.LastPrice, 
-    		quantity: data.quantity
-    	}, len]);
-    },
-    error: handleError
-  }); 
-}
-
-function updateState() {
-	state.totalValue = calcTotalValue();
-	state.invested = calcInvested();
-	state.earned = calcEarned(); 
-	state.buyingPower = calcBuyingPower();
-};
-
-function calcTotalValue() {
-	let defaultMoney = 1000000;
-	let totalValue = defaultMoney + calcEarned();
-
-	state.totalValue = totalValue;
-	return totalValue;
-}
-
-function calcEarned() {
-	let len = state.stocks.length;
-	let invest = calcInvested();
-	let currentTotal = 0;
-	for (let i=0; i < len; i++) {
-		currentTotal += state.stocks[i].currentPrice*state.stocks[i].quantity;
+	  $.ajax({
+	    data: { symbol: data.symbol },
+	    url: MARKITONDEMAND_URL,
+	    dataType: "jsonp",
+	    success: function(price) {
+	    	$('body').trigger('updateCurrentPrice', [{
+	    		symbol: data.symbol, 
+	    		buyInPrice: data.buyInPrice, 
+	    		currentPrice: price.LastPrice, 
+	    		quantity: data.quantity
+	    	}, len]);
+	    },
+	    error: handleError
+	  }); 
 	}
 
-	let earned = currentTotal - invest;
-	//console.log("Earned: " + earned);
-	state.earned = earned;
-	return earned;
+	function updateState() {
+		state.totalValue = calcTotalValue();
+		state.invested = calcInvested();
+		state.earned = calcEarned(); 
+		state.buyingPower = calcBuyingPower();
+	};
 
-}
+	function calcTotalValue() {
+		let defaultMoney = 1000000;
+		let totalValue = defaultMoney + calcEarned();
 
-function calcInvested() {
-	let len = state.stocks.length;
-	let invested = 0;
-	for (let i=0; i < len; i++) {
-		invested += state.stocks[i].buyInPrice*state.stocks[i].quantity;
+		state.totalValue = totalValue;
+		return totalValue;
 	}
-	//console.log("Invested: " + invested);
-	state.invested = invested;
-	return invested;
-}
 
-function calcBuyingPower() {
-	let invested = calcInvested();
-	let buyingPower = 1000000 - invested;
-	return buyingPower;
-}
+	function calcEarned() {
+		let len = state.stocks.length;
+		let invest = calcInvested();
+		let currentTotal = 0;
+		for (let i=0; i < len; i++) {
+			currentTotal += state.stocks[i].currentPrice*state.stocks[i].quantity;
+		}
 
-$('body').on('updateCurrentPrice', function(event, data, len) {
-	state.stocks.push(data);
+		let earned = currentTotal - invest;
+		//console.log("Earned: " + earned);
+		state.earned = earned;
+		return earned;
 
-	if (state.stocks.length == len) {
-		//console.log("finish");
-		// continue...
-		updateState();
-		// Modify DOM
-		//console.log(state);
-		displayLatestStockUpdates(state)
+	}
 
-	} 
-})
+	function calcInvested() {
+		let len = state.stocks.length;
+		let invested = 0;
+		for (let i=0; i < len; i++) {
+			invested += state.stocks[i].buyInPrice*state.stocks[i].quantity;
+		}
+		//console.log("Invested: " + invested);
+		state.invested = invested;
+		return invested;
+	}
 
+	function calcBuyingPower() {
+		let invested = calcInvested();
+		let buyingPower = 1000000 - invested;
+		return buyingPower;
+	}
+
+	$('body').on('updateCurrentPrice', function(event, data, len) {
+		state.stocks.push(data);
+
+		if (state.stocks.length == len) {
+			//console.log("finish");
+			// continue...
+			updateState();
+			// Modify DOM
+			//console.log(state);
+			displayLatestStockUpdates(state)
+
+		} 
+	})
 };
 
 
