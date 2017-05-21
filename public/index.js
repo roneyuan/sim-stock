@@ -9,39 +9,16 @@ const state = {
 function makeStock(spec) {
 
   for (let i=0; i<spec.length; i++) {
- 		// state.stocks.push({
- 		// 	symbol: spec[i].stockId.stock.symbol,
- 		// 	buyInPrice: spec[i].stockId.stock.price,
- 		// 	currentPrice: 0,
- 		// 	quantity: spec[i].stockId.quantity
- 		// });
  		getLatestPrice({
   		symbol: spec[i].stockId.stock.symbol,
  			buyInPrice: spec[i].stockId.stock.price,
  			currentPrice: 0,
  			quantity: spec[i].stockId.quantity			
- 		});
+ 		}, spec.length);
   }
-
-  //state.stocks = portfolio;
-  //console.log(state);
-
-  //updateState();
-
-  //console.log(state);
-
-  //getLatestPrice("UAA");
-	//return function addStock(spec) {
-		// stock.symbol = spec.symbol;
-		// stock.buyInPrice = spec.buyInPrice;
-		// stock.currentPrice = spec.currentPrice;
-		// stock.quantity = spec.quantity;	
-		// state.stocks.push(stock);		
-	//};
 };
 
-function getLatestPrice(data) {
-	// Using Ajax to get the price and return that price
+function getLatestPrice(data, len) {
 	var MARKITONDEMAND_URL = "http://dev.markitondemand.com/Api/v2/Quote/jsonp";
 
   $.ajax({
@@ -49,17 +26,15 @@ function getLatestPrice(data) {
     url: MARKITONDEMAND_URL,
     dataType: "jsonp",
     success: function(price) {
-    	$('body').trigger('updateCurrentPrice', {
+    	$('body').trigger('updateCurrentPrice', [{
     		symbol: data.symbol, 
     		buyInPrice: data.buyInPrice, 
     		currentPrice: price.LastPrice, 
     		quantity: data.quantity
-    	});
+    	}, len]);
     },
     error: handleError
   }); 
-
-
 }
 
 function updateState() {
@@ -86,7 +61,7 @@ function calcEarned() {
 	}
 
 	let earned = currentTotal - invest;
-	console.log("Earned: " + earned);
+	//console.log("Earned: " + earned);
 	state.earned = earned;
 	return earned;
 
@@ -98,7 +73,7 @@ function calcInvested() {
 	for (let i=0; i < len; i++) {
 		invested += state.stocks[i].buyInPrice*state.stocks[i].quantity;
 	}
-	console.log("Invested: " + invested);
+	//console.log("Invested: " + invested);
 	state.invested = invested;
 	return invested;
 }
@@ -109,96 +84,19 @@ function calcBuyingPower() {
 	return buyingPower;
 }
 
-$('body').on('updateCurrentPrice', function(event, data) {
-	// find stock in the state and update
+$('body').on('updateCurrentPrice', function(event, data, len) {
 	state.stocks.push(data);
 
-	console.log(state);
+	if (state.stocks.length == len) {
+		//console.log("finish");
+		// continue...
+		updateState();
+		// Modify DOM
+		//console.log(state);
+		displayLatestStockUpdates(state)
+
+	} 
 })
-
-
-
-
-
-// function makeUserState(spec) {
-	
-// 	function makeStock(spec) {
-// 		const stock = {
-// 			symbol: "",
-// 			buyInPrice: 0,
-// 			currentPrice: 0,
-// 			quantity: 0
-// 		}
-
-// 		// function updateStock(itemsToUpdate) {
-
-// 		// }
-
-// 		function addStock(spec) {
-// 			stock.symbol = spec.symbol;
-// 			stock.buyInPrice = spec.price;
-// 			stock.currentPrice = spec.currentPrice;
-// 			stock.quantity = spec.quantity;	
-// 			state.stocks.push(stock);		
-// 		};
-
-// 		function deleteStock(spec) {
-
-// 		};	
-
-// 		return Object.freeze({
-// 			//updateStock,
-// 			addStock,
-// 			deleteStock
-// 		});
-// 	};
-
-// 	function updateState(itemsToUpdate) {
-// 		state.totalValue = calcTotalValue();
-// 		state.invested = calcInvested();
-// 		state.earned = calcEarned(); 
-// 	};
-
-// 	function calcTotalValue(spec) {
-// 		let defaultMoney = 1000000;
-// 		let totalValue = defaultMoney - calcInvested() + earned();
-
-// 		return totalValue;
-// 	}
-
-// 	function calcEarned(sepc) {
-// 		let len = state.stocks.length();
-// 		let invest = calcInvested();
-// 		let currentTotal = 0;
-// 		for (let i=0; i < len; i++) {
-// 			currentTotal += state.stocks[i].currentPrice;
-// 		}
-
-// 		let earned = currentTotal - invest;
-
-// 		return earned;
-
-// 	}
-
-// 	function calcInvested() {
-// 		let len = state.stocks.length();
-// 		let invest = 0;
-// 		for (let i=0; i < len; i++) {
-// 			invested += state.stocks[i].buyInPrice;
-// 		}
-
-// 		return invested;
-// 	}
-
-// 	return Object.freeze({
-// 		//state,
-// 		makeStock,
-// 		updateState,
-// 		calcTotalValue,
-// 		calcEarned,
-// 		calcInvested
-// 	});	
-// }
 
 
 

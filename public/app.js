@@ -4,7 +4,7 @@ function getLatestStockUpdates(callbackFn) {
     url: 'users/104638216487363687391/stock?access_token='+access_token,
     method: 'GET',
   }).done(function(result) {
-    callbackFn(result.portfolio.investedStocks);
+    makeStock(result.portfolio.investedStocks);
   }).fail(function(err) {
     throw err;
   });
@@ -12,14 +12,14 @@ function getLatestStockUpdates(callbackFn) {
 
 function displayLatestStockUpdates(data) {
   $('.list').remove();    
-makeStock(data);
-  for (let i=0; i<data.length; i++) {
+  console.log(data);
+  for (let i=0; i<data.stocks.length; i++) {
     $('.portfolio').append(`
       <div class="list">
-        <div class="col-4 stock">${data[i].stockId.stock.symbol}</div>
-        <div class="col-4">Quantity: <div class="quantity">${data[i].stockId.quantity}</div></div>
-        <div class="col-4">Buy in: <div class="buyinPrice">${data[i].stockId.stock.price}</div></div>
-        <div class="col-4">Current: <div class="currentPrice">${data[i].stockId.stock.currentPrice}</div></div>
+        <div class="col-4 stock">${data.stocks[i].symbol}</div>
+        <div class="col-4">Quantity: <div class="quantity">${data.stocks[i].quantity}</div></div>
+        <div class="col-4">Buy in: <div class="buyinPrice">${data.stocks[i].buyInPrice}</div></div>
+        <div class="col-4">Current: <div class="currentPrice">${data.stocks[i].currentPrice}</div></div>
         <div class="list-button">
           <button id="buy-more" class="buy-more">More</button>
           <button class="sell">Sell</button>
