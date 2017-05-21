@@ -1,4 +1,4 @@
-function getLatestStockUpdates(callbackFn) {
+function getLatestStockUpdates() {
   let access_token = qs["access_token"];
   $.ajax({
     url: 'users/104638216487363687391/stock?access_token='+access_token,
@@ -56,7 +56,7 @@ function callMarkitOnDemandApi(searchTerm, quantity, access_token) {
             },
             dataType: "json"
         }).done(function(result) {
-          getLatestStockUpdates(displayLatestStockUpdates);
+          getLatestStockUpdates();
         }).fail(function(err) {
           console.log("Update price error: " + err)
         });           
@@ -78,7 +78,7 @@ function sellOrBuyStock(symbol, quantity, price) {
     },
     dataType: "json"
   }).done(function(result) {
-    getLatestStockUpdates(displayLatestStockUpdates);
+    getLatestStockUpdates();
   }).fail(function(err) {
     console.log("Sell or buy error: " + err)
   });
@@ -147,5 +147,5 @@ $('.portfolio').on('click', '.sell',function(event) {
 });
 
 $(function() {
-  getLatestStockUpdates(displayLatestStockUpdates);
+  getLatestStockUpdates();
 })

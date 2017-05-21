@@ -1,12 +1,14 @@
-const state = {
-	totalValue: 0,
-	invested: 0,
-	earned: 0,
-	buyingPower: 0,
-	stocks: []
-};
+
 
 function makeStock(spec) {
+
+	const state = {
+		totalValue: 0,
+		invested: 0,
+		earned: 0,
+		buyingPower: 0,
+		stocks: []
+	};
 
   for (let i=0; i<spec.length; i++) {
  		getLatestPrice({
@@ -16,7 +18,7 @@ function makeStock(spec) {
  			quantity: spec[i].stockId.quantity			
  		}, spec.length);
   }
-};
+
 
 function getLatestPrice(data, len) {
 	var MARKITONDEMAND_URL = "http://dev.markitondemand.com/Api/v2/Quote/jsonp";
@@ -97,6 +99,9 @@ $('body').on('updateCurrentPrice', function(event, data, len) {
 
 	} 
 })
+
+};
+
 
 
 
