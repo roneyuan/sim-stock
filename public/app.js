@@ -12,7 +12,7 @@ function getLatestStockUpdates(callbackFn) {
 
 function displayLatestStockUpdates(data) {
   $('.list').remove();    
-
+makeStock(data);
   for (let i=0; i<data.length; i++) {
     $('.portfolio').append(`
       <div class="list">
@@ -115,7 +115,7 @@ $('.portfolio').on('click', '.buy-more',function(event) {
   let symbol = $(event.target).parent().parent().find('.stock').text();
   let currentQuantity = $(event.target).parent().parent().find('.quantity').text();
   let totalQuantity = +buyingQuantity + +currentQuantity;
-  let price = 30;
+  let price = 30; // Get update price 
   if (buyingQuantity >= 0) {
     sellOrBuyStock(symbol, totalQuantity, price)
   } else {
