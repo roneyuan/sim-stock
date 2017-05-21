@@ -27,6 +27,11 @@ function displayLatestStockUpdates(data) {
         </div>
       </div>`);
   }
+
+  $('#available-money').text("$"+data.buyingPower);
+  $('#total-value').text("$"+data.totalValue);
+  $('#earned').text("$"+data.earned);
+  $('#invested').text("$"+data.invested);
 }
 
 function callMarkitOnDemandApi(searchTerm, quantity, access_token) {
