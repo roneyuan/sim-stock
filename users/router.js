@@ -44,7 +44,7 @@ router.get('/auth/google/callback',
   passport.authenticate('google',{failureRedirect: '/login', session: false}),
   function(req, res) {
     // Authenticated successfully
-    res.redirect("/index.html?access_token=" + req.user.password);
+    res.redirect("/home.html?access_token=" + req.user.password);
   });
 
 // Bearer Strategy
