@@ -61,12 +61,12 @@ passport.use(new BearerStrategy(
 /***
 For test only
 ***/
-router.get('/:username',
-  passport.authenticate('bearer', {session: false}),
-  function (req, res) { 
-  	res.json({user: req.user.apiRepr()}); 
-  }
-);
+// router.get('/:username',
+//   passport.authenticate('bearer', {session: false}),
+//   function (req, res) { 
+//   	res.json({user: req.user.apiRepr()}); 
+//   }
+// );
 
 
 /***
