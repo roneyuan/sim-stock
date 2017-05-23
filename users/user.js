@@ -1,4 +1,4 @@
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const mongoose = require('mongoose');
 const findOrCreate = require('mongoose-find-or-create');
 Schema = mongoose.Schema;
