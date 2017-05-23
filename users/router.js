@@ -19,7 +19,7 @@ const BearerStrategy = require('passport-http-bearer').Strategy;
 passport.use(new GoogleStrategy({
     clientID:  '603515610903-ov1hu4kjoghb028raqlmb2ndd4761re1.apps.googleusercontent.com',
     clientSecret: "K5NBv_fDAp6YcyZJQfNofxVb",
-    callbackURL: "http://localhost:8080/users/auth/google/callback"
+    callbackURL: "/users/auth/google/callback"
   },
   function(accessToken, refreshToken, profile, done) {
 		return User
