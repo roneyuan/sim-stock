@@ -39,10 +39,10 @@ function makeStock(spec) {
 	}
 
 	function updateState() {
-		state.totalValue = calcTotalValue();
-		state.invested = calcInvested();
-		state.earned = calcEarned(); 
-		state.buyingPower = calcBuyingPower();
+		state.totalValue = calcTotalValue().toFixed(2);;
+		state.invested = calcInvested().toFixed(2);;
+		state.earned = calcEarned().toFixed(2);; 
+		state.buyingPower = calcBuyingPower().toFixed(2);;
 	};
 
 	function calcTotalValue() {
