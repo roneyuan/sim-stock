@@ -158,7 +158,13 @@ a {
 	margin-top: 30px;
 }
 
+.stockInfo {
+	padding: 5px 0;
+}
+
 .buy-more, .sell {
+	margin-bottom: 10px;
+	margin-top: 10px;
 	width: 80px;
 	height: 30px;
 	font-size: 18px;
@@ -201,7 +207,9 @@ a {
 	padding-bottom: 20px; 
 }
 
-
+.right-box {
+	text-align: center;
+}
 
 .login, .signup {
 	margin: 20% auto;
@@ -209,4 +217,8 @@ a {
 
 form {
 	text-align: center;
+}
+
+@media only screen only (min-width: 786px ) {
+	
 }
