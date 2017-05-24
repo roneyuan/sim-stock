@@ -88,20 +88,37 @@ function sellStock(symbol, quantity) {
   // 1. Get the latest price
   // 2. Get the buy-in price
   // 3. Calculate the earning
-  // 4. Update quantity
+  // 4. Update quantity and earned
   // 5. Update the state
 
-  // 1.
+  // 1. GET the buy-in Price
   let access_token = qs["access_token"];
   $.ajax({
     url: 'users/104638216487363687391/stock/' + symbol + '?access_token=' + access_token,
     method: 'GET',
-    data: {
-      symbol: symbol
-    },
     dataType: "json"
   }).done(function(result) {
-    console.log(result);
+    var buyInPrice = result.price;
+    // 2. GET the latest price
+    var MARKITONDEMAND_URL = "http://dev.markitondemand.com/Api/v2/Quote/jsonp"; 
+
+    $.ajax({
+      data: { symbol: symbol },
+      url: MARKITONDEMAND_URL,
+      dataType: "jsonp",
+      success: function(data) {
+        if (data.Status !== "SUCCESS") {
+          alert("Unable to find the symbol. Try Use Symbol Finder!"); /* TODO Symbo Finder */
+        } else {
+          let currentPrice = data.LastPrice;   
+          let earning = (currentPrice - buyInPrice)*quantity     
+          // 3. Update quantity and earned
+             
+        }
+      },
+      error: handleError
+    });     
+
   }).fail(function(err) {
     console.log("Sell or buy error: " + err)
   });  

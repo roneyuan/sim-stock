@@ -247,5 +247,13 @@ router.get('/:username/stock/:symbol', passport.authenticate('bearer', {session:
 		})
 });
 
+router.put('/:username/updateEarned', passport.authenticate('bearer', {session: false}), (req, res) => {
+	var earned = req.body.earned
+	// Update earned in user
+	// 1. Get current earned
+	// 2. Sum up
+	// 3. Update
+})
+
 
 module.exports = {router};
