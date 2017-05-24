@@ -84,6 +84,38 @@ function sellOrBuyStock(symbol, quantity, price) {
   });
 }
 
+function sellStock(symbol, quantity) {
+  // 1. Get the latest price
+  // 2. Get the buy-in price
+  // 3. Calculate the earning
+  // 4. Update quantity
+  // 5. Update the state
+
+  // 1.
+  let access_token = qs["access_token"];
+  $.ajax({
+    url: 'users/104638216487363687391/stock/' + symbol + '?access_token=' + access_token,
+    method: 'GET',
+    data: {
+      symbol: symbol
+    },
+    dataType: "json"
+  }).done(function(result) {
+    console.log(result);
+  }).fail(function(err) {
+    console.log("Sell or buy error: " + err)
+  });  
+
+}
+
+function buyMoreStock(symbol, quantity) {
+  // 1. Get the buy-price
+  // 2. Get the latest price
+  // 3. Calculate the average
+  // 4. Update the price
+  // 5. Update the quantity
+}
+
 function handleError(err) {
   console.log(err);
 }
@@ -120,7 +152,7 @@ $('.portfolio').on('click', '.buy-more',function(event) {
   let symbol = $(event.target).parent().parent().find('.stock').text();
   let currentQuantity = $(event.target).parent().parent().find('.quantity').text();
   let totalQuantity = +buyingQuantity + +currentQuantity;
-  let price = 30; // Get update price 
+  //let price = 30; // Get the latest price 
   if (buyingQuantity >= 0) {
     sellOrBuyStock(symbol, totalQuantity, price)
   } else {
@@ -139,7 +171,8 @@ $('.portfolio').on('click', '.sell',function(event) {
     let price = 30;
     totalQuantity = +currentQuantity - +sellingQuantity;
     if (sellingQuantity >= 0) {
-      sellOrBuyStock(symbol, totalQuantity, price)
+      sellStock(symbol);
+      //sellOrBuyStock(symbol, totalQuantity, price)
     } else {
       alert("Please enter quantity");
     }       

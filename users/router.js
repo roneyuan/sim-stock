@@ -73,6 +73,7 @@ For test only
 Get stock list
 ***/
 router.get('/:username/stock', passport.authenticate('bearer', {session: false}), (req, res) => {
+	console.log(req.stock)
 	return User
 		.findOne({username: req.user.username}) //
 		.populate('portfolio.investedStocks.stockId.stock')   
@@ -213,6 +214,37 @@ router.put('/:username/stock/:symbol/:price', passport.authenticate('bearer', {s
 		console.log(err);
 		res.status(500).json({error: 'Error'})
 	});				
+});
+
+router.get('/:username/stock/:symbol', passport.authenticate('bearer', {session: false}), (req, res) => {
+	//console.log("REQ1:" + req.params.symbol) // req.body,symbol does not work? Why? Maybe because it is using GET
+	return User
+		.findOne({username: req.user.username})
+		.populate('portfolio.investedStocks.stockId.stock')
+		.exec((err, user) => {
+			let stocks = user.portfolio.investedStocks;
+			let findStock;
+			for (let i=0; i<stocks.length; i++) {
+				if (stocks[i].stockId.stock.symbol === req.params.symbol) {
+					findStock = user.portfolio.investedStocks[i].stockId.stock["_id"];
+				}				
+			}
+			console.log(findStock)
+			return Stock
+				.findById(findStock)
+				.exec()
+				.then(stock => {
+					//console.log(stock);
+					res.status(200).json(stock.apiRepr());
+				})
+				.catch(err => {
+					console.log("Find Stock Error: " + err);
+				});
+		})
+		.catch(err => {
+			console.log(err);
+			res.status(500).json({error: 'Error'})
+		})
 });
 
 
