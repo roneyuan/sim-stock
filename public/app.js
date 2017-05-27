@@ -4,7 +4,8 @@ function getLatestStockUpdates() {
     url: 'users/104638216487363687391/stock?access_token='+access_token,
     method: 'GET',
   }).done(function(result) {
-    makeStock(result.portfolio.investedStocks); // In this case, we should use makePortfolio
+    //makeStock(result.portfolio.investedStocks); // In this case, we should use makePortfolio
+    newStock.updateStock();
   }).fail(function(err) {
     throw err;
   });
@@ -197,5 +198,8 @@ $('.portfolio').on('click', '.sell',function(event) {
 });
 
 $(function() {
-  getLatestStockUpdates();
+  var newStock = makePortfolio();
+  newStock.getStock();
+  //newStock.updateStock();
+  //newStock.displayLatestStockUpdates();
 })
