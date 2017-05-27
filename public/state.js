@@ -61,13 +61,14 @@ function makePortfolio() {
 	};
 
 	function calcTotalValue() {
-		let defaultMoney = 1000000;
+		let defaultMoney = 1000000.00;
 		let totalValue = defaultMoney + calcEarned();
 
 		state.totalValue = totalValue;
+		state.buyingPower = calcBuyingPower();
 
 		displayLatestStockUpdates();
-	};
+	}
 
 	function calcEarned() {
 		let len = stocks.length;
@@ -78,9 +79,11 @@ function makePortfolio() {
 		}
 
 		let earned = currentTotal - invest;
-		state.earned = earned;
-		return earned
-	};
+		//console.log("Earned: " + earned);
+		state.earned = +earned.toFixed(2);
+		return +earned.toFixed(2);
+
+	}
 
 	function calcInvested() {
 		let len = stocks.length;
@@ -88,10 +91,16 @@ function makePortfolio() {
 		for (let i=0; i < len; i++) {
 			invested += stocks[i].buyInPrice*stocks[i].quantity;
 		}
+		//console.log("Invested: " + invested);
+		state.invested = +invested.toFixed(2);
+		return +invested.toFixed(2);
+	}
 
-		state.invested = invested;
-		return invested
-	};
+	function calcBuyingPower() {
+		let invested = calcInvested();
+		let buyingPower = 1000000 - invested;
+		return +buyingPower.toFixed(2);
+	}
 
 	function displayLatestStockUpdates() {
 	  $('.list').remove();    
