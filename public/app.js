@@ -4,7 +4,7 @@ function getLatestStockUpdates() {
     url: 'users/104638216487363687391/stock?access_token='+access_token,
     method: 'GET',
   }).done(function(result) {
-    makeStock(result.portfolio.investedStocks);
+    makeStock(result.portfolio.investedStocks); // In this case, we should use makePortfolio
   }).fail(function(err) {
     throw err;
   });
