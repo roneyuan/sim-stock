@@ -5,7 +5,7 @@ function getLatestStockUpdates() {
     method: 'GET',
   }).done(function(result) {
     //makeStock(result.portfolio.investedStocks); // In this case, we should use makePortfolio
-    newStock.updateStock();
+     makePortfolio().getStock();
   }).fail(function(err) {
     throw err;
   });
