@@ -7,7 +7,6 @@ function makePortfolio() {
 		stocks: []
 	};
 	const stocks = [];
-	var toggle = false;
 
 	var updateSingleStock = function() {
 		let access_token = qs["access_token"];
@@ -22,7 +21,7 @@ function makePortfolio() {
 	};
 
 	function updateSingle(spec) {
-		  for (let i=0; i<spec.length; i++) {
+		for (let i=0; i<spec.length; i++) {
 	  	stocks.push({
 	  		symbol: spec[i].stockId.stock.symbol,
 	 			buyInPrice: spec[i].stockId.stock.price,
@@ -31,7 +30,7 @@ function makePortfolio() {
 			});
 		}	
 		calcTotalValue();
-	}
+	};
 
 	var getStock = function() {
 		// 1. Call the ajax
@@ -153,7 +152,5 @@ function makePortfolio() {
 	return Object.freeze({
 		getStock,
 		updateSingleStock
-		//updateStock,
-		//displayLatestStockUpdates
 	});
 }
