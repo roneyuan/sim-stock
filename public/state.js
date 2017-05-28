@@ -9,6 +9,30 @@ function makePortfolio() {
 	const stocks = [];
 	var toggle = false;
 
+	var updateSingleStock = function() {
+		let access_token = qs["access_token"];
+	  $.ajax({
+	    url: 'users/104638216487363687391/stock?access_token='+access_token,
+	    method: 'GET',
+	  }).done(function(result) {
+	    updateSingle(result.portfolio.investedStocks);
+	  }).fail(function(err) {
+	    throw err;
+	  });	
+	};
+
+	function updateSingle(spec) {
+		  for (let i=0; i<spec.length; i++) {
+	  	stocks.push({
+	  		symbol: spec[i].stockId.stock.symbol,
+	 			buyInPrice: spec[i].stockId.stock.price,
+	 			currentPrice: spec[i].stockId.stock.currentPrice,
+	 			quantity: spec[i].stockId.quantity			
+			});
+		}	
+		calcTotalValue();
+	}
+
 	var getStock = function() {
 		// 1. Call the ajax
 		let access_token = qs["access_token"];
@@ -128,6 +152,7 @@ function makePortfolio() {
 
 	return Object.freeze({
 		getStock,
+		updateSingleStock
 		//updateStock,
 		//displayLatestStockUpdates
 	});

@@ -5,7 +5,7 @@ function getLatestStockUpdates() {
     method: 'GET',
   }).done(function(result) {
     //makeStock(result.portfolio.investedStocks); // In this case, we should use makePortfolio
-     makePortfolio().getStock();
+     makePortfolio().updateSingleStock();
   }).fail(function(err) {
     throw err;
   });
@@ -67,8 +67,19 @@ function callMarkitOnDemandApi(searchTerm, quantity, access_token) {
   }); 
 }
 
-function sellOrBuyStock(symbol, quantity, price) {
+function sellOrBuyStock(symbol, quantity) {
   let access_token = qs["access_token"];
+var MARKITONDEMAND_URL = "http://dev.markitondemand.com/Api/v2/Quote/jsonp"; 
+  $.ajax({
+    data: { symbol: symbol },
+    url: MARKITONDEMAND_URL,
+    dataType: "jsonp",
+    success: function(data) {
+      if (data.Status !== "SUCCESS") {
+        alert("Unable to find the symbol. Try Use Symbol Finder!"); /* TODO Symbo Finder */
+      } else {
+          price = data.LastPrice;
+
   $.ajax({
     url: 'users/104638216487363687391/stock/' + symbol + '?access_token=' + access_token,
     method: 'PUT',
@@ -83,6 +94,13 @@ function sellOrBuyStock(symbol, quantity, price) {
   }).fail(function(err) {
     console.log("Sell or buy error: " + err)
   });
+          
+      }
+    },
+    error: handleError
+  }); 
+
+
 }
 
 function sellStock(symbol, quantity) {
@@ -114,7 +132,7 @@ function sellStock(symbol, quantity) {
           let currentPrice = data.LastPrice;   
           let earning = (currentPrice - buyInPrice)*quantity     
           // 3. Update quantity and earned
-             
+          //sellOrBuyStock(symbol, quantity, data.LastPrice)
         }
       },
       error: handleError
@@ -172,7 +190,7 @@ $('.portfolio').on('click', '.buy-more',function(event) {
   let totalQuantity = +buyingQuantity + +currentQuantity;
   //let price = 30; // Get the latest price 
   if (buyingQuantity >= 0) {
-    sellOrBuyStock(symbol, totalQuantity, price)
+    sellOrBuyStock(symbol, totalQuantity)
   } else {
     alert("Please enter quantity");
   }
@@ -189,8 +207,8 @@ $('.portfolio').on('click', '.sell',function(event) {
     let price = 30;
     totalQuantity = +currentQuantity - +sellingQuantity;
     if (sellingQuantity >= 0) {
-      sellStock(symbol);
-      //sellOrBuyStock(symbol, totalQuantity, price)
+      //sellStock(symbol);
+      sellOrBuyStock(symbol, totalQuantity, price)
     } else {
       alert("Please enter quantity");
     }       
