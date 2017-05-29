@@ -1,5 +1,9 @@
 function getLatestStockUpdates() {
-  makePortfolio().updateSingleStock();
+  //makePortfolio().updateSingleStock();
+  //displayLatestStockUpdates();
+
+  let portfolio = getNewPortfolio().getAllStock();
+  displayLatestStockUpdates(portfolio);
 }
 
 function callMarkitOnDemandApi(searchTerm, quantity, access_token) {
@@ -182,6 +186,6 @@ $('.portfolio').on('click', '.sell',function(event) {
 });
 
 $(function() {
-  var newStock = makePortfolio();
-  newStock.getStock();
+  let portfolio = makePortfolio().getAllStock();
+  displayLatestStockUpdates(portfolio);
 })
