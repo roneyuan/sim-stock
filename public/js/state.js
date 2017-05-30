@@ -73,7 +73,6 @@ function makePortfolio(init, spec) {
 	var getAllstock = function() {
 		// Clone the element using assign so that it will not affect _state when changes
 		let stocks = _state.stocks.map(elem => Object.assign({}, elem));
-		//let stocks = Object.assign({}, _state);
 		return stocks;
 	}
 

@@ -1,10 +1,12 @@
+let portfolio;
+
 function getLatestStockUpdates() {
   $.ajax({
     url: 'users/104638216487363687391/stock?access_token='+access_token,
     method: 'GET',
   }).done(function(result) {
-    let portfolio = makePortfolio(false, result.portfolio.investedStocks).getPortfolio();
-    displayLatestStockUpdates(portfolio);   
+    portfolio = makePortfolio(false, result.portfolio.investedStocks);
+    displayLatestStockUpdates(portfolio.getPortfolio());   
   }).fail(function(err) {
     throw err;
   });
@@ -204,8 +206,30 @@ $(function() {
     url: 'users/104638216487363687391/stock?access_token='+access_token,
     method: 'GET',
   }).done(function(result) {
-      var initStocks = makePortfolio(true).getAllstock();
-      initStocks = result.portfolio.investedStocks.map(elem => Object.assign({}, elem));
+    //var initStocks = makePortfolio(true).getAllstock(); does not need it
+     var initStocks = result.portfolio.investedStocks.map(elem => JSON.parse(JSON.stringify(elem))); //
+    // var initStocks = result.portfolio.investedStocks.map((stock) => 
+    //   Object.keys(stock).map(stockId => Object.assign({}, stockId).map((res =>
+    //     console.log(res))))
+
+    // );
+
+
+
+      // Imparative - How the machine should do it.
+      // Declrative - What you want it to do
+
+      // 210 contains references to object intead of distinct objects containing the same value
+      // We put references here becuase if we change initStocks and the data from result will also change 
+      // if we do not use references.
+      // Challenge problems here - make everything explicity that references to result.
+      // Separate everything from references
+      // Make initStocks changes independenltly as result.
+
+      initStocks[0].stockId.quantity = true;
+      console.log("Res: " + result.portfolio.investedStocks[0].stockId.quantity)
+      initStocks.forEach(obj => console.log(obj));
+//      console.log("Init: " + initStocks)
  
       for (let i=0; i<initStocks.length; i++) {
         let symbol = initStocks[i].stockId.stock.symbol;
@@ -221,8 +245,8 @@ $(function() {
 
             // Check if all current price are updated
             if (i == initStocks.length - 1) {
-              let portfolio = makePortfolio(false, initStocks).getPortfolio();
-              displayLatestStockUpdates(portfolio);          
+              portfolio = makePortfolio(false, initStocks);
+              displayLatestStockUpdates(portfolio.getPortfolio());          
             }
           },
           error: handleError
