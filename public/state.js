@@ -1,36 +1,8 @@
-
-
 // Need another constructor for updating single instead of put in makePortfolio
 // Use initializing in the portfolio for get stock
+function makePortfolio(init, spec) {
+	var _stocks = spec;
 
-function getNewPortfolio() {
-		// var updateSingleStock = function() {
-	// 	let access_token = qs["access_token"];
-	//   $.ajax({
-	//     url: 'users/104638216487363687391/stock?access_token='+access_token,
-	//     method: 'GET',
-	//   }).done(function(result) {
-	//     updateSingle(result.portfolio.investedStocks);
-	//   }).fail(function(err) {
-	//     throw err;
-	//   });	
-	// };
-
-	// function updateSingle(spec) {
-	// 	for (let i=0; i<spec.length; i++) {
-	//   	stocks.push({
-	//   		symbol: spec[i].stockId.stock.symbol,
-	//  			buyInPrice: spec[i].stockId.stock.price,
-	//  			currentPrice: spec[i].stockId.stock.currentPrice,
-	//  			quantity: spec[i].stockId.quantity			
-	// 		});
-	// 	}	
-	// 	calcTotalValue();
-	// };
-}
-
-
-function makePortfolio() {
 	const _state = {
 		totalValue: 0,
 		invested: 0,
@@ -38,60 +10,82 @@ function makePortfolio() {
 		buyingPower: 0,
 		stocks: []
 	};
-	//const stocks = [];
+
+	// let access_token = qs["access_token"];
+
+	// $.ajax({
+ //    url: 'users/104638216487363687391/stock?access_token='+access_token,
+ //    method: 'GET',
+ //  }).done(function(result) {
+ //  	if (init === true) {
+	// 		addStock(result.portfolio.investedStocks);
+ //  	} else {
+	// 		updateSingle(result.portfolio.investedStocks);
+ //  	}
+ //  }).fail(function(err) {
+ //    throw err;
+ //  });
+
+	 if (init === true) {
+	 //	$(addStock(_portfolio));
+	 	//_state.stocks = _stocks;
+	 	calcTotalValue();
+	 } else {
+	 	//$(updateSingle(_portfolio))
+addStock(_stocks)
+	 }
 
 
-
-	$(function() {
-		// 1. Call the ajax
-		let access_token = qs["access_token"];
-	  $.ajax({
-	    url: 'users/104638216487363687391/stock?access_token='+access_token,
-	    method: 'GET',
-	  }).done(function(result) {
-	    addStock(result.portfolio.investedStocks);
-	  }).fail(function(err) {
-	    throw err;
-	  });
-	}());
+	function updateSingle(spec) {
+		for (let i=0; i<spec.length; i++) {
+	  	_state.stocks.push({
+	  		symbol: spec[i].stockId.stock.symbol,
+	 			buyInPrice: spec[i].stockId.stock.price,
+	 			currentPrice: spec[i].stockId.stock.currentPrice,
+	 			quantity: spec[i].stockId.quantity			
+			});
+		}	
+		calcTotalValue();
+	};
 
 	function addStock(spec) {
+		//calcTotalValue();
 	  for (let i=0; i<spec.length; i++) {
 	  	_state.stocks.push({
 	  		symbol: spec[i].stockId.stock.symbol,
 	 			buyInPrice: spec[i].stockId.stock.price,
-	 			currentPrice: undefined,
+	 			currentPrice: spec[i].stockId.stock.currentPrice,
 	 			quantity: spec[i].stockId.quantity			
 			});
 		}
-		updateStock();
+		//updateStock();
+		calcTotalValue();
 	};
 
-	function updateStock() {
-		// check if stock has undefined
-		for (let i=0; i<_state.stocks.length; i++) {
-			// If last one, that means it is finished
-			updatePrice(_state.stocks[i].symbol);
-		}
-	}
+	// function updateStock() {
+	// 	for (let i=0; i<_state.stocks.length; i++) {
+	// 		// If last one, that means it is finished
+	// 		updatePrice(_state.stocks[i].symbol);
+	// 	}
+	// }
 
-	function updatePrice(symbol) {
-		var MARKITONDEMAND_URL = "http://dev.markitondemand.com/Api/v2/Quote/jsonp";
-		$.ajax({
-	    data: { symbol: symbol },
-	    url: MARKITONDEMAND_URL,
-	    dataType: "jsonp",
-	    success: function(price) {
-	    	// Update price and if it is finished, go to another function
-	    	_state.stocks.find(stock => _state.stock.symbol == symbol).currentPrice = price.LastPrice;
+	// function updatePrice(symbol) {
+	// 	var MARKITONDEMAND_URL = "http://dev.markitondemand.com/Api/v2/Quote/jsonp";
+	// 	$.ajax({
+	//     data: { symbol: symbol },
+	//     url: MARKITONDEMAND_URL,
+	//     dataType: "jsonp",
+	//     success: function(price) {
+	//     	// Update price and if it is finished, go to another function
+	//     	_state.stocks.find(stock => stock.symbol == symbol).currentPrice = price.LastPrice;
 
-	    	if (_state.stocks.find(stock => _state.stock.currentPrice == undefined) == undefined) {
-					calcTotalValue();
-	    	}
-	    },
-	    error: handleError
-	  }); 
-	};
+	//     	if (_state.stocks.find(stock => stock.currentPrice == undefined) == undefined) {
+	// 				calcTotalValue();
+	//     	}
+	//     },
+	//     error: handleError
+	//   }); 
+	// };
 
 	function calcTotalValue() {
 		let defaultMoney = 1000000.00;
@@ -99,8 +93,6 @@ function makePortfolio() {
 
 		_state.totalValue = totalValue;
 		_state.buyingPower = calcBuyingPower();
-
-		//displayLatestStockUpdates();
 	}
 
 	function calcEarned() {
@@ -136,50 +128,14 @@ function makePortfolio() {
 	}
 
 	var getAllstock = function() {
-		//let _stocks = stocks.slice(); //clone the stocks here
 		// Clone the element using assign so that it will not affect _state when changes
-		let state = _state.stocks.map(elem => Object.assign({}, elem));
-		// return object using assign
-		return state;
+		// let stocks = _state.stocks.map(elem => Object.assign({}, elem));
+		let portfolio = Object.assign({}, _state);
+		return portfolio;
 	}
 
 	return Object.freeze({
-		//getStock,
-		//updateSingleStock
-
-		// return all getallstock function
-
-		// Need to clone the object in the stocks
 		getAllstock
 	});
-}
 
-// Using interface differently
-
-// var obj = makeProtfe 
-// pbj = return getall stock
-
-
-function displayLatestStockUpdates(stocks) {
-  $('.list').remove();    
-  console.log(stocks);
-  for (let i=0; i<stocks.length; i++) {
-    $('.portfolio').append(`
-      <div class="list">
-        <div class="col-4 stock stockInfo">${stocks[i].symbol}</div>
-        <div class="col-4 stockInfo">Quantity: <span class="quantity">${stocks[i].quantity}</span></div>
-        <div class="col-4 stockInfo">Buy in: <span class="buyinPrice">${stocks[i].buyInPrice}</span></div>
-        <div class="col-4 stockInfo">Current: <span class="currentPrice">${stocks[i].currentPrice}</span></div>
-        <div class="list-button">
-          <button id="buy-more" class="buy-more">More</button>
-          <button class="sell">Sell</button>
-          <input class="list-button-quantity" type="number" />
-        </div>
-      </div>`);
-  }
-
-  $('#available-money').text("$"+state.buyingPower);
-  $('#total-value').text("$"+state.totalValue);
-  $('#earned').text("$"+state.earned);
-  $('#invested').text("$"+state.invested);
 }

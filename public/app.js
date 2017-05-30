@@ -2,8 +2,8 @@ function getLatestStockUpdates() {
   //makePortfolio().updateSingleStock();
   //displayLatestStockUpdates();
 
-  let portfolio = getNewPortfolio().getAllStock();
-  displayLatestStockUpdates(portfolio);
+  let portfolio = makePortfolio(false);
+  displayLatestStockUpdates(portfolio.getAllstock());
 }
 
 function callMarkitOnDemandApi(searchTerm, quantity, access_token) {
@@ -17,16 +17,16 @@ function callMarkitOnDemandApi(searchTerm, quantity, access_token) {
       if (data.Status !== "SUCCESS") {
         alert("Unable to find the symbol. Try Use Symbol Finder!"); /* TODO Symbo Finder */
       } else {
-          price = data.LastPrice;
-          $.ajax({
-            url: 'users/104638216487363687391/stock?access_token='+access_token,
-            method: 'POST',
-            data: {
-              symbol: searchTerm,
-              quantity: quantity,
-              price: price
-            },
-            dataType: "json"
+        price = data.LastPrice;
+        $.ajax({
+          url: 'users/104638216487363687391/stock?access_token='+access_token,
+          method: 'POST',
+          data: {
+            symbol: searchTerm,
+            quantity: quantity,
+            price: price
+          },
+          dataType: "json"
         }).done(function(result) {
           getLatestStockUpdates();
         }).fail(function(err) {
@@ -49,23 +49,22 @@ function sellOrBuyStock(symbol, quantity) {
         if (data.Status !== "SUCCESS") {
           alert("Unable to find the symbol. Try Use Symbol Finder!"); /* TODO Symbo Finder */
         } else {
-            price = data.LastPrice;
+          price = data.LastPrice;
 
-    $.ajax({
-      url: 'users/104638216487363687391/stock/' + symbol + '?access_token=' + access_token,
-      method: 'PUT',
-      data: {
-        symbol: symbol,
-        quantity: quantity,
-        price: price
-      },
-      dataType: "json"
-    }).done(function(result) {
-      getLatestStockUpdates();
-    }).fail(function(err) {
-      console.log("Sell or buy error: " + err)
-    });
-            
+          $.ajax({
+            url: 'users/104638216487363687391/stock/' + symbol + '?access_token=' + access_token,
+            method: 'PUT',
+            data: {
+              symbol: symbol,
+              quantity: quantity,
+              price: price
+            },
+            dataType: "json"
+          }).done(function(result) {
+            getLatestStockUpdates();
+          }).fail(function(err) {
+            console.log("Sell or buy error: " + err)
+          });          
         }
       },
       error: handleError
@@ -123,6 +122,31 @@ function buyMoreStock(symbol, quantity) {
 
 function handleError(err) {
   console.log(err);
+  alert("This is free version. You have reach API call limit. Please try again later.");
+}
+
+function displayLatestStockUpdates(state) {
+  $('.list').remove();    
+  console.log(state);
+  for (let i=0; i<state.stocks.length; i++) {
+    $('.portfolio').append(`
+      <div class="list">
+        <div class="col-4 stock stockInfo">${state.stocks[i].symbol}</div>
+        <div class="col-4 stockInfo">Quantity: <span class="quantity">${state.stocks[i].quantity}</span></div>
+        <div class="col-4 stockInfo">Buy in: <span class="buyinPrice">${state.stocks[i].buyInPrice}</span></div>
+        <div class="col-4 stockInfo">Current: <span class="currentPrice">${state.stocks[i].currentPrice}</span></div>
+        <div class="list-button">
+          <button id="buy-more" class="buy-more">More</button>
+          <button class="sell">Sell</button>
+          <input class="list-button-quantity" type="number" />
+        </div>
+      </div>`);
+  }
+
+  $('#available-money').text("$"+state.buyingPower);
+  $('#total-value').text("$"+state.totalValue);
+  $('#earned').text("$"+state.earned);
+  $('#invested').text("$"+state.invested);
 }
 
 /* Need to update */
@@ -185,7 +209,54 @@ $('.portfolio').on('click', '.sell',function(event) {
   }
 });
 
+
 $(function() {
-  let portfolio = makePortfolio().getAllStock();
-  displayLatestStockUpdates(portfolio);
+  let access_token = qs["access_token"];
+  var MARKITONDEMAND_URL = "http://dev.markitondemand.com/Api/v2/Quote/jsonp";
+  
+  $.ajax({
+    url: 'users/104638216487363687391/stock?access_token='+access_token,
+    method: 'GET',
+  }).done(function(result) {
+      var initPortfolio = makePortfolio(true).getAllstock();
+      initPortfolio.stocks = result.portfolio.investedStocks.map(elem => Object.assign({}, elem));
+ 
+      for (let i=0; i<initPortfolio.stocks.length; i++) {
+        // If last one, that means it is finished
+        //updatePrice(_state.stocks[i].symbol);
+        let symbol = initPortfolio.stocks[i].stockId.stock.symbol;
+        $.ajax({
+          data: { symbol: symbol },
+          url: MARKITONDEMAND_URL,
+          dataType: "jsonp",
+          success: function(price) {
+            // Update price and if it is finished, go to another function
+            initPortfolio.stocks.find(stock => stock.stockId.stock.symbol == symbol).stockId.stock.currentPrice = price.LastPrice;
+
+            if (initPortfolio.stocks.find(stock => stock.stockId.stock.currentPrice == undefined) == undefined) {
+              //calcTotalValue();
+              let portfolio = makePortfolio(false, initPortfolio.stocks).getAllstock();
+              displayLatestStockUpdates(portfolio);          
+            }
+          },
+          error: handleError
+        }); 
+
+      }
+  }).fail(function(err) {
+    throw err;
+  });
+
+
+
+  // let p1 = new Promise(function(resolve, reject) {
+  //   let portfolio = makePortfolio(true);
+  //   resolve(portfolio);
+  // })
+
+  // p1.then(function(res) {
+  //   let stock = res.getAllstock();
+  //   displayLatestStockUpdates(stock);    
+  // })
+
 })
