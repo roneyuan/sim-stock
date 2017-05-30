@@ -8,11 +8,11 @@ function makePortfolio(init, spec) {
 		invested: 0,
 		earned: 0,
 		buyingPower: 0,
-		stocks: []
+		stocks: [],
 	};
 
 	if (init === true) {
-		calcTotalValue();
+		//calcTotalValue();
 	} else {
 		addStock(_stocks)
 	}
@@ -72,13 +72,19 @@ function makePortfolio(init, spec) {
 
 	var getAllstock = function() {
 		// Clone the element using assign so that it will not affect _state when changes
-		// let stocks = _state.stocks.map(elem => Object.assign({}, elem));
+		let stocks = _state.stocks.map(elem => Object.assign({}, elem));
+		//let stocks = Object.assign({}, _state);
+		return stocks;
+	}
+
+	var getPortfolio = function() {
 		let portfolio = Object.assign({}, _state);
 		return portfolio;
 	}
 
 	return Object.freeze({
-		getAllstock
+		getAllstock,
+		getPortfolio
 	});
 
 }

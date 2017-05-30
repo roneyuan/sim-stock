@@ -27,6 +27,7 @@ stockSchema.methods.apiRepr = function() {
 		price: this.price,
 		currentPrice: this.currentPrice,
 		quantity: this.quantity
+		// Need sell at
 	}
 }
 

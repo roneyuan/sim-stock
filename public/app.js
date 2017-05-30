@@ -1,11 +1,9 @@
 function getLatestStockUpdates() {
-  let access_token = qs["access_token"];
-  
   $.ajax({
     url: 'users/104638216487363687391/stock?access_token='+access_token,
     method: 'GET',
   }).done(function(result) {
-    let portfolio = makePortfolio(false, result.portfolio.investedStocks).getAllstock();
+    let portfolio = makePortfolio(false, result.portfolio.investedStocks).getPortfolio();
     displayLatestStockUpdates(portfolio);   
   }).fail(function(err) {
     throw err;
@@ -13,8 +11,6 @@ function getLatestStockUpdates() {
 }
 
 function callMarkitOnDemandApi(searchTerm, quantity, access_token) {
-  var MARKITONDEMAND_URL = "http://dev.markitondemand.com/Api/v2/Quote/jsonp"; 
-
   $.ajax({
     data: { symbol: searchTerm },
     url: MARKITONDEMAND_URL,
@@ -45,8 +41,6 @@ function callMarkitOnDemandApi(searchTerm, quantity, access_token) {
 }
 
 function sellOrBuyStock(symbol, quantity) {
-  let access_token = qs["access_token"];
-  var MARKITONDEMAND_URL = "http://dev.markitondemand.com/Api/v2/Quote/jsonp"; 
     $.ajax({
       data: { symbol: symbol },
       url: MARKITONDEMAND_URL,
@@ -86,7 +80,6 @@ function sellStock(symbol, quantity) {
   // 5. Update the state
 
   // 1. GET the buy-in Price
-  let access_token = qs["access_token"];
   $.ajax({
     url: 'users/104638216487363687391/stock/' + symbol + '?access_token=' + access_token,
     method: 'GET',
@@ -94,15 +87,13 @@ function sellStock(symbol, quantity) {
   }).done(function(result) {
     var buyInPrice = result.price;
     // 2. GET the latest price
-    var MARKITONDEMAND_URL = "http://dev.markitondemand.com/Api/v2/Quote/jsonp"; 
-
     $.ajax({
       data: { symbol: symbol },
       url: MARKITONDEMAND_URL,
       dataType: "jsonp",
       success: function(data) {
         if (data.Status !== "SUCCESS") {
-          alert("Unable to find the symbol. Try Use Symbol Finder!"); /* TODO Symbo Finder */
+          alert("Unable to find the symbol. Symbol Finder coming soon!"); /* TODO Symbo Finder */
         } else {
           let currentPrice = data.LastPrice;   
           let earning = (currentPrice - buyInPrice)*quantity     
@@ -155,20 +146,10 @@ function displayLatestStockUpdates(state) {
   $('#invested').text("$"+state.invested);
 }
 
-/* Need to update */
-var qs = (function(a) {
-  if (a == "") return {};
-  var b = {};
-  for (var i = 0; i < a.length; ++i)
-  {
-      var p=a[i].split('=', 2);
-      if (p.length == 1)
-          b[p[0]] = "";
-      else
-          b[p[0]] = decodeURIComponent(p[1].replace(/\+/g, " "));
-  }
-  return b;
-})(window.location.search.substr(1).split('&'));
+var getToken = (function(keyset) {
+  var res = keyset.split('=', 2)[1];
+  return res;
+}(location.search.substr(1)));
 
 
 $('#addStock').on('click', function(event) {
@@ -176,8 +157,9 @@ $('#addStock').on('click', function(event) {
 
   let symbol = $('#searchSymbol').val();
   let quantity = $('#enterQuantity').val();
-  let access_token = qs["access_token"];
   callMarkitOnDemandApi(symbol, +quantity, access_token);
+  $('#searchSymbol').val("");
+  $('#enterQuantity').val("");
 });
 
 $('.portfolio').on('click', '.buy-more',function(event) {
@@ -190,6 +172,7 @@ $('.portfolio').on('click', '.buy-more',function(event) {
   //let price = 30; // Get the latest price 
   if (buyingQuantity >= 0) {
     //buyStock(symbol)
+    $(event.target).parent()[0]['lastElementChild']['value'] = "";
     sellOrBuyStock(symbol, totalQuantity)
   } else {
     alert("Please enter quantity");
@@ -208,45 +191,47 @@ $('.portfolio').on('click', '.sell',function(event) {
     totalQuantity = +currentQuantity - +sellingQuantity;
     if (sellingQuantity >= 0) {
       //sellStock(symbol);
-      sellOrBuyStock(symbol, totalQuantity, price)
+      $(event.target).parent()[0]['lastElementChild']['value'] = "";
+      sellOrBuyStock(symbol, totalQuantity, price);
     } else {
       alert("Please enter quantity");
     }       
   }
 });
 
-
 $(function() {
-  let access_token = qs["access_token"];
-  var MARKITONDEMAND_URL = "http://dev.markitondemand.com/Api/v2/Quote/jsonp";
-  
   $.ajax({
     url: 'users/104638216487363687391/stock?access_token='+access_token,
     method: 'GET',
   }).done(function(result) {
-      var initPortfolio = makePortfolio(true).getAllstock();
-      initPortfolio.stocks = result.portfolio.investedStocks.map(elem => Object.assign({}, elem));
+      var initStocks = makePortfolio(true).getAllstock();
+      initStocks = result.portfolio.investedStocks.map(elem => Object.assign({}, elem));
  
-      for (let i=0; i<initPortfolio.stocks.length; i++) {
-        let symbol = initPortfolio.stocks[i].stockId.stock.symbol;
+      for (let i=0; i<initStocks.length; i++) {
+        let symbol = initStocks[i].stockId.stock.symbol;
         $.ajax({
           data: { symbol: symbol },
           url: MARKITONDEMAND_URL,
           dataType: "jsonp",
           success: function(price) {
-            // Update price and if it is finished, go to another function
-            initPortfolio.stocks.find(stock => stock.stockId.stock.symbol == symbol).stockId.stock.currentPrice = price.LastPrice;
+            // Find and update the price that matches the symbol
+            initStocks
+              .find(stock => stock.stockId.stock.symbol == symbol)
+              .stockId.stock.currentPrice = price.LastPrice;
 
-            if (initPortfolio.stocks.find(stock => stock.stockId.stock.currentPrice == undefined) == undefined) {
-              let portfolio = makePortfolio(false, initPortfolio.stocks).getAllstock();
+            // Check if all current price are updated
+            if (i == initStocks.length - 1) {
+              let portfolio = makePortfolio(false, initStocks).getPortfolio();
               displayLatestStockUpdates(portfolio);          
             }
           },
           error: handleError
         }); 
-
       }
   }).fail(function(err) {
     throw err;
   });
 })
+
+var access_token = getToken;
+var MARKITONDEMAND_URL = "http://dev.markitondemand.com/Api/v2/Quote/jsonp";
