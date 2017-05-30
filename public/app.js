@@ -1,9 +1,15 @@
 function getLatestStockUpdates() {
-  //makePortfolio().updateSingleStock();
-  //displayLatestStockUpdates();
-
-  let portfolio = makePortfolio(false);
-  displayLatestStockUpdates(portfolio.getAllstock());
+  let access_token = qs["access_token"];
+  
+  $.ajax({
+    url: 'users/104638216487363687391/stock?access_token='+access_token,
+    method: 'GET',
+  }).done(function(result) {
+    let portfolio = makePortfolio(false, result.portfolio.investedStocks).getAllstock();
+    displayLatestStockUpdates(portfolio);   
+  }).fail(function(err) {
+    throw err;
+  });
 }
 
 function callMarkitOnDemandApi(searchTerm, quantity, access_token) {
@@ -222,8 +228,6 @@ $(function() {
       initPortfolio.stocks = result.portfolio.investedStocks.map(elem => Object.assign({}, elem));
  
       for (let i=0; i<initPortfolio.stocks.length; i++) {
-        // If last one, that means it is finished
-        //updatePrice(_state.stocks[i].symbol);
         let symbol = initPortfolio.stocks[i].stockId.stock.symbol;
         $.ajax({
           data: { symbol: symbol },
@@ -234,7 +238,6 @@ $(function() {
             initPortfolio.stocks.find(stock => stock.stockId.stock.symbol == symbol).stockId.stock.currentPrice = price.LastPrice;
 
             if (initPortfolio.stocks.find(stock => stock.stockId.stock.currentPrice == undefined) == undefined) {
-              //calcTotalValue();
               let portfolio = makePortfolio(false, initPortfolio.stocks).getAllstock();
               displayLatestStockUpdates(portfolio);          
             }
@@ -246,17 +249,4 @@ $(function() {
   }).fail(function(err) {
     throw err;
   });
-
-
-
-  // let p1 = new Promise(function(resolve, reject) {
-  //   let portfolio = makePortfolio(true);
-  //   resolve(portfolio);
-  // })
-
-  // p1.then(function(res) {
-  //   let stock = res.getAllstock();
-  //   displayLatestStockUpdates(stock);    
-  // })
-
 })

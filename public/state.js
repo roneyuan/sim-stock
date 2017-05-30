@@ -11,45 +11,13 @@ function makePortfolio(init, spec) {
 		stocks: []
 	};
 
-	// let access_token = qs["access_token"];
-
-	// $.ajax({
- //    url: 'users/104638216487363687391/stock?access_token='+access_token,
- //    method: 'GET',
- //  }).done(function(result) {
- //  	if (init === true) {
-	// 		addStock(result.portfolio.investedStocks);
- //  	} else {
-	// 		updateSingle(result.portfolio.investedStocks);
- //  	}
- //  }).fail(function(err) {
- //    throw err;
- //  });
-
-	 if (init === true) {
-	 //	$(addStock(_portfolio));
-	 	//_state.stocks = _stocks;
-	 	calcTotalValue();
-	 } else {
-	 	//$(updateSingle(_portfolio))
-addStock(_stocks)
-	 }
-
-
-	function updateSingle(spec) {
-		for (let i=0; i<spec.length; i++) {
-	  	_state.stocks.push({
-	  		symbol: spec[i].stockId.stock.symbol,
-	 			buyInPrice: spec[i].stockId.stock.price,
-	 			currentPrice: spec[i].stockId.stock.currentPrice,
-	 			quantity: spec[i].stockId.quantity			
-			});
-		}	
+	if (init === true) {
 		calcTotalValue();
-	};
+	} else {
+		addStock(_stocks)
+	}
 
 	function addStock(spec) {
-		//calcTotalValue();
 	  for (let i=0; i<spec.length; i++) {
 	  	_state.stocks.push({
 	  		symbol: spec[i].stockId.stock.symbol,
@@ -58,34 +26,9 @@ addStock(_stocks)
 	 			quantity: spec[i].stockId.quantity			
 			});
 		}
-		//updateStock();
+
 		calcTotalValue();
 	};
-
-	// function updateStock() {
-	// 	for (let i=0; i<_state.stocks.length; i++) {
-	// 		// If last one, that means it is finished
-	// 		updatePrice(_state.stocks[i].symbol);
-	// 	}
-	// }
-
-	// function updatePrice(symbol) {
-	// 	var MARKITONDEMAND_URL = "http://dev.markitondemand.com/Api/v2/Quote/jsonp";
-	// 	$.ajax({
-	//     data: { symbol: symbol },
-	//     url: MARKITONDEMAND_URL,
-	//     dataType: "jsonp",
-	//     success: function(price) {
-	//     	// Update price and if it is finished, go to another function
-	//     	_state.stocks.find(stock => stock.symbol == symbol).currentPrice = price.LastPrice;
-
-	//     	if (_state.stocks.find(stock => stock.currentPrice == undefined) == undefined) {
-	// 				calcTotalValue();
-	//     	}
-	//     },
-	//     error: handleError
-	//   }); 
-	// };
 
 	function calcTotalValue() {
 		let defaultMoney = 1000000.00;
