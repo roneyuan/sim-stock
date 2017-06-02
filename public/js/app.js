@@ -1,4 +1,12 @@
+var getToken = (function(keyset) {
+  var res = keyset.split('=', 2)[1];
+  
+  return res;
+}(location.search.substr(1)));
+
 let portfolio;
+let access_token = getToken;
+let MARKITONDEMAND_URL = "http://dev.markitondemand.com/Api/v2/Quote/jsonp";
 
 function getLatestStockUpdates() {
   $.ajax({
@@ -102,12 +110,6 @@ function displayLatestStockUpdates(state) {
   $('#invested').text("$"+state.invested);
 }
 
-var getToken = (function(keyset) {
-  var res = keyset.split('=', 2)[1];
-  return res;
-}(location.search.substr(1)));
-
-
 $('#addStock').on('click', function(event) {
   event.preventDefault();
 
@@ -203,12 +205,6 @@ $(function() {
     throw err;
   });
 })
-
-var access_token = getToken;
-var MARKITONDEMAND_URL = "http://dev.markitondemand.com/Api/v2/Quote/jsonp";
-
-
-
 
 
 /* Future optimization */
