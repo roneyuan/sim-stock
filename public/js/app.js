@@ -201,18 +201,34 @@ $('.portfolio').on('click', '.sell',function(event) {
   }
 });
 
+function clonePortfolio(stocks) {
+
+  let slicedStocks = stocks.slice();
+
+  let result = slicedStocks.map((stock) => 
+    Object.assign({}, {
+      _id: stock._id, 
+      stockId: Object.assign({}, { 
+        quantity: stock.stockId.quantity, 
+        stock: Object.assign({}, stock.stockId.stock)
+      })
+    })
+  );
+// object.keys that fit that object.map ;
+  //res.map((stock) => console.log(stock))
+
+  //console.log(result);
+
+  return result;
+}
+
 $(function() {
   $.ajax({
     url: 'users/104638216487363687391/stock?access_token='+access_token,
     method: 'GET',
   }).done(function(result) {
-    //var initStocks = makePortfolio(true).getAllstock(); does not need it
-     var initStocks = result.portfolio.investedStocks.map(elem => JSON.parse(JSON.stringify(elem))); //
-    // var initStocks = result.portfolio.investedStocks.map((stock) => 
-    //   Object.keys(stock).map(stockId => Object.assign({}, stockId).map((res =>
-    //     console.log(res))))
-
-    // );
+     //var initStocks = result.portfolio.investedStocks.map(elem => JSON.parse(JSON.stringify(elem))); //
+    var initStocks = clonePortfolio(result.portfolio.investedStocks);
 
 
 
@@ -226,10 +242,10 @@ $(function() {
       // Separate everything from references
       // Make initStocks changes independenltly as result.
 
-      initStocks[0].stockId.quantity = true;
+      result.portfolio.investedStocks[0].stockId.quantity = true;
       console.log("Res: " + result.portfolio.investedStocks[0].stockId.quantity)
       initStocks.forEach(obj => console.log(obj));
-//      console.log("Init: " + initStocks)
+      console.log("Init: " + initStocks)
  
       for (let i=0; i<initStocks.length; i++) {
         let symbol = initStocks[i].stockId.stock.symbol;

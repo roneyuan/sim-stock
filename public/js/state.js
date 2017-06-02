@@ -18,7 +18,7 @@ function makePortfolio(init, spec) {
 	}
 
 	function addStock(spec) {
-	  for (let i=0; i<spec.length; i++) {
+	  for (let i=0; i<spec.length; i += 1) { // TODO - Use forEach
 	  	_state.stocks.push({
 	  		symbol: spec[i].stockId.stock.symbol,
 	 			buyInPrice: spec[i].stockId.stock.price,
@@ -42,7 +42,7 @@ function makePortfolio(init, spec) {
 		let len = _state.stocks.length;
 		let invest = calcInvested();
 		let currentTotal = 0;
-		for (let i=0; i < len; i++) {
+		for (let i=0; i < len; i += 1) { // TODO - User forEach  - Use +=1 better positioning 
 			currentTotal += _state.stocks[i].currentPrice*_state.stocks[i].quantity;
 		}
 
@@ -56,7 +56,7 @@ function makePortfolio(init, spec) {
 	function calcInvested() {
 		let len = _state.stocks.length;
 		let invested = 0;
-		for (let i=0; i < len; i++) {
+		for (let i=0; i < len; i++) { // Use forEach
 			invested += _state.stocks[i].buyInPrice*_state.stocks[i].quantity;
 		}
 		//console.log("Invested: " + invested);
