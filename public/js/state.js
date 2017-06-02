@@ -1,5 +1,3 @@
-// Need another constructor for updating single instead of put in makePortfolio
-// Use initializing in the portfolio for get stock
 function makePortfolio(init, spec) {
 	var _stocks = spec;
 
@@ -11,11 +9,9 @@ function makePortfolio(init, spec) {
 		stocks: [],
 	};
 
-	if (init === true) {
-		//calcTotalValue();
-	} else {
+	if (init === false) {
 		addStock(_stocks)
-	}
+	} 
 
 	function addStock(spec) {
 	  for (let i=0; i<spec.length; i += 1) { // TODO - Use forEach
@@ -47,7 +43,6 @@ function makePortfolio(init, spec) {
 		}
 
 		let earned = currentTotal - invest;
-		//console.log("Earned: " + earned);
 		_state.earned = +earned.toFixed(2);
 		return +earned.toFixed(2);
 
@@ -59,7 +54,6 @@ function makePortfolio(init, spec) {
 		for (let i=0; i < len; i++) { // Use forEach
 			invested += _state.stocks[i].buyInPrice*_state.stocks[i].quantity;
 		}
-		//console.log("Invested: " + invested);
 		_state.invested = +invested.toFixed(2);
 		return +invested.toFixed(2);
 	}

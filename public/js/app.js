@@ -73,52 +73,6 @@ function sellOrBuyStock(symbol, quantity) {
     }); 
 }
 
-/* Future optimization */
-function sellStock(symbol, quantity) {
-  // 1. Get the latest price
-  // 2. Get the buy-in price
-  // 3. Calculate the earning
-  // 4. Update quantity and earned
-  // 5. Update the state
-
-  // 1. GET the buy-in Price
-  $.ajax({
-    url: 'users/104638216487363687391/stock/' + symbol + '?access_token=' + access_token,
-    method: 'GET',
-    dataType: "json"
-  }).done(function(result) {
-    var buyInPrice = result.price;
-    // 2. GET the latest price
-    $.ajax({
-      data: { symbol: symbol },
-      url: MARKITONDEMAND_URL,
-      dataType: "jsonp",
-      success: function(data) {
-        if (data.Status !== "SUCCESS") {
-          alert("Unable to find the symbol. Symbol Finder coming soon!"); /* TODO Symbo Finder */
-        } else {
-          let currentPrice = data.LastPrice;   
-          let earning = (currentPrice - buyInPrice)*quantity     
-          // 3. Update quantity and earned
-        }
-      },
-      error: handleError
-    });     
-
-  }).fail(function(err) {
-    console.log("Sell or buy error: " + err)
-  });  
-
-}
-
-function buyMoreStock(symbol, quantity) {
-  // 1. Get the buy-price
-  // 2. Get the latest price
-  // 3. Calculate the average
-  // 4. Update the price
-  // 5. Update the quantity
-}
-
 function handleError(err) {
   console.log(err);
   alert("This is free version. You have reach API call limit. Please try again later.");
@@ -167,11 +121,10 @@ $('#addStock').on('click', function(event) {
 $('.portfolio').on('click', '.buy-more',function(event) {
   event.preventDefault();
 
-  let buyingQuantity = $(event.target).parent()[0]['lastElementChild']['value']; // Easier way?
+  let buyingQuantity = $(event.target).parent()[0]['lastElementChild']['value'];
   let symbol = $(event.target).parent().parent().find('.stock').text();
   let currentQuantity = $(event.target).parent().parent().find('.quantity').text();
   let totalQuantity = +buyingQuantity + +currentQuantity;
-  //let price = 30; // Get the latest price 
   if (buyingQuantity >= 0) {
     //buyStock(symbol)
     $(event.target).parent()[0]['lastElementChild']['value'] = "";
@@ -183,7 +136,7 @@ $('.portfolio').on('click', '.buy-more',function(event) {
 
 $('.portfolio').on('click', '.sell',function(event) {
   event.preventDefault();
-  let sellingQuantity = $(event.target).parent()[0]['lastElementChild']['value']; // Easier way?
+  let sellingQuantity = $(event.target).parent()[0]['lastElementChild']['value'];
   let symbol = $(event.target).parent().parent().find('.stock').text();
   let currentQuantity = $(event.target).parent().parent().find('.quantity').text();
   if (+sellingQuantity > +currentQuantity) {
@@ -214,10 +167,6 @@ function clonePortfolio(stocks) {
       })
     })
   );
-// object.keys that fit that object.map ;
-  //res.map((stock) => console.log(stock))
-
-  //console.log(result);
 
   return result;
 }
@@ -227,47 +176,29 @@ $(function() {
     url: 'users/104638216487363687391/stock?access_token='+access_token,
     method: 'GET',
   }).done(function(result) {
-     //var initStocks = result.portfolio.investedStocks.map(elem => JSON.parse(JSON.stringify(elem))); //
     var initStocks = clonePortfolio(result.portfolio.investedStocks);
 
+    for (let i=0; i<initStocks.length; i++) {
+      let symbol = initStocks[i].stockId.stock.symbol;
+      $.ajax({
+        data: { symbol: symbol },
+        url: MARKITONDEMAND_URL,
+        dataType: "jsonp",
+        success: function(price) {
+          // Find and update the price that matches the symbol
+          initStocks
+            .find(stock => stock.stockId.stock.symbol == symbol)
+            .stockId.stock.currentPrice = price.LastPrice;
 
-
-      // Imparative - How the machine should do it.
-      // Declrative - What you want it to do
-
-      // 210 contains references to object intead of distinct objects containing the same value
-      // We put references here becuase if we change initStocks and the data from result will also change 
-      // if we do not use references.
-      // Challenge problems here - make everything explicity that references to result.
-      // Separate everything from references
-      // Make initStocks changes independenltly as result.
-
-      result.portfolio.investedStocks[0].stockId.quantity = true;
-      console.log("Res: " + result.portfolio.investedStocks[0].stockId.quantity)
-      initStocks.forEach(obj => console.log(obj));
-      console.log("Init: " + initStocks)
- 
-      for (let i=0; i<initStocks.length; i++) {
-        let symbol = initStocks[i].stockId.stock.symbol;
-        $.ajax({
-          data: { symbol: symbol },
-          url: MARKITONDEMAND_URL,
-          dataType: "jsonp",
-          success: function(price) {
-            // Find and update the price that matches the symbol
-            initStocks
-              .find(stock => stock.stockId.stock.symbol == symbol)
-              .stockId.stock.currentPrice = price.LastPrice;
-
-            // Check if all current price are updated
-            if (i == initStocks.length - 1) {
-              portfolio = makePortfolio(false, initStocks);
-              displayLatestStockUpdates(portfolio.getPortfolio());          
-            }
-          },
-          error: handleError
-        }); 
-      }
+          // Check if all current price are updated
+          if (i == initStocks.length - 1) {
+            portfolio = makePortfolio(false, initStocks);
+            displayLatestStockUpdates(portfolio.getPortfolio());          
+          }
+        },
+        error: handleError
+      }); 
+    }
   }).fail(function(err) {
     throw err;
   });
@@ -275,3 +206,54 @@ $(function() {
 
 var access_token = getToken;
 var MARKITONDEMAND_URL = "http://dev.markitondemand.com/Api/v2/Quote/jsonp";
+
+
+
+
+
+/* Future optimization */
+function sellStock(symbol, quantity) {
+  // 1. Get the latest price
+  // 2. Get the buy-in price
+  // 3. Calculate the earning
+  // 4. Update quantity and earned
+  // 5. Update the state
+
+  // 1. GET the buy-in Price
+  $.ajax({
+    url: 'users/104638216487363687391/stock/' + symbol + '?access_token=' + access_token,
+    method: 'GET',
+    dataType: "json"
+  }).done(function(result) {
+    var buyInPrice = result.price;
+    // 2. GET the latest price
+    $.ajax({
+      data: { symbol: symbol },
+      url: MARKITONDEMAND_URL,
+      dataType: "jsonp",
+      success: function(data) {
+        if (data.Status !== "SUCCESS") {
+          alert("Unable to find the symbol. Symbol Finder coming soon!"); /* TODO Symbo Finder */
+        } else {
+          let currentPrice = data.LastPrice;   
+          let earning = (currentPrice - buyInPrice)*quantity     
+          // 3. Update quantity and earned
+        }
+      },
+      error: handleError
+    });     
+
+  }).fail(function(err) {
+    console.log("Sell or buy error: " + err)
+  });  
+
+}
+
+function buyMoreStock(symbol, quantity) {
+  // 1. Get the buy-price
+  // 2. Get the latest price
+  // 3. Calculate the average
+  // 4. Update the price
+  // 5. Update the quantity
+}
+/* End Here */

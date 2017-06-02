@@ -1,6 +1,7 @@
 * {
 	font-family: 'Source Sans Pro', sans-serif;
 }
+
 header { 
 	background-color: #2d6492; 
 	padding-top:50px;
@@ -8,8 +9,7 @@ header {
 	color: white;
 
 }
-/*.col-4 { background-color: green; }*/
-/*.col-8 { background-color: blue; }*/
+
 footer { background-color: yellow; }
 
 body {
@@ -33,7 +33,6 @@ a {
 }
 
 .inner-land {
-
 	width: 550px;
 	height: 500px;
 	background-color: rgba(147, 178, 232, 0.55);
@@ -88,7 +87,6 @@ a {
 }
 
 .current-value { 
-	/*height: 300px; */
 	text-align: center;
 	padding-top: 30px;
 	font-size: 20px;
@@ -102,14 +100,10 @@ a {
 	text-align: center;
 }
 .portfolio, .control { 
-	/*height :500px;*/
 	background-color: white;
 	border-radius: 2px;
 	padding: 10px 10px;
 	margin-top: 20px;
-}
-.control { 
-	/*height: 200px;*/
 }
 
 .searchSymbol, .enterAmount {
@@ -118,7 +112,6 @@ a {
 	font-size: 25px;
 	padding-left: 5px;
 	border-radius: 5px;
-	/*background-color: gray;*/
 	outline: none;
 	box-shadow: none;
 	background-color: rgba(241, 241, 241, 0.80);
@@ -144,7 +137,6 @@ a {
 }
 
 .list { 
-	/*background-color: white;*/ 
 	padding-top: 20px; 
 	padding-bottom: 20px; 
 	padding-left: 25px;
@@ -153,7 +145,6 @@ a {
 }
 
 .list-button {
-	/*margin: auto;*/
 	text-align: center;
 	margin-top: 30px;
 }
@@ -167,7 +158,6 @@ a {
 	height: 30px;
 	font-size: 18px;
 	background-color: aqua;
-	/*padding: 5px 5px;*/
 	margin: auto 10px;
 	border-radius: 5px;
 	border: none;
@@ -183,7 +173,6 @@ a {
 	font-size: 20px;
 	padding-left: 5px;
 	border-radius: 5px;
-	/*background-color: gray;*/
 	outline: none;
 	box-shadow: none;
 	background-color: rgba(241, 241, 241, 0.80);
@@ -193,15 +182,11 @@ a {
 }
 
 .buying-power { 
-	/*height: 50px; */
-	/*background-color: red; */
 	padding-top: 20px; 
 	padding-bottom: 20px; 
 	padding-left: 20px;
 }
 .add { 
-	/*height: 150px; */
-	/*background-color: purple; */
 	padding-top: 20px; 
 	padding-bottom: 20px; 
 }
@@ -222,8 +207,6 @@ form {
 	.inner-land {
 		margin: 50px auto;
 		width: 80%;
-		/*height: 600px;*/
-		/*background-color: rgba(147, 178, 232, 0.55);*/
 		border-radius: 5px;
 		padding-top: 20px;
 	}
