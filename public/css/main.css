@@ -3,7 +3,16 @@
 }
 
 header { 
+	background:     linear-gradient(
+      rgba(45, 100, 146, 0.55), 
+      rgba(45, 100, 146, 0.55)
+    ),
+    /* bottom, image */
+    url('../img/header.jpg');
+	/*background-image: url('../img/bg.jpg');*/
+	/*opacity: 0.5;*/
 	background-color: #2d6492; 
+	background-size: cover;
 	padding-top:50px;
 	padding-bottom: 50px;
 	color: white;
@@ -50,6 +59,13 @@ a {
 	position: absolute;
 	bottom: 0;
 	right: 0;
+}
+
+.creditHome {
+	position: absolute;
+	right: 0;
+	font-size: 8px;
+	margin-top: 40px;	
 }
 
 .land-button {
@@ -106,9 +122,14 @@ a {
 	margin-top: 20px;
 }
 
+.control {
+	padding-bottom: 30px;
+}
+
 .searchSymbol, .enterAmount {
 	width: 150px;
 	height: 30px;
+	margin-top: 10px;
 	font-size: 25px;
 	padding-left: 5px;
 	border-radius: 5px;
@@ -120,7 +141,11 @@ a {
 
 .amount, .search {
 	padding-top: 20px;
-	padding-bottom: 20px;
+	padding-bottom: 10px;
+}
+
+.amount {
+	padding-bottom: 30px;
 }
 
 .buyNew {
@@ -182,13 +207,13 @@ a {
 }
 
 .buying-power { 
-	padding-top: 20px; 
-	padding-bottom: 20px; 
+	padding-top: 10px; 
+	/*padding-bottom: 10px; */
 	padding-left: 20px;
 }
 .add { 
-	padding-top: 20px; 
-	padding-bottom: 20px; 
+/*	padding-top: 20px; 
+	padding-bottom: 20px; */
 }
 
 .right-box {
