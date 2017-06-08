@@ -20,16 +20,21 @@ function getLatestStockUpdates() {
   });
 }
 
-function callMarkitOnDemandApi(searchTerm, quantity, access_token) {
+function callBarchartOnDemandApi(searchTerm, quantity, access_token) {
+  let url = "http://marketdata.websol.barchart.com/getQuote.jsonp"; 
   $.ajax({
-    data: { symbol: searchTerm },
-    url: MARKITONDEMAND_URL,
+    data: { 
+      symbols: searchTerm,
+      key: "2fa1f157fb3ce032ffbb1d9fc16b687f"
+    },
+    url: url,
     dataType: "jsonp",
     success: function(data) {
-      if (data.Status !== "SUCCESS") {
+      console.log(data);
+      if (data.status.code != 200) {
         alert("Unable to find the symbol. Try Use Symbol Finder!"); /* TODO Symbo Finder */
       } else {
-        price = data.LastPrice;
+        price = data.results[0].lastPrice;
         $.ajax({
           url: 'users/104638216487363687391/stock?access_token='+access_token,
           method: 'POST',
@@ -43,7 +48,7 @@ function callMarkitOnDemandApi(searchTerm, quantity, access_token) {
           getLatestStockUpdates();
         }).fail(function(err) {
           console.log("Update price error: " + err)
-        });           
+        }); 
       }
     },
     error: handleError
@@ -51,34 +56,38 @@ function callMarkitOnDemandApi(searchTerm, quantity, access_token) {
 }
 
 function sellOrBuyStock(symbol, quantity) {
-    $.ajax({
-      data: { symbol: symbol },
-      url: MARKITONDEMAND_URL,
-      dataType: "jsonp",
-      success: function(data) {
-        if (data.Status !== "SUCCESS") {
-          alert("Unable to find the symbol. Try Use Symbol Finder!"); /* TODO Symbo Finder */
-        } else {
-          price = data.LastPrice;
+  let url = "http://marketdata.websol.barchart.com/getQuote.jsonp"; 
+  $.ajax({
+    data: { 
+      symbols: symbol,
+      key: "2fa1f157fb3ce032ffbb1d9fc16b687f"
+    },
+    url: url,
+    dataType: "jsonp",
+    success: function(data) {
+      if (data.Status !== "SUCCESS") {
+        alert("Unable to find the symbol. Try Use Symbol Finder!"); /* TODO Symbo Finder */
+      } else {
+        price = data.results[0].lastPrice;
 
-          $.ajax({
-            url: 'users/104638216487363687391/stock/' + symbol + '?access_token=' + access_token,
-            method: 'PUT',
-            data: {
-              symbol: symbol,
-              quantity: quantity,
-              price: price
-            },
-            dataType: "json"
-          }).done(function(result) {
-            getLatestStockUpdates();
-          }).fail(function(err) {
-            console.log("Sell or buy error: " + err)
-          });          
-        }
-      },
-      error: handleError
-    }); 
+        $.ajax({
+          url: 'users/104638216487363687391/stock/' + symbol + '?access_token=' + access_token,
+          method: 'PUT',
+          data: {
+            symbol: symbol,
+            quantity: quantity,
+            price: price
+          },
+          dataType: "json"
+        }).done(function(result) {
+          getLatestStockUpdates();
+        }).fail(function(err) {
+          console.log("Sell or buy error: " + err)
+        });          
+      }
+    },
+    error: handleError
+  }); 
 }
 
 function handleError(err) {
@@ -115,7 +124,7 @@ $('#addStock').on('click', function(event) {
 
   let symbol = $('#searchSymbol').val();
   let quantity = $('#enterQuantity').val();
-  callMarkitOnDemandApi(symbol, +quantity, access_token);
+  callBarchartOnDemandApi(symbol, +quantity, access_token);
   $('#searchSymbol').val("");
   $('#enterQuantity').val("");
 });
@@ -182,15 +191,19 @@ $(function() {
 
     for (let i=0; i<initStocks.length; i++) {
       let symbol = initStocks[i].stockId.stock.symbol;
-      $.ajax({
-        data: { symbol: symbol },
-        url: MARKITONDEMAND_URL,
-        dataType: "jsonp",
-        success: function(price) {
+  let url = "http://marketdata.websol.barchart.com/getQuote.jsonp"; 
+  $.ajax({
+    data: { 
+      symbols: symbol,
+      key: "2fa1f157fb3ce032ffbb1d9fc16b687f"
+    },
+    url: url,
+    dataType: "jsonp",
+    success: function(data) {
           // Find and update the price that matches the symbol
           initStocks
             .find(stock => stock.stockId.stock.symbol == symbol)
-            .stockId.stock.currentPrice = price.LastPrice;
+            .stockId.stock.currentPrice = data.results[0].lastPrice;
 
           // Check if all current price are updated
           if (i == initStocks.length - 1) {
@@ -223,15 +236,19 @@ function sellStock(symbol, quantity) {
   }).done(function(result) {
     var buyInPrice = result.price;
     // 2. GET the latest price
-    $.ajax({
-      data: { symbol: symbol },
-      url: MARKITONDEMAND_URL,
-      dataType: "jsonp",
-      success: function(data) {
+  let url = "http://marketdata.websol.barchart.com/getQuote.jsonp"; 
+  $.ajax({
+    data: { 
+      symbols: symbol,
+      key: "2fa1f157fb3ce032ffbb1d9fc16b687f"
+    },
+    url: url,
+    dataType: "jsonp",
+    success: function(data) {
         if (data.Status !== "SUCCESS") {
           alert("Unable to find the symbol. Symbol Finder coming soon!"); /* TODO Symbo Finder */
         } else {
-          let currentPrice = data.LastPrice;   
+          let currentPrice = data.results[0].lastPrice;  
           let earning = (currentPrice - buyInPrice)*quantity     
           // 3. Update quantity and earned
         }
