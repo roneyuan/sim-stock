@@ -65,7 +65,7 @@ function sellOrBuyStock(symbol, quantity) {
     url: url,
     dataType: "jsonp",
     success: function(data) {
-      if (data.Status !== "SUCCESS") {
+      if (data.status.code != 200) {
         alert("Unable to find the symbol. Try Use Symbol Finder!"); /* TODO Symbo Finder */
       } else {
         price = data.results[0].lastPrice;
@@ -191,15 +191,15 @@ $(function() {
 
     for (let i=0; i<initStocks.length; i++) {
       let symbol = initStocks[i].stockId.stock.symbol;
-  let url = "http://marketdata.websol.barchart.com/getQuote.jsonp"; 
-  $.ajax({
-    data: { 
-      symbols: symbol,
-      key: "2fa1f157fb3ce032ffbb1d9fc16b687f"
-    },
-    url: url,
-    dataType: "jsonp",
-    success: function(data) {
+      let url = "http://marketdata.websol.barchart.com/getQuote.jsonp"; 
+      $.ajax({
+        data: { 
+          symbols: symbol,
+          key: "2fa1f157fb3ce032ffbb1d9fc16b687f"
+        },
+        url: url,
+        dataType: "jsonp",
+        success: function(data) {
           // Find and update the price that matches the symbol
           initStocks
             .find(stock => stock.stockId.stock.symbol == symbol)
@@ -236,16 +236,16 @@ function sellStock(symbol, quantity) {
   }).done(function(result) {
     var buyInPrice = result.price;
     // 2. GET the latest price
-  let url = "http://marketdata.websol.barchart.com/getQuote.jsonp"; 
-  $.ajax({
-    data: { 
-      symbols: symbol,
-      key: "2fa1f157fb3ce032ffbb1d9fc16b687f"
-    },
-    url: url,
-    dataType: "jsonp",
-    success: function(data) {
-        if (data.Status !== "SUCCESS") {
+    let url = "http://marketdata.websol.barchart.com/getQuote.jsonp"; 
+    $.ajax({
+      data: { 
+        symbols: symbol,
+        key: "2fa1f157fb3ce032ffbb1d9fc16b687f"
+      },
+      url: url,
+      dataType: "jsonp",
+      success: function(data) {
+        if (data.status.code != 200) {
           alert("Unable to find the symbol. Symbol Finder coming soon!"); /* TODO Symbo Finder */
         } else {
           let currentPrice = data.results[0].lastPrice;  
@@ -255,11 +255,9 @@ function sellStock(symbol, quantity) {
       },
       error: handleError
     });     
-
   }).fail(function(err) {
     console.log("Sell or buy error: " + err)
   });  
-
 }
 
 function buyMoreStock(symbol, quantity) {
