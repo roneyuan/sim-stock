@@ -66,25 +66,26 @@ router.post('/login', (req, res) => {
 
   username = username.trim();
   password = password.trim();
-
+  let user;
   return User
     .findOne({username}) // find will return an array
     .exec()
-    .then(user => {
-      if (user) { 	
-      	if (user.password === req.body.password) {
-      		return res.status(201).json({
-      			username: user.username,
-      			nickname: user.nickname,
-      			password: user.hashPassword(user.password),
-      			portfolio: user.portfolio
-      		});
-      	} else {
-      		return res.status(422).json({message: 'Wrong Password'});
-      	}
-      } else {
-      	return res.status(422).json({message: 'Wrong Username'});
-      }
+    .then(_user => {
+    	user = _user;
+    	console.log(password)
+    	// Everytime is different?
+    	return User.hashPassword(password);
+    })
+    .then(hash => {
+    	console.log(hash);
+    	if (user.validatePassword(password)) {
+    		return res.status(201).json({
+    			username: user.username,
+    			nickname: user.nickname,
+    			password: hash,
+    			portfolio: user.portfolio
+    		});    		
+    	}
     })
     .catch(err => {
     	console.log(err);

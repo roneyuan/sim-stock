@@ -49,6 +49,8 @@ const UserSchema = mongoose.Schema({
 UserSchema.plugin(findOrCreate);
 
 UserSchema.methods.validatePassword = function(password) {
+	console.log(password);
+	console.log("THIS: ", this.password)
 	return bcrypt.compare(password, this.password);
 }
 
