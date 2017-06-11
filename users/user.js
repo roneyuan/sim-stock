@@ -1,4 +1,4 @@
-//const bcrypt = require('bcrypt-nodejs');
+const bcrypt = require('bcrypt-nodejs');
 const mongoose = require('mongoose');
 const findOrCreate = require('mongoose-find-or-create');
 Schema = mongoose.Schema;
@@ -52,13 +52,13 @@ UserSchema.methods.validatePassword = function(password) {
 	return bcrypt.compare(password, this.password);
 }
 
-// UserSchema.statics.hashPassword = function(password) {
-// 	console.log(password);
-// 	return bcrypt.hash(password, 10)
-// 		.catch(function(err) {
-// 			console.log(err);
-// 		});
-// }
+UserSchema.statics.hashPassword = function(password) {
+	console.log("HASH: ", password);
+	return bcrypt.hash(password, 10)
+		.catch(function(err) {
+			console.log(err);
+		});
+}
 
 UserSchema.methods.apiRepr = function() {
   return {
