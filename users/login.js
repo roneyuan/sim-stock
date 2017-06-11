@@ -10,64 +10,12 @@ const passport = require('passport');
 const fs = require('fs');
 const {User} = require('./user');
 const {Stock} = require('./stock');
-const LocalStrategy = require('passport-local').Strategy;
+
 router.use(jsonParser);
 router.use(passport.initialize());
-
-// const BearerStrategy = require('passport-http-bearer').Strategy;
-// app.use(require('cookie-parser')());
-// app.use(require('body-parser').urlencoded({ extended: true }));
-// app.use(require('express-session')({ secret: 'keyboard cat', resave: false, saveUninitialized: false }));
-
-// Initialize Passport and restore authentication state, if any, from the
-// session.
-// router.use(passport.initialize());
 router.use(passport.session());
 
-// Bearer Strategy
-// passport.use('newbearer', new BearerStrategy(
-//   function(token, done) {
-//   	console.log(token);
-//   	// console.log("DONE", done)
-//     User.findOne({ password: token }, function (err, user) {
-//       if (err) { return done(err); }
-//       if (!user) { return done(null, false); }
-//       return done(null, user, { scope: 'all' });
-//     });
-//   }));
-
-// const basicStrategy = new BasicStrategy(function(username, password, callback) {
-//   let user;
-//   console.log("USER:", username);
-//   console.log("PW:", password);
-//   User
-//     .findOne({username: username})
-//     .exec()
-//     .then(_user => {
-//       user = _user;
-//       if (!user) {
-//         return callback(null, false, {message: 'Incorrect username'});
-//       }
-//       console.log("_USER:" , user)
-//       // return user.validatePassword(password);
-//       if (password === user.password) {
-//       	return callback(null, user)
-//       } else {
-//       	return callback(null, false, {message: 'Incorrect password'});
-//       }
-//     })
-//     // .then(isValid => {
-//     // 	console.log("isValid: ", isValid);
-//     //   if (!isValid) {
-//     //     return callback(null, false, {message: 'Incorrect password'});
-//     //   }
-//     //   else {
-//     //     return callback(null, user)
-//     //   }
-//     // });
-// });
-
-// passport.use('mybasic', basicStrategy);
+const LocalStrategy = require('passport-local').Strategy;
 
 const localStrategy = new LocalStrategy(
 	function(username, password, callback) {
@@ -82,7 +30,6 @@ const localStrategy = new LocalStrategy(
     .exec()
     .then(_user => {
     	user = _user;
-    	// Everytime is different?
     	console.log("CHECK POINT 1");
     	return User.hashPassword(password);
     })
@@ -107,28 +54,10 @@ const localStrategy = new LocalStrategy(
     	console.log(err);
       res.status(500).json({message: 'Internal server error'})
     });	
-	});
+});
 
 passport.use('mylocal', localStrategy);
 
-// passport.use(new Strategy(
-//   function(username, password, cb) {
-//     db.users.findByUsername(username, function(err, user) {
-//       if (err) { return cb(err); }
-//       if (!user) { return cb(null, false); }
-//       if (user.password != password) { return cb(null, false); }
-//       return cb(null, user);
-//     });
-//   }));
-
-
-// Configure Passport authenticated session persistence.
-//
-// In order to restore authentication state across HTTP requests, Passport needs
-// to serialize users into and deserialize users out of the session.  The
-// typical implementation of this is as simple as supplying the user ID when
-// serializing, and querying the user record by ID from the database when
-// deserializing.
 passport.serializeUser(function(user, cb) {
 	console.log("CHECK POINT 3", user)
   cb(null, user.id);
@@ -142,35 +71,14 @@ passport.deserializeUser(function(id, cb) {
   });
 });
 
-
-// app.post('/login', 
-//   passport.authenticate('local', { failureRedirect: '/login' }),
-//   function(req, res) {
-//     res.redirect('/home');
-//   });
-  
-// app.get('/logout',
-//   function(req, res){
-//     req.logout();
-//     res.redirect('/');
-//   });
-
-// app.get('/:user',
-//   require('connect-ensure-login').ensureLoggedIn(),
-//   function(req, res){
-//     res.render('profile', { user: req.user });
-//   });
-
-
-
-
 router.post('/login', passport.authenticate('mylocal', 
 	{ 
-		//successRedirect: '/account/home',
 		failureRedirect: '/account/login' 
 	}), function(req, res) {
 	console.log("CHECK LOGIN", req.body);
-	res.redirect('account/home');
+	// req.session['username'] = req.body.username;
+	// req.session['password'] = req.body.password;
+	res.redirect('/account/home/'+req.body.username);
 
 });
 
@@ -178,41 +86,205 @@ router.get('/login', (req, res) => {
 	res.redirect('/index.html')
 })
 
-// router.post('/login', (req, res) => {
-//   let {username, password} = req.body;
-
-//   username = username.trim();
-//   password = password.trim();
-//   let user;
-//   return User
-//     .findOne({username}) // find will return an array
-//     .exec()
-//     .then(_user => {
-//     	user = _user;
-//     	// Everytime is different?
-//     	return User.hashPassword(password);
-//     })
-//     .then(hash => {
-//     	if (user.validatePassword(password)) {
-//     		return res.status(201).json({
-//     			username: user.username,
-//     			nickname: user.nickname,
-//     			password: hash,
-//     			portfolio: user.portfolio
-//     		});    		
-//     	}
-//     })
-//     .catch(err => {
-//     	console.log(err);
-//       res.status(500).json({message: 'Internal server error'})
-//     });	
-// });
-
-router.get('/home', function(req, res) {
-	console.log("CHECK POINT 5", req.params.user);
-	console.log("Rerirect", req.session)
-	res.redirect('/home.html'); 
+router.get('/home/:user', function(req, res) {
+	console.log("CHECK POINT 5");
+	// console.log("Rerirect", req.session)
+	res.redirect('/custom/home.html?user=' + req.params.user); 
 });
+
+
+
+/***
+Get stock list
+***/
+router.get('/:username/stock', (req, res) => {
+	//console.log("REQ STOCK:", req.stock); 
+	return User
+		.findOne({username: req.params.username}) //
+		.populate('portfolio.investedStocks.stockId.stock')   
+		.exec(function(err, user) {
+			res.status(200).json(user);
+		});
+});
+
+
+/***
+Buy new stock
+***/
+router.post('/:username/stock', (req, res) => {
+	Stock
+		.create({
+			symbol: req.body.symbol,
+			price: req.body.price,
+			currentPrice: req.body.price,
+			quantity: req.body.quantity	
+		})
+		.then(stock => {
+			return User
+				.findOneAndUpdate({username:req.params.username}, 
+				{
+					$push: { 
+						"portfolio.investedStocks": {
+								'stockId.stock': stock._id,
+								'stockId.quantity': req.body.quantity			
+						}	
+					}
+				})
+				.exec()
+				.then(user => {
+					res.status(201).json(user);
+				})
+				.catch(err => {
+					console.log(err);
+				})
+		})
+		.catch(err => {
+			console.log(err);
+		})
+	}
+);
+
+
+/***
+Buy and Sell update
+***/
+router.put('/:username/stock/:symbol', (req, res) => {
+	if (req.params.symbol !== req.body.symbol) {
+		return res.status(400).send("Request field does not match");
+	}
+
+	return User
+		.findOne({username: req.params.username})
+		.populate('portfolio.investedStocks.stockId.stock') 
+		.exec((err, user) => {
+			let stocks = user.portfolio.investedStocks;
+			let selectedId;
+			let updateStockId;
+			for (let i=0; i<stocks.length; i++) {
+				if (stocks[i].stockId.stock.symbol === req.body.symbol) {
+					selectedId = stocks[i].id;
+					user.portfolio.investedStocks[i].stockId.quantity = req.body.quantity;
+					updateStockId = user.portfolio.investedStocks[i].stockId.stock["_id"];
+				}
+			}
+
+			user.save((err) => {
+				if (err) {
+					console.log("Save and Update error", err)
+				}
+			});
+
+			return Stock
+				.findById(updateStockId)
+				.exec()
+				.then(stock => {
+					stock.currentPrice = req.body.price;
+
+					stock.save((err) => {
+						if (err) {
+							console.log("Stock save errror: ", err)
+						}
+					});
+					res.status(204).json(stock);
+				})
+				.catch(err => {
+					console.log("Update Stock Error: " + err);
+				});
+	}) 
+	.catch(err => {
+		console.log(err);
+		res.status(500).json({error: 'Error'})
+	});						
+});
+
+
+/***
+Update current price for stock TODO
+***/
+router.put('/:username/stock/:symbol/:price', (req, res) => {
+	if (req.params.price !== req.body.price || req.params.symbol !== req.body.symbol) {
+			return res.status(400).send("Request field does not match");	
+	}
+
+	return User
+		.findOne({username: req.params.username})
+		.populate('portfolio.investedStocks.stockId.stock') 
+		.exec((err, user) => {
+			let stocks = user.portfolio.investedStocks;
+			let updateStockId;
+			for (let i=0; i<stocks.length; i++) {
+				if (stocks[i].stockId.stock.symbol === req.body.symbol) {
+					updateStockId = user.portfolio.investedStocks[i].stockId.stock["_id"];
+				}
+			}
+
+			return Stock
+				.findById(updateStockId)
+				.exec()
+				.then(stock => {
+					stock.currentPrice = req.body.price;
+
+					stock.save((err) => {
+						if (err) {
+							console.log("Stock save error: ", err)
+						}
+					});
+					res.status(204).json(stock);
+				})
+				.catch(err => {
+					console.log("Update Stock Price Error: " + err);
+				});
+	}) 
+	.catch(err => {
+		console.log(err);
+		res.status(500).json({error: 'Error'})
+	});				
+});
+
+router.get('/:username/stock/:symbol', (req, res) => {
+	//console.log("REQ1:" + req.params.symbol) // req.body,symbol does not work? Why? Maybe because it is using GET
+	return User
+		.findOne({username: req.params.username})
+		.populate('portfolio.investedStocks.stockId.stock')
+		.exec((err, user) => {
+			let stocks = user.portfolio.investedStocks;
+			let findStock;
+			for (let i=0; i<stocks.length; i++) {
+				if (stocks[i].stockId.stock.symbol === req.params.symbol) {
+					findStock = user.portfolio.investedStocks[i].stockId.stock["_id"];
+				}				
+			}
+			console.log("Find Stock: " + findStock)
+			return Stock
+				.findById(findStock)
+				.exec()
+				.then(stock => {
+					//console.log(stock);
+					res.status(200).json(stock.apiRepr());
+				})
+				.catch(err => {
+					console.log("Find Stock Error: " + err);
+				});
+		})
+		.catch(err => {
+			console.log(err);
+			res.status(500).json({error: 'Error'})
+		})
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 router.get('/logout', function(req, res) {
   req.logout();

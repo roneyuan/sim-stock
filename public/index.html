@@ -16,7 +16,7 @@
 						<h3> 3. Check your earning!</h3>
 					</div>
 					<div>
-						
+						<form action='/account/login' method='POST'>
 							<div class="form-group">
 								<label> Username: </label>
 								<input type="text" name="username" id="username" required />
@@ -28,7 +28,7 @@
 							<div class="form-group">
 								<button id="login"> Login </button>
 							</div>
-						
+						</form>
 						<p> Or </p>
 					</div>
 					<div class="land-button">
@@ -44,7 +44,7 @@
 		</div>
 	</body>
 	<script src="https://code.jquery.com/jquery-3.0.0.js"></script>
-	<script>
+<!-- 	<script>
 	$('#login').on('click', function(event) {
 		event.preventDefault();
 		let username = $('#username').val();
@@ -61,10 +61,10 @@
 		}).done(function(result) {
 			console.log(result);
 			// Make A GET Call
-			window.location.href = "/account/home/" + result.username;
+			window.location.href = "/account/" + result.username;
 		}).fail(function(err) {
 			console.log(err);
 		})
 	})
-	</script>	
+	</script>	 -->
 </html> 

@@ -1,0 +1,61 @@
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<link rel="stylesheet" href="../css/grid.css">
+		<link rel="stylesheet" href="../css/main.css">		
+		<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
+	</head>
+	<body>
+		<header>
+			<div class="current-value">
+				<h1>Total Value:</h1>
+				<h1 id="total-value"></h1>
+			</div>
+			<div class="invested">
+				<h2>Invested:</h2>
+				<h2 id="invested"></h2>
+			</div>
+			<div class="earned">
+				<h2>Earning:</h2>
+				<h2 id="earned"></h2>
+			</div>
+		<div class="creditHome">
+			Photo from <a href="https://www.flickr.com/photos/jpstjohn/6843611891/in/photolist-bqKiot-qPK7GJ-TYj6pm-oEQbpZ-4SWEqS-aojRPK-nvbFcK-qjMLZk-9K5YDq-9rLtM6-hS7yFK-a2G8jY-cAUyuq-TYk5xE-GxNgTF-bYNHYS-2KsXUL-9g2T72-5nfAPg-5kNxW3-UsdQ7W-TFwPoS-fz8mo-6tboRq-pn7Luy-5btNzt-6avTB4-sqS8DY-keLDPc-nYeEWv-kAkwRF-fzaHv-eac2ZZ-Mk3bCj-Na9S2B-dM9UYo-s2T93f-SyeJCv-cmxBAs-8pgk4a-8hLFx6-QCTbSn-Mk3c8N-hVc7mc-s732KW-9g7tr9-6UetXr-2KtvXs-abybXF-2KsXVE">here</a>
+		</div>			
+		</header>
+		<main>
+			<div class="row">
+				<div class="col-4 right-box">
+					<div class="control">
+						<div class="buying-power">
+							<h3>Buying Power: <br> </h3>
+							<h3 id="available-money">$1000000.00</h3>						
+						</div>	
+						<div class="add">					
+							<div class="search">
+								<label> Enter Stock Symbol</label>
+								<br>
+								<input class="searchSymbol" type="text" id="searchSymbol" name="symbol" required />							
+							</div>
+							<div class="amount">
+								<label> Enter quantity</label>
+								<br>
+								<input class="enterAmount" type="number" id="enterQuantity" name="quantity" required />
+							</div>
+						</div>
+						<button id="addStock" class="buyNew" type="button" >Buy</button>
+					</div>
+				</div>			
+				<div class="col-8">
+					<div class="portfolio"></div>
+				</div>
+			</div>
+		</main>
+		<footer></footer>		
+		<script src="https://code.jquery.com/jquery-3.0.0.js"></script>
+		<script type="text/javascript" src="app.js"></script>
+		<script type="text/javascript" src="state.js"></script>
+		<script src="../js/lib/barchart-ondemand-client-js.min.js"></script>
+
+	</body>
+</html>
