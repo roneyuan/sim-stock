@@ -10,23 +10,31 @@ const passport = require('passport');
 const fs = require('fs');
 const {User} = require('./user');
 const {Stock} = require('./stock');
+const LocalStrategy = require('passport-local').Strategy;
 router.use(jsonParser);
 router.use(passport.initialize());
 
-const BearerStrategy = require('passport-http-bearer').Strategy;
+// const BearerStrategy = require('passport-http-bearer').Strategy;
+// app.use(require('cookie-parser')());
+// app.use(require('body-parser').urlencoded({ extended: true }));
+// app.use(require('express-session')({ secret: 'keyboard cat', resave: false, saveUninitialized: false }));
 
+// Initialize Passport and restore authentication state, if any, from the
+// session.
+// router.use(passport.initialize());
+router.use(passport.session());
 
 // Bearer Strategy
-passport.use('newbearer', new BearerStrategy(
-  function(token, done) {
-  	console.log(token);
-  	console.log("DONE", done)
-    User.findOne({ password: token }, function (err, user) {
-      if (err) { return done(err); }
-      if (!user) { return done(null, false); }
-      return done(null, user, { scope: 'all' });
-    });
-  }));
+// passport.use('newbearer', new BearerStrategy(
+//   function(token, done) {
+//   	console.log(token);
+//   	// console.log("DONE", done)
+//     User.findOne({ password: token }, function (err, user) {
+//       if (err) { return done(err); }
+//       if (!user) { return done(null, false); }
+//       return done(null, user, { scope: 'all' });
+//     });
+//   }));
 
 // const basicStrategy = new BasicStrategy(function(username, password, callback) {
 //   let user;
@@ -61,43 +69,150 @@ passport.use('newbearer', new BearerStrategy(
 
 // passport.use('mybasic', basicStrategy);
 
-router.post('/login', (req, res) => {
-  let {username, password} = req.body;
+const localStrategy = new LocalStrategy(
+	function(username, password, callback) {
 
   username = username.trim();
   password = password.trim();
+
   let user;
+  
   return User
     .findOne({username}) // find will return an array
     .exec()
     .then(_user => {
     	user = _user;
-    	console.log(password)
     	// Everytime is different?
+    	console.log("CHECK POINT 1");
     	return User.hashPassword(password);
     })
     .then(hash => {
-    	console.log(hash);
-    	if (user.validatePassword(password)) {
-    		return res.status(201).json({
-    			username: user.username,
-    			nickname: user.nickname,
-    			password: hash,
-    			portfolio: user.portfolio
-    		});    		
-    	}
+    	console.log("CHECK POINT 2")
+      if (!user) { return callback(null, false); }
+    	
+    	user.validatePassword(password, function(err, isValid) {
+    		if (err) {
+    			return callback(null, false);
+    		}
+
+    		if (!isValid) {
+    			return callback(null, false);
+    		}
+
+    		console.log("SUCCESS")
+    		return callback(null, user);
+    	})
     })
     .catch(err => {
     	console.log(err);
       res.status(500).json({message: 'Internal server error'})
     });	
+	});
+
+passport.use('mylocal', localStrategy);
+
+// passport.use(new Strategy(
+//   function(username, password, cb) {
+//     db.users.findByUsername(username, function(err, user) {
+//       if (err) { return cb(err); }
+//       if (!user) { return cb(null, false); }
+//       if (user.password != password) { return cb(null, false); }
+//       return cb(null, user);
+//     });
+//   }));
+
+
+// Configure Passport authenticated session persistence.
+//
+// In order to restore authentication state across HTTP requests, Passport needs
+// to serialize users into and deserialize users out of the session.  The
+// typical implementation of this is as simple as supplying the user ID when
+// serializing, and querying the user record by ID from the database when
+// deserializing.
+passport.serializeUser(function(user, cb) {
+	console.log("CHECK POINT 3", user)
+  cb(null, user.id);
 });
 
-router.get('/:user', passport.authenticate('newbearer', {session: false}), function(req, res) {
-	console.log("REQ", req.params.user);
-	console.log(req.body)
-	res.redirect('/home.html'); 
+passport.deserializeUser(function(id, cb) {
+	console.log("CHECK POINT 4", id)
+  Users.findById(id, function (err, user) {
+    if (err) { return cb(err); }
+    cb(null, user);
+  });
+});
+
+
+// app.post('/login', 
+//   passport.authenticate('local', { failureRedirect: '/login' }),
+//   function(req, res) {
+//     res.redirect('/home');
+//   });
+  
+// app.get('/logout',
+//   function(req, res){
+//     req.logout();
+//     res.redirect('/');
+//   });
+
+// app.get('/:user',
+//   require('connect-ensure-login').ensureLoggedIn(),
+//   function(req, res){
+//     res.render('profile', { user: req.user });
+//   });
+
+
+
+
+router.post('/login', passport.authenticate('mylocal', 
+	{ 
+		//successRedirect: '/account/home',
+		failureRedirect: '/account/login' 
+	}), function(req, res) {
+	console.log("CHECK LOGIN", req.body);
+	res.redirect('account/home');
+
+});
+
+router.get('/login', (req, res) => {
+	res.redirect('/index.html')
 })
+
+// router.post('/login', (req, res) => {
+//   let {username, password} = req.body;
+
+//   username = username.trim();
+//   password = password.trim();
+//   let user;
+//   return User
+//     .findOne({username}) // find will return an array
+//     .exec()
+//     .then(_user => {
+//     	user = _user;
+//     	// Everytime is different?
+//     	return User.hashPassword(password);
+//     })
+//     .then(hash => {
+//     	if (user.validatePassword(password)) {
+//     		return res.status(201).json({
+//     			username: user.username,
+//     			nickname: user.nickname,
+//     			password: hash,
+//     			portfolio: user.portfolio
+//     		});    		
+//     	}
+//     })
+//     .catch(err => {
+//     	console.log(err);
+//       res.status(500).json({message: 'Internal server error'})
+//     });	
+// });
+
+router.get('/home', function(req, res) {
+	console.log("CHECK POINT 5", req.params.user);
+	console.log("Rerirect", req.session)
+	res.redirect('/home.html'); 
+});
 
 router.get('/logout', function(req, res) {
   req.logout();
