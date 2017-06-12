@@ -88,7 +88,7 @@ router.get('/login', (req, res) => {
 	res.redirect('/index.html');
 })
 
-router.get('/home/:user/:token', function(req, res) {
+router.get('/home/:user', function(req, res) {
 	console.log("CHECK POINT 5");
 	res.redirect('/custom/home.html?user=' + req.params.user); 
 });
@@ -328,6 +328,9 @@ router.post('/signup', function(req, res) {
           password: hash,
           nickname: req.body.nickname,
         })
+  	})
+  	.then(user => {
+  		res.redirect('/account/home/'+user.username);
   	})
     .catch(err => {
     	console.log(err);
