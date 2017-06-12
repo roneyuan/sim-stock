@@ -34,7 +34,7 @@ function callBarchartOnDemandApi(searchTerm, quantity, access_token) {
       if (data.status.code != 200) {
         alert("Unable to find the symbol. Try Use Symbol Finder!"); /* TODO Symbo Finder */
       } else {
-        price = data.results['0'].lastPrice;
+        price = data.results[0].lastPrice;
         $.ajax({
           url: 'users/104638216487363687391/stock?access_token='+access_token,
           method: 'POST',
@@ -203,7 +203,7 @@ $(function() {
           // Find and update the price that matches the symbol
           initStocks
             .find(stock => stock.stockId.stock.symbol == symbol)
-            .stockId.stock.currentPrice = data.results['0'].lastPrice;
+            .stockId.stock.currentPrice = data.results[0].lastPrice;
 
           // Check if all current price are updated
           if (i == initStocks.length - 1) {
@@ -248,7 +248,7 @@ function sellStock(symbol, quantity) {
         if (data.status.code != 200) {
           alert("Unable to find the symbol. Symbol Finder coming soon!"); /* TODO Symbo Finder */
         } else {
-          let currentPrice = data.results['0'].lastPrice;  
+          let currentPrice = data.results[0].lastPrice;  
           let earning = (currentPrice - buyInPrice)*quantity     
           // 3. Update quantity and earned
         }
