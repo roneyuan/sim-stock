@@ -87,3 +87,13 @@ function makePortfolio(init, spec) {
 	});
 
 }
+
+(function(){
+	let marketOpen = new Date();
+	let day = marketOpen.getDay();
+	let hour = marketOpen.getHours();
+
+	if (day == 6 || day == 0 || hour < 9 || hour > 16) {
+		alert("Warning! Current market is closed. You can only buy and sell the stock with last market close price.")
+	} 
+}())
