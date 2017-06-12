@@ -203,7 +203,7 @@ $(function() {
           // Find and update the price that matches the symbol
           initStocks
             .find(stock => stock.stockId.stock.symbol == symbol)
-            .stockId.stock.currentPrice = data.results['0'].lastPrice;
+            .stockId.stock.currentPrice = data.results["0"].lastPrice;
 
           // Check if all current price are updated
           if (i == initStocks.length - 1) {
