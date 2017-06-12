@@ -248,7 +248,7 @@ function sellStock(symbol, quantity) {
         if (data.status.code != 200) {
           alert("Unable to find the symbol. Symbol Finder coming soon!"); /* TODO Symbo Finder */
         } else {
-          let currentPrice = data.['results'][0].lastPrice;  
+          let currentPrice = data['results'][0].lastPrice;  
           let earning = (currentPrice - buyInPrice)*quantity     
           // 3. Update quantity and earned
         }
