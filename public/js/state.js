@@ -94,6 +94,6 @@ function makePortfolio(init, spec) {
 	let hour = marketOpen.getHours();
 
 	if (day == 6 || day == 0 || hour < 9 || hour > 16) {
-		alert("Warning! Current market is closed. You can only buy and sell the stock with last market close price.")
+		alert("Warning! Current market is closed. You can only buy and sell the stock with last market close price, but nothing will change at this time. ")
 	} 
 }())
