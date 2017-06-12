@@ -31,6 +31,17 @@ a {
 	color: white;
 }
 
+.signup-form, .login-form {
+	margin: 5% auto;
+	width: 500px;
+	padding-left: 100px;
+	padding-right: 100px;
+}
+.form-group {
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
 .land {
 	width:100%;
 	height: 100%;
@@ -43,7 +54,7 @@ a {
 
 .inner-land {
 	width: 550px;
-	height: 500px;
+	height: 550px;
 	background-color: rgba(147, 178, 232, 0.55);
 	border-radius: 5px;
 	margin: 50px 30px;
@@ -71,11 +82,12 @@ a {
 .land-button {
 	margin: auto;
 	width: 300px;
+	padding-top: 10px;
 	text-align: center;
 }
 
 .google-button {
-	margin: 30% auto;
+	margin: auto;
 	background: #DD4B39;
 	border: none;
 	border-radius: 5px;
@@ -220,8 +232,24 @@ a {
 	text-align: center;
 }
 
+.login {
+	/*width: 120px !important;*/
+	background-color: #308cde !important;
+}
+
 .login, .signup {
-	margin: 20% auto;
+	/*margin: 20% auto;*/
+  width: 220px;
+  height: 32px;
+  border: none;
+  background-color: #45c156;
+  font-size: 15px;
+  border-radius: 5px;	
+}
+
+.index-button {
+	padding-bottom: 10px;
+	padding-top: 10px;
 }
 
 form {
