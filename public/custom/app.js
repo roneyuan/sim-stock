@@ -70,7 +70,7 @@ function sellOrBuyStock(symbol, quantity) {
         price = data.results[0].lastPrice;
 
         $.ajax({
-          url: '/account/'+user+'/' + symbol,
+          url: '/account/'+user+'/stock/' + symbol,
           method: 'PUT',
           data: {
             symbol: symbol,
