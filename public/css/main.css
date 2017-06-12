@@ -1,15 +1,24 @@
 * {
 	font-family: 'Source Sans Pro', sans-serif;
 }
+
 header { 
+	background:     linear-gradient(
+      rgba(45, 100, 146, 0.55), 
+      rgba(45, 100, 146, 0.55)
+    ),
+    /* bottom, image */
+    url('../img/header.jpg');
+	/*background-image: url('../img/bg.jpg');*/
+	/*opacity: 0.5;*/
 	background-color: #2d6492; 
+	background-size: cover;
 	padding-top:50px;
 	padding-bottom: 50px;
 	color: white;
 
 }
-/*.col-4 { background-color: green; }*/
-/*.col-8 { background-color: blue; }*/
+
 footer { background-color: yellow; }
 
 body {
@@ -20,6 +29,17 @@ body {
 a {
 	text-decoration: none;
 	color: white;
+}
+
+.signup-form, .login-form {
+	margin: 5% auto;
+	width: 500px;
+	padding-left: 100px;
+	padding-right: 100px;
+}
+.form-group {
+	padding-top: 5px;
+	padding-bottom: 5px;
 }
 
 .land {
@@ -33,9 +53,8 @@ a {
 }
 
 .inner-land {
-
 	width: 550px;
-	height: 500px;
+	height: 550px;
 	background-color: rgba(147, 178, 232, 0.55);
 	border-radius: 5px;
 	margin: 50px 30px;
@@ -53,14 +72,22 @@ a {
 	right: 0;
 }
 
+.creditHome {
+	position: absolute;
+	right: 0;
+	font-size: 8px;
+	margin-top: 40px;	
+}
+
 .land-button {
 	margin: auto;
 	width: 300px;
+	padding-top: 10px;
 	text-align: center;
 }
 
 .google-button {
-	margin: 30% auto;
+	margin: auto;
 	background: #DD4B39;
 	border: none;
 	border-radius: 5px;
@@ -88,7 +115,6 @@ a {
 }
 
 .current-value { 
-	/*height: 300px; */
 	text-align: center;
 	padding-top: 30px;
 	font-size: 20px;
@@ -102,23 +128,23 @@ a {
 	text-align: center;
 }
 .portfolio, .control { 
-	/*height :500px;*/
 	background-color: white;
 	border-radius: 2px;
 	padding: 10px 10px;
 	margin-top: 20px;
 }
-.control { 
-	/*height: 200px;*/
+
+.control {
+	padding-bottom: 30px;
 }
 
 .searchSymbol, .enterAmount {
 	width: 150px;
 	height: 30px;
+	margin-top: 10px;
 	font-size: 25px;
 	padding-left: 5px;
 	border-radius: 5px;
-	/*background-color: gray;*/
 	outline: none;
 	box-shadow: none;
 	background-color: rgba(241, 241, 241, 0.80);
@@ -127,7 +153,11 @@ a {
 
 .amount, .search {
 	padding-top: 20px;
-	padding-bottom: 20px;
+	padding-bottom: 10px;
+}
+
+.amount {
+	padding-bottom: 30px;
 }
 
 .buyNew {
@@ -144,7 +174,6 @@ a {
 }
 
 .list { 
-	/*background-color: white;*/ 
 	padding-top: 20px; 
 	padding-bottom: 20px; 
 	padding-left: 25px;
@@ -153,7 +182,6 @@ a {
 }
 
 .list-button {
-	/*margin: auto;*/
 	text-align: center;
 	margin-top: 30px;
 }
@@ -167,7 +195,6 @@ a {
 	height: 30px;
 	font-size: 18px;
 	background-color: aqua;
-	/*padding: 5px 5px;*/
 	margin: auto 10px;
 	border-radius: 5px;
 	border: none;
@@ -183,7 +210,6 @@ a {
 	font-size: 20px;
 	padding-left: 5px;
 	border-radius: 5px;
-	/*background-color: gray;*/
 	outline: none;
 	box-shadow: none;
 	background-color: rgba(241, 241, 241, 0.80);
@@ -193,25 +219,37 @@ a {
 }
 
 .buying-power { 
-	/*height: 50px; */
-	/*background-color: red; */
-	padding-top: 20px; 
-	padding-bottom: 20px; 
+	padding-top: 10px; 
+	/*padding-bottom: 10px; */
 	padding-left: 20px;
 }
 .add { 
-	/*height: 150px; */
-	/*background-color: purple; */
-	padding-top: 20px; 
-	padding-bottom: 20px; 
+/*	padding-top: 20px; 
+	padding-bottom: 20px; */
 }
 
 .right-box {
 	text-align: center;
 }
 
+.login {
+	/*width: 120px !important;*/
+	background-color: #308cde !important;
+}
+
 .login, .signup {
-	margin: 20% auto;
+	/*margin: 20% auto;*/
+  width: 220px;
+  height: 32px;
+  border: none;
+  background-color: #45c156;
+  font-size: 15px;
+  border-radius: 5px;	
+}
+
+.index-button {
+	padding-bottom: 10px;
+	padding-top: 10px;
 }
 
 form {
@@ -222,8 +260,6 @@ form {
 	.inner-land {
 		margin: 50px auto;
 		width: 80%;
-		/*height: 600px;*/
-		/*background-color: rgba(147, 178, 232, 0.55);*/
 		border-radius: 5px;
 		padding-top: 20px;
 	}

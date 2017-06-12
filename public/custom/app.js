@@ -1,16 +1,15 @@
-var getToken = (function(keyset) {
+let getUser = (function(keyset) {
   var res = keyset.split('=', 2)[1];
   
   return res;
 }(location.search.substr(1)));
 
 let portfolio;
-let access_token = getToken;
-let MARKITONDEMAND_URL = "http://dev.markitondemand.com/Api/v2/Quote/jsonp";
+let user = getUser;
 
 function getLatestStockUpdates() {
   $.ajax({
-    url: 'users/104638216487363687391/stock?access_token='+access_token,
+    url: '/account/'+user+'/stock',
     method: 'GET',
   }).done(function(result) {
     portfolio = makePortfolio(false, result.portfolio.investedStocks);
@@ -36,7 +35,7 @@ function callBarchartOnDemandApi(searchTerm, quantity, access_token) {
       } else {
         price = data.results[0].lastPrice;
         $.ajax({
-          url: 'users/104638216487363687391/stock?access_token='+access_token,
+          url: '/account/'+user+'/stock',
           method: 'POST',
           data: {
             symbol: searchTerm,
@@ -71,7 +70,7 @@ function sellOrBuyStock(symbol, quantity) {
         price = data.results[0].lastPrice;
 
         $.ajax({
-          url: 'users/104638216487363687391/stock/' + symbol + '?access_token=' + access_token,
+          url: '/account/'+user+'/' + symbol,
           method: 'PUT',
           data: {
             symbol: symbol,
@@ -124,7 +123,7 @@ $('#addStock').on('click', function(event) {
 
   let symbol = $('#searchSymbol').val();
   let quantity = $('#enterQuantity').val();
-  callBarchartOnDemandApi(symbol, +quantity, access_token);
+  callBarchartOnDemandApi(symbol, +quantity);
   $('#searchSymbol').val("");
   $('#enterQuantity').val("");
 });
@@ -184,7 +183,7 @@ function clonePortfolio(stocks) {
 
 $(function() {
   $.ajax({
-    url: 'users/104638216487363687391/stock?access_token='+access_token,
+    url: '/account/'+user+'/stock',
     method: 'GET',
   }).done(function(result) {
     var initStocks = clonePortfolio(result.portfolio.investedStocks);
@@ -230,7 +229,7 @@ function sellStock(symbol, quantity) {
 
   // 1. GET the buy-in Price
   $.ajax({
-    url: 'users/104638216487363687391/stock/' + symbol + '?access_token=' + access_token,
+    url: '/account/'+user+'/stock/' + symbol,
     method: 'GET',
     dataType: "json"
   }).done(function(result) {

@@ -22,6 +22,7 @@ passport.use(new GoogleStrategy({
     callbackURL: "/users/auth/google/callback"
   },
   function(accessToken, refreshToken, profile, done) {
+  	console.log("Google!!!");
 		return User
 	  	.findOrCreate({			
 	  		username: profile.id,
@@ -33,6 +34,28 @@ passport.use(new GoogleStrategy({
 				return done(null, user);
 			});
   } 
+));
+
+
+// Bearer Strategy - compare token
+// Why no console log no output?
+// The reason is that if you use 'bearer' in passport.authenticate, 
+// that is the built-in method. So You will never be able to call
+// your own stretegy. To do that, you need to name your strategy
+passport.use('mybearer', new BearerStrategy(
+  function(token, done) {
+    User.findOne({ password: token }, function (err, user) {
+    	console.log(user);
+      if (err) { 
+      	return done(err); 
+      }
+      if (!user) {
+      	return done(null, false); 
+      }
+
+      return done(null, user, { scope: 'all' });
+    });
+  }
 ));
 
 // Go to login page from Google
@@ -47,16 +70,6 @@ router.get('/auth/google/callback',
     res.redirect("/home.html?access_token=" + req.user.password);
   });
 
-// Bearer Strategy
-passport.use(new BearerStrategy(
-  function(token, done) {
-    User.findOne({ password: token }, function (err, user) {
-      if (err) { return done(err); }
-      if (!user) { return done(null, false); }
-      return done(null, user, { scope: 'all' });
-    });
-  }
-));
 
 /***
 For test only
@@ -72,8 +85,8 @@ For test only
 /***
 Get stock list
 ***/
-router.get('/:username/stock', passport.authenticate('bearer', {session: false}), (req, res) => {
-	console.log(req.stock)
+router.get('/:username/stock', passport.authenticate('mybearer', {session: false}), (req, res) => {
+	//console.log("REQ STOCK:", req.stock); 
 	return User
 		.findOne({username: req.user.username}) //
 		.populate('portfolio.investedStocks.stockId.stock')   
@@ -86,7 +99,7 @@ router.get('/:username/stock', passport.authenticate('bearer', {session: false})
 /***
 Buy new stock
 ***/
-router.post('/:username/stock', passport.authenticate('bearer', {session: false}), (req, res) => {
+router.post('/:username/stock', passport.authenticate('mybearer', {session: false}), (req, res) => {
 	Stock
 		.create({
 			symbol: req.body.symbol,
@@ -123,7 +136,7 @@ router.post('/:username/stock', passport.authenticate('bearer', {session: false}
 /***
 Buy and Sell update
 ***/
-router.put('/:username/stock/:symbol', passport.authenticate('bearer', {session: false}), (req, res) => {
+router.put('/:username/stock/:symbol', passport.authenticate('mybearer', {session: false}), (req, res) => {
 	if (req.params.symbol !== req.body.symbol) {
 		return res.status(400).send("Request field does not match");
 	}
@@ -145,7 +158,7 @@ router.put('/:username/stock/:symbol', passport.authenticate('bearer', {session:
 
 			user.save((err) => {
 				if (err) {
-					console.log(err)
+					console.log("Save and Update error", err)
 				}
 			});
 
@@ -157,7 +170,7 @@ router.put('/:username/stock/:symbol', passport.authenticate('bearer', {session:
 
 					stock.save((err) => {
 						if (err) {
-							console.log(err)
+							console.log("Stock save errror: ", err)
 						}
 					});
 					res.status(204).json(stock);
@@ -176,7 +189,7 @@ router.put('/:username/stock/:symbol', passport.authenticate('bearer', {session:
 /***
 Update current price for stock TODO
 ***/
-router.put('/:username/stock/:symbol/:price', passport.authenticate('bearer', {session: false}), (req, res) => {
+router.put('/:username/stock/:symbol/:price', passport.authenticate('mybearer', {session: false}), (req, res) => {
 	if (req.params.price !== req.body.price || req.params.symbol !== req.body.symbol) {
 			return res.status(400).send("Request field does not match");	
 	}
@@ -201,7 +214,7 @@ router.put('/:username/stock/:symbol/:price', passport.authenticate('bearer', {s
 
 					stock.save((err) => {
 						if (err) {
-							console.log(err)
+							console.log("Stock save error: ", err)
 						}
 					});
 					res.status(204).json(stock);
@@ -216,7 +229,7 @@ router.put('/:username/stock/:symbol/:price', passport.authenticate('bearer', {s
 	});				
 });
 
-router.get('/:username/stock/:symbol', passport.authenticate('bearer', {session: false}), (req, res) => {
+router.get('/:username/stock/:symbol', passport.authenticate('mybearer', {session: false}), (req, res) => {
 	//console.log("REQ1:" + req.params.symbol) // req.body,symbol does not work? Why? Maybe because it is using GET
 	return User
 		.findOne({username: req.user.username})
@@ -229,7 +242,7 @@ router.get('/:username/stock/:symbol', passport.authenticate('bearer', {session:
 					findStock = user.portfolio.investedStocks[i].stockId.stock["_id"];
 				}				
 			}
-			console.log(findStock)
+			console.log("Find Stock: " + findStock)
 			return Stock
 				.findById(findStock)
 				.exec()
@@ -247,7 +260,7 @@ router.get('/:username/stock/:symbol', passport.authenticate('bearer', {session:
 		})
 });
 
-router.put('/:username/updateEarned', passport.authenticate('bearer', {session: false}), (req, res) => {
+router.put('/:username/updateEarned', passport.authenticate('mybearer', {session: false}), (req, res) => {
 	var earned = req.body.earned
 	// Update earned in user
 	// 1. Get current earned
