@@ -20,7 +20,7 @@ function getLatestStockUpdates() {
 }
 
 function callBarchartOnDemandApi(searchTerm, quantity, access_token) {
-  let url = "http://marketdata.websol.barchart.com/getQuote.jsonp"; 
+  let url = "https://marketdata.websol.barchart.com/getQuote.jsonp"; 
   $.ajax({
     data: { 
       symbols: searchTerm,
@@ -55,7 +55,7 @@ function callBarchartOnDemandApi(searchTerm, quantity, access_token) {
 }
 
 function sellOrBuyStock(symbol, quantity) {
-  let url = "http://marketdata.websol.barchart.com/getQuote.jsonp"; 
+  let url = "https://marketdata.websol.barchart.com/getQuote.jsonp"; 
   $.ajax({
     data: { 
       symbols: symbol,
@@ -190,7 +190,7 @@ $(function() {
 
     for (let i=0; i<initStocks.length; i++) {
       let symbol = initStocks[i].stockId.stock.symbol;
-      let url = "http://marketdata.websol.barchart.com/getQuote.jsonp"; 
+      let url = "https://marketdata.websol.barchart.com/getQuote.jsonp"; 
       $.ajax({
         data: { 
           symbols: symbol,
@@ -235,7 +235,7 @@ function sellStock(symbol, quantity) {
   }).done(function(result) {
     var buyInPrice = result.price;
     // 2. GET the latest price
-    let url = "http://marketdata.websol.barchart.com/getQuote.jsonp"; 
+    let url = "https://marketdata.websol.barchart.com/getQuote.jsonp"; 
     $.ajax({
       data: { 
         symbols: symbol,
