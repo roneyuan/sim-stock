@@ -37,7 +37,7 @@ passport.use(new GoogleStrategy({
 ));
 
 
-// Bearer Strategy
+// Bearer Strategy - compare token
 // Why no console log no output?
 // The reason is that if you use 'bearer' in passport.authenticate, 
 // that is the built-in method. So You will never be able to call

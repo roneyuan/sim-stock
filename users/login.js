@@ -16,6 +16,7 @@ router.use(passport.initialize());
 router.use(passport.session());
 
 const LocalStrategy = require('passport-local').Strategy;
+const BearerStrategy = require('passport-http-bearer').Strategy;
 
 const localStrategy = new LocalStrategy(
 	function(username, password, callback) {
@@ -46,7 +47,7 @@ const localStrategy = new LocalStrategy(
     			return callback(null, false);
     		}
 
-    		console.log("SUCCESS")
+    		console.log("Validate Password SUCCESS")
     		return callback(null, user);
     	})
     })
@@ -56,15 +57,18 @@ const localStrategy = new LocalStrategy(
     });	
 });
 
+// Future integration
+// OpenID with autherization
+
 passport.use('mylocal', localStrategy);
 
 passport.serializeUser(function(user, cb) {
-	console.log("CHECK POINT 3", user)
+	console.log("CHECK POINT 3")
   cb(null, user.id);
 });
 
 passport.deserializeUser(function(id, cb) {
-	console.log("CHECK POINT 4", id)
+	console.log("CHECK POINT 4")
   Users.findById(id, function (err, user) {
     if (err) { return cb(err); }
     cb(null, user);
@@ -75,30 +79,26 @@ router.post('/login', passport.authenticate('mylocal',
 	{ 
 		failureRedirect: '/account/login' 
 	}), function(req, res) {
-	console.log("CHECK LOGIN", req.body);
-	// req.session['username'] = req.body.username;
-	// req.session['password'] = req.body.password;
+	console.log("LOGIN SUCCESS");
 	res.redirect('/account/home/'+req.body.username);
 
 });
 
 router.get('/login', (req, res) => {
-	res.redirect('/index.html')
+	res.redirect('/index.html');
 })
 
-router.get('/home/:user', function(req, res) {
+router.get('/home/:user/:token', function(req, res) {
 	console.log("CHECK POINT 5");
-	// console.log("Rerirect", req.session)
 	res.redirect('/custom/home.html?user=' + req.params.user); 
 });
-
 
 
 /***
 Get stock list
 ***/
 router.get('/:username/stock', (req, res) => {
-	//console.log("REQ STOCK:", req.stock); 
+	console.log("REQ STOCK:", req.user); 
 	return User
 		.findOne({username: req.params.username}) //
 		.populate('portfolio.investedStocks.stockId.stock')   
@@ -270,25 +270,6 @@ router.get('/:username/stock/:symbol', (req, res) => {
 			console.log(err);
 			res.status(500).json({error: 'Error'})
 		})
-});
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-router.get('/logout', function(req, res) {
-  req.logout();
-  res.redirect('/index.html'); 
 });
 
 router.post('/signup', function(req, res) {

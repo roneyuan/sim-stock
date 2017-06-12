@@ -1,4 +1,4 @@
-var getUser = (function(keyset) {
+let getUser = (function(keyset) {
   var res = keyset.split('=', 2)[1];
   
   return res;
@@ -6,7 +6,6 @@ var getUser = (function(keyset) {
 
 let portfolio;
 let user = getUser;
-let MARKITONDEMAND_URL = "http://dev.markitondemand.com/Api/v2/Quote/jsonp";
 
 function getLatestStockUpdates() {
   $.ajax({
