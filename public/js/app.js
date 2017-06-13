@@ -13,8 +13,9 @@ function getLatestStockUpdates() {
     url: 'users/104638216487363687391/stock?access_token='+access_token,
     method: 'GET',
   }).done(function(result) {
-    portfolio = makePortfolio(false, result.portfolio.investedStocks);
-    displayLatestStockUpdates(portfolio.getPortfolio());   
+    // portfolio = makePortfolio(false, result.portfolio.investedStocks);
+    // displayLatestStockUpdates(portfolio.getPortfolio()); 
+    updateCurrentPrice(result);  
   }).fail(function(err) {
     throw err;
   });
@@ -182,38 +183,42 @@ function clonePortfolio(stocks) {
   return result;
 }
 
+function updateCurrentPrice(result) {
+  var initStocks = clonePortfolio(result.portfolio.investedStocks);
+
+  for (let i=0; i<initStocks.length; i++) {
+    let symbol = initStocks[i].stockId.stock.symbol;
+    let url = "https://marketdata.websol.barchart.com/getQuote.jsonp"; 
+    $.ajax({
+      data: { 
+        symbols: symbol,
+        key: "2fa1f157fb3ce032ffbb1d9fc16b687f"
+      },
+      url: url,
+      dataType: "jsonp",
+      success: function(data) {
+        // Find and update the price that matches the symbol
+        initStocks
+          .find(stock => stock.stockId.stock.symbol == symbol)
+          .stockId.stock.currentPrice = data.results[0].lastPrice;
+
+        // Check if all current price are updated
+        if (i == initStocks.length - 1) {
+          portfolio = makePortfolio(false, initStocks);
+          displayLatestStockUpdates(portfolio.getPortfolio());          
+        }
+      },
+      error: handleError
+    }); 
+  }
+}
+
 $(function() {
   $.ajax({
     url: 'users/104638216487363687391/stock?access_token='+access_token,
     method: 'GET',
   }).done(function(result) {
-    var initStocks = clonePortfolio(result.portfolio.investedStocks);
-
-    for (let i=0; i<initStocks.length; i++) {
-      let symbol = initStocks[i].stockId.stock.symbol;
-      let url = "https://marketdata.websol.barchart.com/getQuote.jsonp"; 
-      $.ajax({
-        data: { 
-          symbols: symbol,
-          key: "2fa1f157fb3ce032ffbb1d9fc16b687f"
-        },
-        url: url,
-        dataType: "jsonp",
-        success: function(data) {
-          // Find and update the price that matches the symbol
-          initStocks
-            .find(stock => stock.stockId.stock.symbol == symbol)
-            .stockId.stock.currentPrice = data.results[0].lastPrice;
-
-          // Check if all current price are updated
-          if (i == initStocks.length - 1) {
-            portfolio = makePortfolio(false, initStocks);
-            displayLatestStockUpdates(portfolio.getPortfolio());          
-          }
-        },
-        error: handleError
-      }); 
-    }
+    updateCurrentPrice(result);
   }).fail(function(err) {
     throw err;
   });
@@ -251,6 +256,7 @@ function sellStock(symbol, quantity) {
           let currentPrice = data.results[0].lastPrice;  
           let earning = (currentPrice - buyInPrice)*quantity     
           // 3. Update quantity and earned
+          // 4. Update current price to DB
         }
       },
       error: handleError
