@@ -1,10 +1,11 @@
-function makePortfolio(init, spec) {
+function makePortfolio(init, spec, earned) {
 	var _stocks = spec;
 
 	const _state = {
 		totalValue: 0,
 		invested: 0,
-		earned: 0,
+		earned: earned,
+		earning: 0,
 		buyingPower: 0,
 		stocks: [],
 	};
@@ -26,13 +27,13 @@ function makePortfolio(init, spec) {
 
 	function calcTotalValue() {
 		let defaultMoney = 1000000.00;
-		let totalValue = defaultMoney + calcEarned();
+		let totalValue = defaultMoney + calcEarning();
 
 		_state.totalValue = totalValue;
 		_state.buyingPower = calcBuyingPower();
 	}
 
-	function calcEarned() {
+	function calcEarning() {
 		let len = _state.stocks.length;
 		let invest = calcInvested();
 		let currentTotal = 0;
@@ -41,10 +42,10 @@ function makePortfolio(init, spec) {
 			currentTotal += _state.stocks[i].currentPrice*_state.stocks[i].quantity;
 		}
 
-		let earned = currentTotal - invest;
-		_state.earned = +earned.toFixed(2);
+		let earning = currentTotal - invest;
+		_state.earning = +earning.toFixed(2);
 
-		return +earned.toFixed(2);
+		return +earning.toFixed(2);
 
 	}
 

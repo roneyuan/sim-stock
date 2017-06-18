@@ -45,7 +45,7 @@ passport.use(new GoogleStrategy({
 passport.use('mybearer', new BearerStrategy(
   function(token, done) {
     User.findOne({ password: token }, function (err, user) {
-    	console.log(user);
+    	// console.log(user);
       if (err) { 
       	return done(err); 
       }
@@ -223,9 +223,13 @@ router.put('/:username/stock/:symbol/buy', passport.authenticate('mybearer', {se
 				.exec()
 				.then(stock => {
 					stock.currentPrice = req.body.price;
-
+					console.log("Current Quantity", currentQuantity);
+					console.log("Stock Price", stock.price);
+					console.log("Request quantity", req.body.quantity);
+					console.log("Price now", req.body.price);
 					// Future optimization: Calculate avg price
-					let newPrice = (currentQuantity*stock.price + req.body.quantity*req.body.price)/(currentQuantity + req.body.quantity);
+					let newPrice = ((req.body.quantity-currentQuantity)*stock.price + (req.body.quantity*req.body.price))/(req.body.quantity);
+					console.log("New Price", newPrice);
 					stock.price = newPrice;
 					stock.save((err) => {
 						if (err) {
@@ -247,7 +251,7 @@ router.put('/:username/stock/:symbol/buy', passport.authenticate('mybearer', {se
 /***
 Sell update
 ***/
-router.put('/:username/stock/:symbol', passport.authenticate('mybearer', {session: false}), (req, res) => {
+router.put('/:username/stock/:symbol/sell', passport.authenticate('mybearer', {session: false}), (req, res) => {
 	if (req.params.symbol !== req.body.symbol) {
 		return res.status(400).send("Request field does not match");
 	}
@@ -259,9 +263,11 @@ router.put('/:username/stock/:symbol', passport.authenticate('mybearer', {sessio
 			let stocks = user.portfolio.investedStocks;
 			let selectedId;
 			let updateStockId;
+			let currentQuantity;
 			for (let i=0; i<stocks.length; i++) {
 				if (stocks[i].stockId.stock.symbol === req.body.symbol) {
 					selectedId = stocks[i].id;
+					currentQuantity = user.portfolio.investedStocks[i].stockId.quantity;
 					user.portfolio.investedStocks[i].stockId.quantity = req.body.quantity;
 					updateStockId = user.portfolio.investedStocks[i].stockId.stock["_id"];
 				}
@@ -283,11 +289,13 @@ router.put('/:username/stock/:symbol', passport.authenticate('mybearer', {sessio
 					// 1. Get the sell quantity
 					// 2. Earned = (currentPrice - buyInPrice) * quantity sell
 					// 3. Update earned
-					
-					stock.price = req.body.price;
-					stock.save((err) => {
+					let earned = (req.body.price - stock.price) * currentQuantity;
+					// stock.price = req.body.price;
+					user.portfolio.earned = earned;
+					// user.portfolio.totalValue += earned;
+					user.save((err) => {
 						if (err) {
-							console.log("Stock save errror: ", err)
+							console.log("User save errror: ", err)
 						}
 					});
 					res.status(204).json(stock);
@@ -360,7 +368,7 @@ router.get('/:username/stock/:symbol', passport.authenticate('mybearer', {sessio
 					findStock = user.portfolio.investedStocks[i].stockId.stock["_id"];
 				}				
 			}
-			console.log("Find Stock: " + findStock)
+
 			return Stock
 				.findById(findStock)
 				.exec()
