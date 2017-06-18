@@ -223,14 +223,14 @@ router.put('/:username/stock/:symbol/buy', passport.authenticate('mybearer', {se
 				.exec()
 				.then(stock => {
 					stock.currentPrice = req.body.price;
-					console.log("Current Quantity", currentQuantity);
-					console.log("Stock Price", stock.price);
-					console.log("Request quantity", req.body.quantity);
-					console.log("Price now", req.body.price);
+					// console.log("Current Quantity", currentQuantity);
+					// console.log("Stock Price", stock.price);
+					// console.log("Request quantity", req.body.quantity);
+					// console.log("Price now", req.body.price);
 					// Future optimization: Calculate avg price
 					let newPrice = ((req.body.quantity-currentQuantity)*stock.price + (req.body.quantity*req.body.price))/(req.body.quantity);
 					console.log("New Price", newPrice);
-					stock.price = newPrice;
+					stock.price = newPrice.toFixed(2);
 					stock.save((err) => {
 						if (err) {
 							console.log("Stock save errror: ", err)
@@ -289,9 +289,15 @@ router.put('/:username/stock/:symbol/sell', passport.authenticate('mybearer', {s
 					// 1. Get the sell quantity
 					// 2. Earned = (currentPrice - buyInPrice) * quantity sell
 					// 3. Update earned
-					let earned = (req.body.price - stock.price) * currentQuantity;
+
+					console.log("Current Quantity", currentQuantity);
+					console.log("Stock Price", stock.price);
+					console.log("Request quantity", req.body.quantity);
+					console.log("Price now", req.body.price);
+
+					let earned = (req.body.price - stock.price) * (req.body.quantity-currentQuantity);
 					// stock.price = req.body.price;
-					user.portfolio.earned = earned;
+					user.portfolio.earned += earned;
 					// user.portfolio.totalValue += earned;
 					user.save((err) => {
 						if (err) {
