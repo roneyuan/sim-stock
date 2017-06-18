@@ -4,7 +4,7 @@ function makePortfolio(init, spec, earned) {
 	const _state = {
 		totalValue: 0,
 		invested: 0,
-		earned: earned,
+		earned: earned.toFixed(2),
 		earning: 0,
 		buyingPower: 0,
 		stocks: [],
@@ -29,7 +29,7 @@ function makePortfolio(init, spec, earned) {
 		let defaultMoney = 1000000.00;
 		let totalValue = defaultMoney + calcEarning();
 
-		_state.totalValue = totalValue;
+		_state.totalValue = totalValue+ (+_state.earned);
 		_state.buyingPower = calcBuyingPower();
 	}
 
