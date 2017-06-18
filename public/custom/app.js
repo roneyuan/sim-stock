@@ -98,6 +98,17 @@ function handleError(err) {
 function displayLatestStockUpdates(state) {
   $('.list').remove();    
   console.log(state);
+
+  let marketOpen = new Date();
+  let day = marketOpen.getDay();
+  let hour = marketOpen.getHours();
+  let inputTime;
+  if (day == 6 || day == 0 || hour < 9 || hour > 16) {
+    inputTime = '<input class="list-button-quantity" type="number" readonly/>';
+  } else {
+    inputTime = '<input class="list-button-quantity" type="number" />';
+  }
+
   for (let i=0; i<state.stocks.length; i++) {
     $('.portfolio').append(`
       <div class="list">
@@ -108,7 +119,7 @@ function displayLatestStockUpdates(state) {
         <div class="list-button">
           <button id="buy-more" class="buy-more">More</button>
           <button class="sell">Sell</button>
-          <input class="list-button-quantity" type="number" />
+          ${inputTime}
         </div>
       </div>`);
   }
