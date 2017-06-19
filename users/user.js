@@ -49,8 +49,6 @@ const UserSchema = mongoose.Schema({
 UserSchema.plugin(findOrCreate);
 
 UserSchema.methods.validatePassword = function(password, callback) {
-	// console.log(password);
-	// console.log("THIS: ", this.password)
 	return bcrypt.compare(password, this.password, function(err, isValid) {
 		if (err) {
 			callback(err);
@@ -60,7 +58,6 @@ UserSchema.methods.validatePassword = function(password, callback) {
 }
 
 UserSchema.statics.hashPassword = function(password) {
-	// console.log("HASH: ", password);
 	return bcrypt.hash(password, 10);
 }
 

@@ -293,9 +293,9 @@ router.put('/:username/stock/:symbol/sell', passport.authenticate('mybearer', {s
 					console.log("Price now", req.body.price);
 
 					let earned = (req.body.price - stock.price) * (req.body.quantity-currentQuantity);
-					// stock.price = req.body.price;
+				
 					user.portfolio.earned += earned;
-					// user.portfolio.totalValue += earned;
+
 					user.save((err) => {
 						if (err) {
 							console.log("User save errror: ", err)
@@ -359,7 +359,6 @@ router.put('/:username/stock/:symbol/:price', passport.authenticate('mybearer', 
 });
 
 router.get('/:username/stock/:symbol', passport.authenticate('mybearer', {session: false}), (req, res) => {
-	//console.log("REQ1:" + req.params.symbol) // req.body,symbol does not work? Why? Maybe because it is using GET
 	return User
 		.findOne({username: req.user.username})
 		.populate('portfolio.investedStocks.stockId.stock')
@@ -376,7 +375,6 @@ router.get('/:username/stock/:symbol', passport.authenticate('mybearer', {sessio
 				.findById(findStock)
 				.exec()
 				.then(stock => {
-					//console.log(stock);
 					res.status(200).json(stock.apiRepr());
 				})
 				.catch(err => {

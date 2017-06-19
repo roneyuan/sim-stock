@@ -1,20 +1,17 @@
-var getToken = (function(keyset) {
-  var res = keyset.split('=', 2)[1];
+let getToken = (function(keyset) {
+  let res = keyset.split('=', 2)[1];
   
   return res;
 }(location.search.substr(1)));
 
 let portfolio;
 let access_token = getToken;
-let MARKITONDEMAND_URL = "http://dev.markitondemand.com/Api/v2/Quote/jsonp";
 
 function getLatestStockUpdates() {
   $.ajax({
     url: 'users/104638216487363687391/stock?access_token='+access_token,
     method: 'GET',
   }).done(function(result) {
-    // portfolio = makePortfolio(false, result.portfolio.investedStocks);
-    // displayLatestStockUpdates(portfolio.getPortfolio()); 
     updateCurrentPrice(result);  
   }).fail(function(err) {
     throw err;
@@ -31,9 +28,8 @@ function callBarchartOnDemandApi(searchTerm, quantity, access_token) {
     url: url,
     dataType: "jsonp",
     success: function(data) {
-      console.log(data);
       if (data.status.code != 200) {
-        alert("Unable to find the symbol. Try Use Symbol Finder!"); /* TODO Symbo Finder */
+        alert("Unable to find the symbol. Try Use Symbol Finder!");
       } else {
         price = data.results[0].lastPrice;
         $.ajax({
@@ -68,7 +64,7 @@ function sellOrBuyStock(symbol, quantity, newPrice, operate) {
     success: function(data) {
       console.log("OPERATE", operate);
       if (data.status.code != 200) {
-        alert("Unable to find the symbol. Try Use Symbol Finder!"); /* TODO Symbo Finder */
+        alert("Unable to find the symbol. Try Use Symbol Finder!");
       } else {
         price = data.results[0].lastPrice;
 
@@ -171,7 +167,6 @@ $('.portfolio').on('click', '.sell',function(event) {
     let price = 30;
     totalQuantity = +currentQuantity - +sellingQuantity;
     if (sellingQuantity >= 0) {
-      //sellStock(symbol);
       $(event.target).parent()[0]['lastElementChild']['value'] = "";
       sellOrBuyStock(symbol, totalQuantity, price, "sell");
     } else {
@@ -265,7 +260,7 @@ function sellStock(symbol, quantity) {
       dataType: "jsonp",
       success: function(data) {
         if (data.status.code != 200) {
-          alert("Unable to find the symbol. Symbol Finder coming soon!"); /* TODO Symbo Finder */
+          alert("Unable to find the symbol. Symbol Finder coming soon!");
         } else {
           let currentPrice = data.results[0].lastPrice;  
           let earning = (currentPrice - buyInPrice)*quantity     

@@ -1,5 +1,5 @@
 let getUser = (function(keyset) {
-  var res = keyset.split('=', 2)[1];
+  let res = keyset.split('=', 2)[1];
   
   return res;
 }(location.search.substr(1)));
@@ -11,9 +11,7 @@ function getLatestStockUpdates() {
   $.ajax({
     url: '/account/'+user+'/stock',
     method: 'GET',
-  }).done(function(result) {
-    // portfolio = makePortfolio(false, result.portfolio.investedStocks);
-    // displayLatestStockUpdates(portfolio.getPortfolio());   
+  }).done(function(result) { 
     updateCurrentPrice(result);  
   }).fail(function(err) {
     throw err;
@@ -104,7 +102,7 @@ function displayLatestStockUpdates(state) {
   let hour = marketOpen.getHours();
   let inputTime;
   if (day == 6 || day == 0 || hour < 9 || hour > 16) {
-    inputTime = '<input class="list-button-quantity" type="number" readonly/>';
+    inputTime = '<input class="list-button-quantity" type="number" disabled />';
   } else {
     inputTime = '<input class="list-button-quantity" type="number" />';
   }
@@ -123,6 +121,8 @@ function displayLatestStockUpdates(state) {
         </div>
       </div>`);
   }
+
+  $("button").prop("disabled", true);
 
   $('#available-money').text("$"+state.buyingPower);
   $('#total-value').text("$"+state.totalValue);
