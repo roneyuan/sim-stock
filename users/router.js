@@ -223,12 +223,9 @@ router.put('/:username/stock/:symbol/buy', passport.authenticate('mybearer', {se
 				.exec()
 				.then(stock => {
 					stock.currentPrice = req.body.price;
-					// console.log("Current Quantity", currentQuantity);
-					// console.log("Stock Price", stock.price);
-					// console.log("Request quantity", req.body.quantity);
-					// console.log("Price now", req.body.price);
-					// Future optimization: Calculate avg price
-					let newPrice = ((req.body.quantity-currentQuantity)*stock.price + (req.body.quantity*req.body.price))/(req.body.quantity);
+					console.log(req.body.quantity);
+					console.log(currentQuantity);
+					let newPrice = ((req.body.quantity-currentQuantity)*req.body.price + (currentQuantity*stock.price))/(req.body.quantity);
 					console.log("New Price", newPrice);
 					stock.price = newPrice.toFixed(2);
 					stock.save((err) => {
