@@ -105,7 +105,7 @@ function displayLatestStockUpdates(state) {
   let hour = marketOpen.getHours();
   let inputTime;
   if (day == 6 || day == 0 || hour < 9 || hour > 16) {
-    inputTime = '<input class="list-button-quantity" type="number" />';
+    inputTime = '<input class="list-button-quantity" type="number" disabled />';
   } else {
     inputTime = '<input class="list-button-quantity" type="number" />';
   }
@@ -125,7 +125,7 @@ function displayLatestStockUpdates(state) {
       </div>`);
   }
 
-  // $("button").prop("disabled", true);
+  $("button").prop("disabled", true);
 
   $('#available-money').text("$"+state.buyingPower);
   $('#total-value').text("$"+state.totalValue);
