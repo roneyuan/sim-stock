@@ -36,7 +36,14 @@ a {
 	width: 500px;
 	padding-left: 100px;
 	padding-right: 100px;
+	color: white;
 }
+
+.signup-login-land {
+	background-image: url('../img/bg.jpg');
+	background-size: cover;
+}
+
 .form-group {
 	padding-top: 5px;
 	padding-bottom: 5px;
@@ -237,7 +244,12 @@ a {
 	background-color: #308cde !important;
 }
 
-.login, .signup {
+.demo {
+	/*width: 120px !important;*/
+	background-color: #ff8010 !important;
+}
+
+.login, .signup, .demo {
 	/*margin: 20% auto;*/
   width: 220px;
   height: 32px;
