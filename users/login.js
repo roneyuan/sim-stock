@@ -179,7 +179,8 @@ router.put('/:username/stock/:symbol', (req, res) => {
 				.exec()
 				.then(stock => {
 					stock.currentPrice = req.body.price;
-
+					// Future optimization: Calculate avg price
+					stock.price = req.body.price;
 					stock.save((err) => {
 						if (err) {
 							console.log("Stock save errror: ", err)
@@ -198,8 +199,170 @@ router.put('/:username/stock/:symbol', (req, res) => {
 });
 
 
+
+
+router.get('/:username/stock/:symbol', (req, res) => {
+	//console.log("REQ1:" + req.params.symbol) // req.body,symbol does not work? Why? Maybe because it is using GET
+	return User
+		.findOne({username: req.params.username})
+		.populate('portfolio.investedStocks.stockId.stock')
+		.exec((err, user) => {
+			let stocks = user.portfolio.investedStocks;
+			let findStock;
+			for (let i=0; i<stocks.length; i++) {
+				if (stocks[i].stockId.stock.symbol === req.params.symbol) {
+					findStock = user.portfolio.investedStocks[i].stockId.stock["_id"];
+				}				
+			}
+			console.log("Find Stock: " + findStock)
+			return Stock
+				.findById(findStock)
+				.exec()
+				.then(stock => {
+					//console.log(stock);
+					res.status(200).json(stock.apiRepr());
+				})
+				.catch(err => {
+					console.log("Find Stock Error: " + err);
+				});
+		})
+		.catch(err => {
+			console.log(err);
+			res.status(500).json({error: 'Error'})
+		})
+});
+
 /***
-Update current price for stock TODO
+Buy update
+***/
+router.put('/:username/stock/:symbol/buy', (req, res) => {
+	
+	if (req.params.symbol !== req.body.symbol) {
+		return res.status(400).send("Request field does not match");
+	}
+	let currentQuantity;
+	return User
+		.findOne({username: req.params.username})
+		.populate('portfolio.investedStocks.stockId.stock') 
+		.exec((err, user) => {
+			let stocks = user.portfolio.investedStocks;
+			let selectedId;
+			let updateStockId;
+			for (let i=0; i<stocks.length; i++) {
+				if (stocks[i].stockId.stock.symbol === req.body.symbol) {
+					selectedId = stocks[i].id;
+					// Get the quantiy
+					currentQuantity = user.portfolio.investedStocks[i].stockId.quantity;
+					user.portfolio.investedStocks[i].stockId.quantity = req.body.quantity;
+					updateStockId = user.portfolio.investedStocks[i].stockId.stock["_id"];
+				}
+			}
+
+			user.save((err) => {
+				if (err) {
+					console.log("Save and Update error", err)
+				}
+			});
+
+			return Stock
+				.findById(updateStockId)
+				.exec()
+				.then(stock => {
+					stock.currentPrice = req.body.price;
+					console.log(req.body.quantity);
+					console.log(currentQuantity);
+					let newPrice = ((req.body.quantity-currentQuantity)*req.body.price + (currentQuantity*stock.price))/(req.body.quantity);
+					console.log("BODY", req.body.price)
+					console.log("New Price", newPrice);
+					stock.price = newPrice.toFixed(2);
+					stock.save((err) => {
+						if (err) {
+							console.log("Stock save errror: ", err)
+						}
+					});
+					res.status(204).json(stock);
+				})
+				.catch(err => {
+					console.log("Update Stock Error: " + err);
+				});
+	}) 
+	.catch(err => {
+		console.log(err);
+		res.status(500).json({error: 'Error'})
+	});						
+});
+
+/***
+Sell update
+***/
+router.put('/:username/stock/:symbol/sell', (req, res) => {
+
+	if (req.params.symbol !== req.body.symbol) {
+		return res.status(400).send("Request field does not match");
+	}
+
+	return User
+		.findOne({username: req.params.username})
+		.populate('portfolio.investedStocks.stockId.stock') 
+		.exec((err, user) => {
+			let stocks = user.portfolio.investedStocks;
+			let selectedId;
+			let updateStockId;
+			let currentQuantity;
+			for (let i=0; i<stocks.length; i++) {
+				if (stocks[i].stockId.stock.symbol === req.body.symbol) {
+					selectedId = stocks[i].id;
+					currentQuantity = user.portfolio.investedStocks[i].stockId.quantity;
+					user.portfolio.investedStocks[i].stockId.quantity = req.body.quantity;
+					updateStockId = user.portfolio.investedStocks[i].stockId.stock["_id"];
+				}
+			}
+
+			user.save((err) => {
+				if (err) {
+					console.log("Save and Update error", err)
+				}
+			});
+
+			return Stock
+				.findById(updateStockId)
+				.exec()
+				.then(stock => {
+					stock.currentPrice = req.body.price;
+
+					// Future optimization: Calculate earned
+					// 1. Get the sell quantity
+					// 2. Earned = (currentPrice - buyInPrice) * quantity sell
+					// 3. Update earned
+
+					// console.log("Current Quantity", currentQuantity);
+					// console.log("Stock Price", stock.price);
+					// console.log("Request quantity", req.body.quantity);
+					// console.log("Price now", req.body.price);
+
+					let earned = (req.body.price - stock.price) * (req.body.quantity-currentQuantity);
+				
+					user.portfolio.earned += earned;
+
+					user.save((err) => {
+						if (err) {
+							console.log("User save errror: ", err)
+						}
+					});
+					res.status(204).json(stock);
+				})
+				.catch(err => {
+					console.log("Update Stock Error: " + err);
+				});
+	}) 
+	.catch(err => {
+		console.log(err);
+		res.status(500).json({error: 'Error'})
+	});						
+});
+
+/***
+Update current price for stock TODO - Need a new path otherwise it will conflict with buy and sell
 ***/
 router.put('/:username/stock/:symbol/:price', (req, res) => {
 	if (req.params.price !== req.body.price || req.params.symbol !== req.body.symbol) {
@@ -239,37 +402,6 @@ router.put('/:username/stock/:symbol/:price', (req, res) => {
 		console.log(err);
 		res.status(500).json({error: 'Error'})
 	});				
-});
-
-router.get('/:username/stock/:symbol', (req, res) => {
-	//console.log("REQ1:" + req.params.symbol) // req.body,symbol does not work? Why? Maybe because it is using GET
-	return User
-		.findOne({username: req.params.username})
-		.populate('portfolio.investedStocks.stockId.stock')
-		.exec((err, user) => {
-			let stocks = user.portfolio.investedStocks;
-			let findStock;
-			for (let i=0; i<stocks.length; i++) {
-				if (stocks[i].stockId.stock.symbol === req.params.symbol) {
-					findStock = user.portfolio.investedStocks[i].stockId.stock["_id"];
-				}				
-			}
-			console.log("Find Stock: " + findStock)
-			return Stock
-				.findById(findStock)
-				.exec()
-				.then(stock => {
-					//console.log(stock);
-					res.status(200).json(stock.apiRepr());
-				})
-				.catch(err => {
-					console.log("Find Stock Error: " + err);
-				});
-		})
-		.catch(err => {
-			console.log(err);
-			res.status(500).json({error: 'Error'})
-		})
 });
 
 router.post('/signup', function(req, res) {

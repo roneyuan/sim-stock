@@ -30,7 +30,7 @@ function callBarchartOnDemandApi(searchTerm, quantity, access_token) {
     success: function(data) {
       console.log(data);
       if (data.status.code != 200) {
-        alert("Unable to find the symbol. Try Use Symbol Finder!"); /* TODO Symbo Finder */
+        alert("Unable to find the symbol."); /* TODO Symbo Finder */
       } else {
         price = data.results[0].lastPrice;
         $.ajax({
@@ -53,7 +53,7 @@ function callBarchartOnDemandApi(searchTerm, quantity, access_token) {
   }); 
 }
 
-function sellOrBuyStock(symbol, quantity) {
+function sellOrBuyStock(symbol, quantity, newPrice, operate) {
   let url = "https://marketdata.websol.barchart.com/getQuote.jsonp"; 
   $.ajax({
     data: { 
@@ -64,12 +64,12 @@ function sellOrBuyStock(symbol, quantity) {
     dataType: "jsonp",
     success: function(data) {
       if (data.status.code != 200) {
-        alert("Unable to find the symbol. Try Use Symbol Finder!"); /* TODO Symbo Finder */
+        alert("Unable to find the symbol."); /* TODO Symbo Finder */
       } else {
         price = data.results[0].lastPrice;
 
         $.ajax({
-          url: '/account/'+user+'/stock/' + symbol,
+          url: '/account/'+user+'/stock/' + symbol + '/' + operate,
           method: 'PUT',
           data: {
             symbol: symbol,
@@ -102,7 +102,8 @@ function displayLatestStockUpdates(state) {
   let hour = marketOpen.getHours();
   let inputTime;
   if (day == 6 || day == 0 || hour < 9 || hour > 16) {
-    inputTime = '<input class="list-button-quantity" type="number" disabled />';
+    inputTime = '<input class="list-button-quantity" type="number"  disabled/>';
+    // $("button").prop("disabled", true);
   } else {
     inputTime = '<input class="list-button-quantity" type="number" />';
   }
@@ -122,7 +123,7 @@ function displayLatestStockUpdates(state) {
       </div>`);
   }
 
-  $("button").prop("disabled", true);
+  // $("button").prop("disabled", true);
 
   $('#available-money').text("$"+state.buyingPower);
   $('#total-value').text("$"+state.totalValue);
@@ -150,7 +151,7 @@ $('.portfolio').on('click', '.buy-more',function(event) {
   if (buyingQuantity >= 0) {
     //buyStock(symbol)
     $(event.target).parent()[0]['lastElementChild']['value'] = "";
-    sellOrBuyStock(symbol, totalQuantity)
+    sellOrBuyStock(symbol, totalQuantity, "", "buy")
   } else {
     alert("Please enter quantity");
   }
@@ -169,7 +170,7 @@ $('.portfolio').on('click', '.sell',function(event) {
     if (sellingQuantity >= 0) {
       //sellStock(symbol);
       $(event.target).parent()[0]['lastElementChild']['value'] = "";
-      sellOrBuyStock(symbol, totalQuantity, price);
+      sellOrBuyStock(symbol, totalQuantity, price, "sell");
     } else {
       alert("Please enter quantity");
     }       
@@ -214,7 +215,7 @@ function updateCurrentPrice(result) {
 
         // Check if all current price are updated
         if (i == initStocks.length - 1) {
-          portfolio = makePortfolio(false, initStocks);
+          portfolio = makePortfolio(false, initStocks, result.portfolio.earned);
           displayLatestStockUpdates(portfolio.getPortfolio());          
         }
       },
@@ -261,7 +262,7 @@ function sellStock(symbol, quantity) {
       dataType: "jsonp",
       success: function(data) {
         if (data.status.code != 200) {
-          alert("Unable to find the symbol. Symbol Finder coming soon!"); /* TODO Symbo Finder */
+          alert("Unable to find the symbol. "); /* TODO Symbo Finder */
         } else {
           let currentPrice = data.results[0].lastPrice;  
           let earning = (currentPrice - buyInPrice)*quantity     
