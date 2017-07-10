@@ -447,7 +447,7 @@ router.post('/signup', function(req, res) {
     .exec()
     .then(count => {
       if (count > 0) {
-        return res.status(422).json({message: 'username already taken'});
+        return res.status(422).json({message: 'Username already taken'});
       }
       // if no existing user, hash password
       return User.hashPassword(password)
