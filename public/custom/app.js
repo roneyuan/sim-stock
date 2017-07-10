@@ -28,11 +28,14 @@ function callBarchartOnDemandApi(searchTerm, quantity, access_token) {
     url: url,
     dataType: "jsonp",
     success: function(data) {
-      console.log(data);
-      if (data.status.code != 200) {
+      // console.log(data);
+      if (data.status.code != 200 || data.results[0].lastPrice == null) {
         alert("Unable to find the symbol."); /* TODO Symbo Finder */
       } else {
+        // console.log(data)
+
         price = data.results[0].lastPrice;
+                // console.log("Price", price)
         $.ajax({
           url: '/account/'+user+'/stock',
           method: 'POST',
@@ -95,7 +98,7 @@ function handleError(err) {
 
 function displayLatestStockUpdates(state) {
   $('.list').remove();    
-  console.log(state);
+  // console.log(state);
 
   let marketOpen = new Date();
   let day = marketOpen.getDay();

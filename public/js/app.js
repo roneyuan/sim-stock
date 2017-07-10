@@ -28,7 +28,7 @@ function callBarchartOnDemandApi(searchTerm, quantity, access_token) {
     url: url,
     dataType: "jsonp",
     success: function(data) {
-      if (data.status.code != 200) {
+      if (data.status.code != 200 || data.results[0].lastPrice==null) {
         alert("Unable to find the symbol. Try Use Symbol Finder!");
       } else {
         price = data.results[0].lastPrice;

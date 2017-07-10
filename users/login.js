@@ -125,6 +125,7 @@ router.post('/:username/stock', (req, res) => {
 			quantity: req.body.quantity	
 		})
 		.then(stock => {
+			console.log("STOCK", stock)
 			return User
 				.findOneAndUpdate({username:req.params.username}, 
 				{
