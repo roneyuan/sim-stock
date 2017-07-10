@@ -77,12 +77,17 @@ passport.deserializeUser(function(id, cb) {
 
 router.post('/login', passport.authenticate('mylocal', 
 	{ 
-		failureRedirect: '/account/login' 
-	}), function(req, res) {
-	console.log("LOGIN SUCCESS");
-	res.redirect('/account/home/'+req.body.username);
-
-});
+		failWithError: true
+	}), 
+	function(req, res, next) {
+		console.log("LOGIN SUCCESS");
+		res.status(201).json({url:'/account/home/'+req.body.username});
+	},
+  function(err, req, res, next) {
+    // handle error
+    // if (req.xhr) { return res.json(err); }
+    res.status(422).json({message: 'Invalid Username or Password'});
+  });
 
 router.get('/login', (req, res) => {
 	res.redirect('/index.html');

@@ -8,7 +8,7 @@
 	</head>
 	<body class="signup-login-land">
 		<div class="login-form">
-			<form action='/account/login' method='POST'>
+			<!-- <form action='/account/login' method='POST'> -->
 				<div class="form-group">
 					<label> Username: </label>
 					<input type="text" class="form-control" name="username" id="username" required />
@@ -18,10 +18,34 @@
 					<input type="password" class="form-control" name="password" id="password" required />
 				</div>
 				<div class="form-group">
-					<button class="btn btn-primary" id="login"> Login </button>
+					<button id="submit" class="btn btn-primary" id="login"> Login </button>
 				</div>
-			</form>
+			<!-- </form> -->
+				<div class="response"></div>
 		</div>
 	</body>
 	<script src="https://code.jquery.com/jquery-3.0.0.js"></script>
+	<script type="text/javascript">
+		$('#submit').on('click', function(event) {
+			event.preventDefault();
+			let username = $('#username').val();
+			let password = $('#password').val();
+			$.ajax({
+				data: {
+					username: username,
+					password: password
+				},
+				method: 'POST',
+				url: '/account/login'
+			}).done(function(result) {
+				// console.log(data);
+				window.location = result.url;
+			}).fail(function(error) {
+				// console.log(error.responseJSON.message)
+				$('.response').html("");
+				$('.response').append(error.responseJSON.message);
+			});
+		});
+
+	</script>	
 </html> 
