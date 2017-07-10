@@ -29,8 +29,13 @@ function callBarchartOnDemandApi(searchTerm, quantity, access_token) {
     dataType: "jsonp",
     success: function(data) {
       // console.log(data);
+      let buyingPower = +($('#available-money').text().replace('$', ''));
+      let price = data.results[0].lastPrice;
+      let checkEnough = buyingPower - (price*quantity);      
       if (data.status.code != 200 || data.results[0].lastPrice == null) {
         alert("Unable to find the symbol."); /* TODO Symbo Finder */
+      } else if (checkEnough < 0) {
+        alert("Not enough money!")
       } else {
         // console.log(data)
 
@@ -66,8 +71,15 @@ function sellOrBuyStock(symbol, quantity, newPrice, operate) {
     url: url,
     dataType: "jsonp",
     success: function(data) {
+      let buyingPower = +($('#available-money').text().replace('$', ''));
+      console.log("POWER",buyingPower)
+      let price = data.results[0].lastPrice;
+      let checkEnough = buyingPower - (price*quantity);
+
       if (data.status.code != 200) {
         alert("Unable to find the symbol."); /* TODO Symbo Finder */
+      } else if (operate=="buy" && checkEnough < 0) {
+        alert("Not enough money!")
       } else {
         price = data.results[0].lastPrice;
 

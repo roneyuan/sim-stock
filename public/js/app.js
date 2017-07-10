@@ -28,10 +28,14 @@ function callBarchartOnDemandApi(searchTerm, quantity, access_token) {
     url: url,
     dataType: "jsonp",
     success: function(data) {
+      let buyingPower = +($('#available-money').text().replace('$', ''));
+      let price = data.results[0].lastPrice;
+      let checkEnough = buyingPower - (price*quantity);
       if (data.status.code != 200 || data.results[0].lastPrice==null) {
-        alert("Unable to find the symbol. Try Use Symbol Finder!");
+        alert("Unable to find the symbol.");
+      } else if (checkEnough < 0) {
+        alert("Not enough money!")
       } else {
-        price = data.results[0].lastPrice;
         $.ajax({
           url: 'users/104638216487363687391/stock?access_token='+access_token,
           method: 'POST',
@@ -62,11 +66,16 @@ function sellOrBuyStock(symbol, quantity, newPrice, operate) {
     url: url,
     dataType: "jsonp",
     success: function(data) {
-      console.log("OPERATE", operate);
+      // console.log("OPERATE", operate);
+      let buyingPower = +($('#available-money').text().replace('$', ''));
+      let price = data.results[0].lastPrice;
+      let checkEnough = buyingPower - (price*quantity);
       if (data.status.code != 200) {
-        alert("Unable to find the symbol. Try Use Symbol Finder!");
+        alert("Unable to find the symbol.");
+      } else if (operate == "buy" && checkEnough < 0) {
+        alert("Not enough money!");
       } else {
-        price = data.results[0].lastPrice;
+        // price = data.results[0].lastPrice;
 
         $.ajax({
           url: 'users/104638216487363687391/stock/' + symbol + '/' + operate + '?access_token=' + access_token,
@@ -261,7 +270,7 @@ function sellStock(symbol, quantity) {
       dataType: "jsonp",
       success: function(data) {
         if (data.status.code != 200) {
-          alert("Unable to find the symbol. Symbol Finder coming soon!");
+          alert("Unable to find the symbol.");
         } else {
           let currentPrice = data.results[0].lastPrice;  
           let earning = (currentPrice - buyInPrice)*quantity     
