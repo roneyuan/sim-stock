@@ -8,7 +8,7 @@
 	</head>
 	<body class="signup-login-land">
 		<div class="signup-form">
-			<form method="POST" action="/account/signup">
+			<form id="signup" method="POST" action="/account/signup">
 				<div class="form-group">
 					<label> Username: </label>
 					<input type="text" class="form-control" name="username" id="username" required />
@@ -31,4 +31,9 @@
 			</form>
 		</div>
 	</body>
+	<script type="text/javascript">
+		$("#signup").submit(function(e){
+    	return false;
+		});	
+	</script>
 </html>

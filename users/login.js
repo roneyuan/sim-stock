@@ -453,7 +453,7 @@ router.post('/signup', function(req, res) {
       return User.hashPassword(password)
     })
   	.then(hash => {
-  		console.log(hash);
+  		// console.log(hash);
     	return User
         .create({
           username: username,

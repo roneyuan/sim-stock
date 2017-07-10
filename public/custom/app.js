@@ -102,10 +102,10 @@ function displayLatestStockUpdates(state) {
   let hour = marketOpen.getHours();
   let inputTime;
   if (day == 6 || day == 0 || hour < 9 || hour > 16) {
-    inputTime = '<input class="list-button-quantity" type="number"  disabled/>';
+    inputTime = '<input class="list-button-quantity" type="number" placeholder="Closed" disabled/>';
     // $("button").prop("disabled", true);
   } else {
-    inputTime = '<input class="list-button-quantity" type="number" />';
+    inputTime = '<input class="list-button-quantity" type="number" placeholder="Quantity" />';
   }
 
   for (let i=0; i<state.stocks.length; i++) {
