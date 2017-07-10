@@ -98,7 +98,7 @@ router.get('/home/:user', function(req, res) {
 Get stock list
 ***/
 router.get('/:username/stock', (req, res) => {
-	console.log("REQ STOCK:", req.user); 
+	// console.log("REQ STOCK:", req.user); 
 	return User
 		.findOne({username: req.params.username}) //
 		.populate('portfolio.investedStocks.stockId.stock')   
@@ -462,10 +462,10 @@ router.post('/signup', function(req, res) {
         })
   	})
   	.then(user => {
-  		res.redirect('/account/home/'+user.username);
+  		res.status(201).json({url: '/account/home/'+user.username});
   	})
     .catch(err => {
-    	console.log(err);
+    	// console.log(err);
       res.status(500).json({message: 'Internal server error'})
     });	
 })
