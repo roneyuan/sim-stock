@@ -29,6 +29,9 @@ function callBarchartOnDemandApi(searchTerm, quantity, access_token) {
     url: url,
     dataType: "jsonp",
     success: function(data) {
+      if (data.results == null) {
+        handleError();
+      }
       let buyingPower = +($('#available-money').text().replace('$', ''));
       let price = data.results[0].lastPrice;
       let checkEnough = buyingPower - (price*quantity);
@@ -70,7 +73,7 @@ function sellOrBuyStock(symbol, quantity, newPrice, operate) {
     url: url,
     dataType: "jsonp",
     success: function(data) {
-      // console.log("OPERATE", operate);
+      // console.log("data", data.results[0]);
       let buyingPower = +($('#available-money').text().replace('$', ''));
       let price = data.results[0].lastPrice;
       let checkEnough = buyingPower - (price*quantity);
