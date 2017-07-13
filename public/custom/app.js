@@ -14,6 +14,7 @@ function getLatestStockUpdates() {
   }).done(function(result) { 
     updateCurrentPrice(result);  
   }).fail(function(err) {
+    $('.process-bg').hide();
     throw err;
   });
 }
@@ -33,9 +34,12 @@ function callBarchartOnDemandApi(searchTerm, quantity, access_token) {
       let price = data.results[0].lastPrice;
       let checkEnough = buyingPower - (price*quantity);      
       if (data.status.code != 200 || data.results[0].lastPrice == null) {
+        $('.process-bg').hide();
         alert("Unable to find the symbol."); /* TODO Symbo Finder */
       } else if (checkEnough < 0) {
+        $('.process-bg').hide();
         alert("Not enough money!")
+
       } else {
         // console.log(data)
 
@@ -53,6 +57,7 @@ function callBarchartOnDemandApi(searchTerm, quantity, access_token) {
         }).done(function(result) {
           getLatestStockUpdates();
         }).fail(function(err) {
+          $('.process-bg').hide();
           console.log("Update price error: " + err)
         }); 
       }
@@ -77,8 +82,10 @@ function sellOrBuyStock(symbol, quantity, newPrice, operate) {
       let checkEnough = buyingPower - (price*quantity);
 
       if (data.status.code != 200) {
+        $('.process-bg').hide();
         alert("Unable to find the symbol."); /* TODO Symbo Finder */
       } else if (operate=="buy" && checkEnough < 0) {
+        $('.process-bg').hide();
         alert("Not enough money!")
       } else {
         price = data.results[0].lastPrice;
@@ -95,6 +102,7 @@ function sellOrBuyStock(symbol, quantity, newPrice, operate) {
         }).done(function(result) {
           getLatestStockUpdates();
         }).fail(function(err) {
+          $('.process-bg').hide();
           console.log("Sell or buy error: " + err)
         });          
       }
@@ -105,13 +113,14 @@ function sellOrBuyStock(symbol, quantity, newPrice, operate) {
 
 function handleError(err) {
   console.log(err);
-  alert("This is free version. You have reach API call limit. Please try again later.");
+  $('.process-bg').hide();
+  alert("Invalid. Please try again.");
 }
 
 function displayLatestStockUpdates(state) {
   $('.list').remove();    
   // console.log(state);
-
+  $('.process-bg').hide();
   let marketOpen = new Date();
   let day = marketOpen.getDay();
   let hour = marketOpen.getHours();
@@ -151,6 +160,7 @@ $('#addStock').on('click', function(event) {
 
   let symbol = $('#searchSymbol').val();
   let quantity = $('#enterQuantity').val();
+  $('.process-bg').show();
   callBarchartOnDemandApi(symbol, +quantity);
   $('#searchSymbol').val("");
   $('#enterQuantity').val("");
@@ -166,6 +176,7 @@ $('.portfolio').on('click', '.buy-more',function(event) {
   if (buyingQuantity >= 0) {
     //buyStock(symbol)
     $(event.target).parent()[0]['lastElementChild']['value'] = "";
+    $('.process-bg').show();
     sellOrBuyStock(symbol, totalQuantity, "", "buy")
   } else {
     alert("Please enter quantity");
@@ -185,6 +196,7 @@ $('.portfolio').on('click', '.sell',function(event) {
     if (sellingQuantity >= 0) {
       //sellStock(symbol);
       $(event.target).parent()[0]['lastElementChild']['value'] = "";
+      $('.process-bg').show();
       sellOrBuyStock(symbol, totalQuantity, price, "sell");
     } else {
       alert("Please enter quantity");

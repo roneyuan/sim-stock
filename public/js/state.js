@@ -99,4 +99,7 @@ function makePortfolio(init, spec, earned) {
 		$("button").prop("disabled", true);
 		alert("Warning! Current market is closed. You cannot buy and sell the stock. ")
 	} 
+
+	// Hide processing icon;
+	$('.process-bg').hide();
 }())
