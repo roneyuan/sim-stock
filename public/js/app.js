@@ -116,7 +116,7 @@ function displayLatestStockUpdates(state) {
     inputTime = '<input class="list-button-quantity" type="number" />';
   }
 
-  for (let i=0; i<state.stocks.length; i++) {
+  for (let i=state.stocks.length-1; i >= 0; i--) {
     $('.portfolio').append(`
       <div class="list">
         <div class="col-4 stock stockInfo">${state.stocks[i].symbol}</div>
