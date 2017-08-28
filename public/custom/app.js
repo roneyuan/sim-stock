@@ -228,7 +228,9 @@ function clonePortfolio(stocks) {
 
 function updateCurrentPrice(result) {
   var initStocks = clonePortfolio(result.portfolio.investedStocks);
-
+  if (length === 0) {
+    displayLatestStockUpdates(portfolio.getPortfolio()); 
+  }
   for (let i=0; i<initStocks.length; i++) {
     let symbol = initStocks[i].stockId.stock.symbol;
     let url = "https://marketdata.websol.barchart.com/getQuote.jsonp"; 
