@@ -228,9 +228,7 @@ function clonePortfolio(stocks) {
 
 function updateCurrentPrice(result) {
   var initStocks = clonePortfolio(result.portfolio.investedStocks);
-  if (length === 0) {
-    displayLatestStockUpdates(portfolio.getPortfolio()); 
-  }
+
   for (let i=0; i<initStocks.length; i++) {
     let symbol = initStocks[i].stockId.stock.symbol;
     let url = "https://marketdata.websol.barchart.com/getQuote.jsonp"; 
@@ -248,7 +246,7 @@ function updateCurrentPrice(result) {
           .stockId.stock.currentPrice = data.results[0].lastPrice;
 
         // Check if all current price are updated
-        if (i == initStocks.length - 1) {
+        if (i == initStocks.length - 1 || i === 0) {
           portfolio = makePortfolio(false, initStocks, result.portfolio.earned);
           displayLatestStockUpdates(portfolio.getPortfolio());          
         }
