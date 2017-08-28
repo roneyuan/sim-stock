@@ -89,17 +89,17 @@ function makePortfolio(init, spec, earned) {
 
 }
 
-(function(){
-	let marketOpen = new Date();
-	let day = marketOpen.getDay();
-	let hour = marketOpen.getHours();
+// (function(){
+// 	let marketOpen = new Date();
+// 	let day = marketOpen.getDay();
+// 	let hour = marketOpen.getHours();
 
-	if (day == 6 || day == 0 || hour < 9 || hour > 16) {
-		$('input').prop('readonly', true);
-		$("button").prop("disabled", true);
-		alert("Warning! Current market is closed. You cannot buy and sell the stock. ")
-	} 
+// 	if (day == 6 || day == 0 || hour < 9 || hour > 16) {
+// 		$('input').prop('readonly', true);
+// 		$("button").prop("disabled", true);
+// 		alert("Warning! Current market is closed. You cannot buy and sell the stock. ")
+// 	} 
 
-	// Hide processing icon;
-	$('.process-bg').hide();
-}())
+// 	// Hide processing icon;
+// 	$('.process-bg').hide();
+// }())
