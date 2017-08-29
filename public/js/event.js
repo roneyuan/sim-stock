@@ -58,11 +58,11 @@ $('.portfolio').on('click', '.sell', function(event) {
   let day = marketOpen.getDay();
   let hour = marketOpen.getHours();
 
-  // if (day == 6 || day == 0 || hour < 9 || hour > 16) {
-  //   $('input').prop('readonly', true);
-  //   $("button").prop("disabled", true);
-  //   alert("Warning! Current market is closed. You cannot buy and sell the stock. ")
-  // } 
+  if (day == 6 || day == 0 || hour < 9 || hour > 16) {
+    $('input').prop('readonly', true);
+    $("button").prop("disabled", true);
+    alert("Warning! Current market is closed. You cannot buy and sell the stock. ")
+  } 
 
   // Hide processing icon;
   $('.process-bg').hide();

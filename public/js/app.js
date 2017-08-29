@@ -157,8 +157,7 @@ function displayLatestStockUpdates(state) {
   let inputTime;
 
   if (day == 6 || day == 0 || hour < 9 || hour > 16) {
-    // inputTime = '<input class="list-button-quantity" type="number" placeholder="Closed" disabled />';
-        inputTime = '<input class="list-button-quantity" type="number" placeholder="Quantity" />';
+    inputTime = '<input class="list-button-quantity" type="number" placeholder="Closed" disabled />';
   } else {
     inputTime = '<input class="list-button-quantity" type="number" placeholder="Quantity" />';
   }

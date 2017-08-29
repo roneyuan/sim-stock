@@ -70,18 +70,6 @@ router.get('/auth/google/callback',
     res.redirect("/home.html?access_token=" + req.user.password);
   });
 
-
-/***
-For test only
-***/
-// router.get('/:username',
-//   passport.authenticate('bearer', {session: false}),
-//   function (req, res) { 
-//    res.json({user: req.user.apiRepr()}); 
-//   }
-// );
-
-
 /***
 Get stock list
 ***/

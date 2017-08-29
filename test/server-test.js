@@ -1,15 +1,14 @@
 const chai = require('chai');
 const chaiHttp = require('chai-http');
-//const faker = require('faker');
 const server = require('../server.js');
 const mongoose = require('mongoose');
 
 const should = chai.should();
 
-const {User} = require('../users');
-const {Stock} = require('../users');
-const {app, runServer, closeServer} = require('../server');
-const {TEST_DATABASE_URL} = require('../config');
+const { User } = require('../models/user');
+const { Stock } = require('../models/stock');
+const { app, runServer, closeServer } = require('../server');
+const { TEST_DATABASE_URL } = require('../config');
 
 chai.use(chaiHttp);
 
