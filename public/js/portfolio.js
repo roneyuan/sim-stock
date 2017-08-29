@@ -10,8 +10,7 @@ class Portfolio {
     this.pastOwnedStocks = [];
   }
 
-  initOrRefresh(stocks) {
-    // let currentTotal = 0;
+  init(stocks) {
     let currentInvested = 0;
 
     stocks.investedStocks.forEach(stock => {
@@ -28,14 +27,28 @@ class Portfolio {
       currentInvested += stock.stockId.stock.price * stock.stockId.quantity;
     });
 
-    // currentTotal += stock.stockId.stock.currentPrice * stock.stockId.quantity;
-
     this.invested = Number(currentInvested.toFixed(2));
-    // this.earning = Number((currentTotal - currentInvested).toFixed(2));
     this.earned = Number((stocks.earned).toFixed(2));
-    // this.totalValue = Number((1000000.00 + this.earning + stocks.earned).toFixed(2)); 
     this.buyingPower = Number((1000000.00 - this.invested).toFixed(2));    
   }
+
+  refresh(earned) {
+    let currentTotal = 0;
+    let currentInvested = 0;
+
+    this.stocks.forEach(stock => {
+      currentTotal += stock.currentPrice * stock.quantity;
+      currentInvested += stock.buyInPrice * stock.quantity;
+    });
+
+    currentTotal = Number(currentTotal.toFixed(2));
+    
+    this.invested = Number(currentInvested.toFixed(2));
+    this.earned = Number(earned.toFixed(2)) || this.earned;
+    this.buyingPower = Number((1000000.00 - this.invested).toFixed(2));  
+    this.earning = Number((currentTotal - this.invested).toFixed(2));
+    this.totalValue = Number((1000000.00 + this.earning + this.earned).toFixed(2)); 
+  }    
 
   calcEarningAndTotal() {
     let currentTotal = 0;
@@ -59,18 +72,7 @@ class Portfolio {
     this.buyingPower = Number((1000000.00 - this.invested).toFixed(2));  
   }
 
-  // filterStocks() {
-  //   this.stocks.forEach(stock => {
-  //     if (stock.stockId.quantity === 0) {
-  //       this.pastOwnedStocks.push(stock);
-  //     } else {
-  //       this.currentOwnedStocks.push(stock);
-  //     }
-  //   });
-  // }
-
   checkIfSellAll(stock) {
-    // Filter current and past stock
     if (stock.quantity === 0) {
       let index = currentOwnedStocks.findIndex(owned => owned.symbol === stock.symbol);
       this.currentOwnedStocks.splice(index, 1);
@@ -81,7 +83,7 @@ class Portfolio {
   checkIfOwned(symbol) {
     let owned = false;
 
-    this.currentOwnedStocks.forEach(stock => {
+    this.stocks.forEach(stock => {
       if (stock.symbol === symbol) {
         owned = true;
       }

@@ -4,7 +4,9 @@ $('#addStock').on('click', function(event) {
   let symbol = $('#searchSymbol').val().toUpperCase();
   let quantity = Number($('#enterQuantity').val());
   $('.process-bg').show();
+
   addStock(symbol, quantity);
+  
   $('#searchSymbol').val("");
   $('#enterQuantity').val("");
 });
@@ -20,7 +22,8 @@ $('.portfolio').on('click', '.buy-more', function(event) {
   if (buyingQuantity >= 0) {
     $(event.target).parent()[0]['lastElementChild']['value'] = "";
     $('.process-bg').show();
-    buyStock(symbol, totalQuantity);
+
+    buyOrSellStock(symbol, totalQuantity, "buy");
   } else {
     alert("Please enter quantity");
   }
@@ -42,7 +45,8 @@ $('.portfolio').on('click', '.sell', function(event) {
 
       $(event.target).parent()[0]['lastElementChild']['value'] = "";
       $('.process-bg').show();
-      sellStock(symbol, totalQuantity);
+
+      buyOrSellStock(symbol, totalQuantity, "sell");
     } else {
       alert("Please enter quantity");
     }       

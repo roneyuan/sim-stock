@@ -1,5 +1,5 @@
-function addStockPromise(searchTerm, quantity) {
-  let getStockPrice = new Promise((resolve, reject) => {
+function getLatestPriceFromAPI(searchTerm, quantity) {
+  return new Promise((resolve, reject) => {
     let url = "https://marketdata.websol.barchart.com/getQuote.jsonp"; 
     $.ajax({
       data: { 
@@ -27,50 +27,17 @@ function addStockPromise(searchTerm, quantity) {
       }
     }); 
   });
-
-  getStockPrice
-    .then(data => {
-        return new Promise((resolve, reject) => {
-          $.ajax({
-            url: 'users/username/stock?access_token='+access_token,
-            method: 'POST',
-            data: {
-              symbol: searchTerm,
-              quantity: quantity,
-              price: data.results[0].lastPrice
-            },
-            dataType: "json"
-          }).done(function(result) {
-            resolve(result);
-          }).fail(function(err) {
-            reject(err);
-          }); 
-        });
-    })
-    .then(result => {
-      portfolio.addStock({
-        symbol: searchTerm,
-        quantity: quantity,
-        price: result.price,
-        currentPrice: result.price       
-      });
-      displayLatestStockUpdates(portfolio);
-    })
-    .catch(error => {
-      $('.process-bg').hide();
-      console.log("Error: " + error);
-      handleError(error);
-    })
 }
 
 /* Need to fix buying power*/
-function updateAllStocks(result) {
+function updateAllStocks() {
   let promisesList = [];
 
   for (let i = 0; i < portfolio.stocks.length; i++) {
     promisesList.push(new Promise ((resolve, reject) => {
       let symbol = portfolio.stocks[i].symbol;
       let url = "https://marketdata.websol.barchart.com/getQuote.jsonp"; 
+
       $.ajax({
         data: { 
           symbols: symbol,
@@ -80,7 +47,6 @@ function updateAllStocks(result) {
         dataType: "jsonp",
         success: function(data) {
           // Find and update the price that matches the symbol
-          console.log(data.results[0].lastPrice);
           portfolio.stocks
             .find(stock => stock.symbol === symbol)
             .currentPrice = data.results[0].lastPrice;
@@ -104,38 +70,81 @@ function updateAllStocks(result) {
     })  
 }
 
-function clonePortfolio(stocks) {
-  let slicedStocks = stocks.slice();
-
-  let result = slicedStocks.map((stock) => 
-    Object.assign({}, {
-      _id: stock._id, 
-      stockId: Object.assign({}, { 
-        quantity: stock.stockId.quantity, 
-        stock: Object.assign({}, stock.stockId.stock)
-      })
-    })
-  );
-
-  return result;
-}
-
 function addStock(symbol, quantity) {
   // Check if it is already owned
   if (portfolio.checkIfOwned(symbol)) {
     alert(symbol + " already in your portfolio.");
+    $('.process-bg').hide();
   } else {
     // Call Promise
-    addStockPromise(symbol, quantity);
+    getLatestPriceFromAPI(symbol, quantity)
+      .then(data => {
+          return new Promise((resolve, reject) => {
+            $.ajax({
+              url: 'users/username/stock?access_token='+access_token,
+              method: 'POST',
+              data: {
+                symbol: symbol,
+                quantity: quantity,
+                price: data.results[0].lastPrice
+              },
+              dataType: "json"
+            }).done(function(result) {
+              resolve(result);
+            }).fail(function(err) {
+              reject(err);
+            }); 
+          });
+      })
+      .then(result => {
+        portfolio.addStock({
+          symbol: symbol,
+          quantity: quantity,
+          price: result.price,
+          currentPrice: result.price       
+        });
+
+        displayLatestStockUpdates(portfolio);
+      })
+      .catch(error => {
+        $('.process-bg').hide();
+        console.log("Error: " + error);
+        handleError(error);
+      })    
   }
 }
 
-function buyStock() {
-  /* TODO */
-}
+function buyOrSellStock(symbol, quantity, operate) {
+  getLatestPriceFromAPI(symbol, quantity)
+    .then(data => {
+      return new Promise((resolve, reject) =>{
+        $.ajax({
+          url: 'users/104638216487363687391/stock/' + symbol + '/' + operate + '?access_token=' + access_token,
+          method: 'PUT',
+          data: {
+            symbol: symbol,
+            quantity: quantity,
+            price: data.results[0].lastPrice
+          },
+          dataType: "json"
+        }).done(function(result) {
+          resolve(result);
+        }).fail(function(err) {
+          $('.process-bg').hide();
+          reject(err);
+        });        
+      })
+    })
+    .then(result => {
+      // Update portfolio
+      let findStock = portfolio.stocks.find(stock => stock.symbol === result.symbol);
 
-function sellStock() {
-  /* TODO */
+      findStock.quantity = quantity;
+      findStock.buyInPrice = result.price;
+      
+      portfolio.refresh(result.earned);
+      displayLatestStockUpdates(portfolio);
+    })
 }
 
 function displayLatestStockUpdates(state) {
@@ -187,8 +196,8 @@ $(function() {
     method: 'GET',
   }).done(function(result) {
     $('.process-bg').show();
-    portfolio.initOrRefresh(result.portfolio);
-    updateAllStocks(result);
+    portfolio.init(result.portfolio);
+    updateAllStocks();
   }).fail(function(err) {
     throw err;
   });

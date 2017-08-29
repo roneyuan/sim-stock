@@ -120,12 +120,6 @@ router.post('/:username/stock', passport.authenticate('mybearer', {session: fals
 				})
 				.exec()
 				.then(user => {
-						// return User
-						// 	.findOne({username: req.user.username}) //
-						// 	.populate('portfolio.investedStocks.stockId.stock')   
-						// 	.exec(function(err, user) {
-						// 		res.json(user);
-						// });
 					res.status(201).json({
 						symbol: stock.symbol,
 						price: stock.price
@@ -242,7 +236,12 @@ router.put('/:username/stock/:symbol/buy', passport.authenticate('mybearer', {se
 							console.log("Stock save errror: ", err)
 						}
 					});
-					res.status(204).json(stock);
+					res.status(201).json({
+						symbol: stock.symbol,
+						price: stock.price,
+						currentPrice: stock.currentPrice,
+						earned: null
+					});
 				})
 				.catch(err => {
 					console.log("Update Stock Error: " + err);
@@ -301,7 +300,7 @@ router.put('/:username/stock/:symbol/sell', passport.authenticate('mybearer', {s
 					console.log("Request quantity", req.body.quantity);
 					console.log("Price now", req.body.price);
 
-					let earned = (req.body.price - stock.price) * (req.body.quantity-currentQuantity);
+					let earned = (req.body.price - stock.price) * (currentQuantity - req.body.quantity);
 				
 					user.portfolio.earned += earned;
 
@@ -310,7 +309,12 @@ router.put('/:username/stock/:symbol/sell', passport.authenticate('mybearer', {s
 							console.log("User save errror: ", err)
 						}
 					});
-					res.status(204).json(stock);
+					res.status(201).json({
+						symbol: stock.symbol,
+						price: stock.price,
+						currentPrice: stock.currentPrice,
+						earned: user.portfolio.earned
+					});
 				})
 				.catch(err => {
 					console.log("Update Stock Error: " + err);
@@ -355,7 +359,7 @@ router.put('/:username/stock/:symbol/:price', passport.authenticate('mybearer', 
 							console.log("Stock save error: ", err)
 						}
 					});
-					res.status(204).json(stock);
+					res.status(201).json(stock);
 				})
 				.catch(err => {
 					console.log("Update Stock Price Error: " + err);
