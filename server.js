@@ -9,8 +9,8 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); // Need this in order to get the data from form
 
-const {router: userRouter} = require('./users');
-const loginRouter = require('./users/login');
+const userRouter = require('./router/account');
+const loginRouter = require('./router/demo');
 
 app.use(morgan('common'));
 app.use(express.static('public'));

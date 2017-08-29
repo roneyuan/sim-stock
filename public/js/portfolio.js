@@ -44,7 +44,11 @@ class Portfolio {
     currentTotal = Number(currentTotal.toFixed(2));
     
     this.invested = Number(currentInvested.toFixed(2));
-    this.earned = Number(earned.toFixed(2)) || this.earned;
+
+    if (earned !== null) {
+      this.earned = Number(earned.toFixed(2));      
+    }
+
     this.buyingPower = Number((1000000.00 - this.invested).toFixed(2));  
     this.earning = Number((currentTotal - this.invested).toFixed(2));
     this.totalValue = Number((1000000.00 + this.earning + this.earned).toFixed(2)); 
