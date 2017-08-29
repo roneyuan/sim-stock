@@ -138,7 +138,10 @@ router.post('/:username/stock', (req, res) => {
         })
         .exec()
         .then(user => {
-          res.status(201).json(user);
+          res.status(201).json({
+            symbol: stock.symbol,
+            price: stock.price
+          });
         })
         .catch(err => {
           console.log(err);
@@ -286,7 +289,12 @@ router.put('/:username/stock/:symbol/buy', (req, res) => {
               console.log("Stock save errror: ", err)
             }
           });
-          res.status(204).json(stock);
+          res.status(201).json({
+            symbol: stock.symbol,
+            price: stock.price,
+            currentPrice: stock.currentPrice,
+            earned: null
+          });
         })
         .catch(err => {
           console.log("Update Stock Error: " + err);
@@ -346,7 +354,7 @@ router.put('/:username/stock/:symbol/sell', (req, res) => {
           // console.log("Request quantity", req.body.quantity);
           // console.log("Price now", req.body.price);
 
-          let earned = (req.body.price - stock.price) * (req.body.quantity-currentQuantity);
+          let earned = (req.body.price - stock.price) * (currentQuantity - req.body.quantity);
         
           user.portfolio.earned += earned;
 
@@ -355,7 +363,12 @@ router.put('/:username/stock/:symbol/sell', (req, res) => {
               console.log("User save errror: ", err)
             }
           });
-          res.status(204).json(stock);
+          res.status(201).json({
+            symbol: stock.symbol,
+            price: stock.price,
+            currentPrice: stock.currentPrice,
+            earned: user.portfolio.earned
+          });
         })
         .catch(err => {
           console.log("Update Stock Error: " + err);

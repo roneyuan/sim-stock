@@ -4,128 +4,351 @@ let getUser = (function(keyset) {
   return res;
 }(location.search.substr(1)));
 
-let portfolio;
 let user = getUser;
 
-function getLatestStockUpdates() {
-  $.ajax({
-    url: '/account/'+user+'/stock',
-    method: 'GET',
-  }).done(function(result) { 
-    updateCurrentPrice(result);  
-  }).fail(function(err) {
-    $('.process-bg').hide();
-    throw err;
+class Stock {
+  constructor(symbol, buyInPrice, currentPrice, quantity) {
+    this.symbol = symbol;
+    this.buyInPrice = buyInPrice;
+    this.currentPrice = currentPrice;
+    this.quantity = quantity;
+  }
+}
+
+class Portfolio {
+  constructor() {
+    this.totalValue = 1000000.00;
+    this.invested = 0;
+    this.earned = 0;
+    this.earning = 0;
+    this.buyingPower = 1000000.00;
+    this.stocks = [];
+    this.currentOwnedStocks = [];
+    this.pastOwnedStocks = [];
+  }
+
+  init(stocks) {
+    let currentInvested = 0;
+
+    stocks.investedStocks.forEach(stock => {
+      let stockObject = new Stock(stock.stockId.stock.symbol, stock.stockId.stock.price, stock.stockId.stock.currentPrice, stock.stockId.quantity); // WORK HERE ADD stock
+
+      this.stocks.push(stockObject);
+
+      if (stock.stockId.quantity === 0) {
+        this.pastOwnedStocks.push(stockObject);
+      } else {
+        this.currentOwnedStocks.push(stockObject);
+      }
+
+      currentInvested += stock.stockId.stock.price * stock.stockId.quantity;
+    });
+
+    this.invested = Number(currentInvested.toFixed(2));
+    this.earned = Number((stocks.earned).toFixed(2));
+    this.buyingPower = Number((1000000.00 - this.invested).toFixed(2));    
+  }
+
+  refresh(earned) {
+    let currentTotal = 0;
+    let currentInvested = 0;
+
+    this.stocks.forEach(stock => {
+      currentTotal += stock.currentPrice * stock.quantity;
+      currentInvested += stock.buyInPrice * stock.quantity;
+    });
+
+    currentTotal = Number(currentTotal.toFixed(2));
+    
+    this.invested = Number(currentInvested.toFixed(2));
+
+    if (earned !== null) {
+      this.earned = Number(earned.toFixed(2));      
+    }
+
+    this.buyingPower = Number((1000000.00 - this.invested).toFixed(2));  
+    this.earning = Number((currentTotal - this.invested).toFixed(2));
+    this.totalValue = Number((1000000.00 + this.earning + this.earned).toFixed(2)); 
+  }    
+
+  calcEarningAndTotal() {
+    let currentTotal = 0;
+
+    this.stocks.forEach(stock => {
+      currentTotal += stock.currentPrice * stock.quantity;
+    });
+
+    currentTotal = Number(currentTotal.toFixed(2));
+
+    this.earning = Number((currentTotal - this.invested).toFixed(2));
+    this.totalValue = Number((1000000.00 + this.earning + this.earned).toFixed(2)); 
+  }
+
+  addStock(stock) {
+    let stockObject = new Stock(stock.symbol, stock.price, stock.currentPrice, stock.quantity); // WORK HERE ADD stock
+    this.currentOwnedStocks.push(stockObject);
+    this.stocks.push(stockObject);
+
+    this.invested += stock.price * stock.quantity;
+    this.buyingPower = Number((1000000.00 - this.invested).toFixed(2));  
+  }
+
+  checkIfSellAll(stock) {
+    if (stock.quantity === 0) {
+      let index = currentOwnedStocks.findIndex(owned => owned.symbol === stock.symbol);
+      this.currentOwnedStocks.splice(index, 1);
+      this.pastOwnedStocks.push(stock);
+    }
+  }
+
+  checkIfOwned(symbol) {
+    let owned = false;
+
+    this.stocks.forEach(stock => {
+      if (stock.symbol === symbol) {
+        owned = true;
+      }
+    });
+
+    return owned;
+  }
+
+  checkIfEnoughMoney(money) {
+    if (money > this.buyingPower) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+}
+
+
+let portfolio = new Portfolio();
+
+$('#addStock').on('click', function(event) {
+  event.preventDefault();
+
+  let symbol = $('#searchSymbol').val().toUpperCase();
+  let quantity = Number($('#enterQuantity').val());
+  $('.process-bg').show();
+
+  addStock(symbol, quantity);
+  
+  $('#searchSymbol').val("");
+  $('#enterQuantity').val("");
+});
+
+$('.portfolio').on('click', '.buy-more', function(event) {
+  event.preventDefault();
+
+  let buyingQuantity = Number($(event.target).parent()[0]['lastElementChild']['value']);
+  let currentQuantity = Number($(event.target).parent().parent().find('.quantity').text());
+  let totalQuantity = buyingQuantity + currentQuantity;
+  let symbol = $(event.target).parent().parent().find('.stock').text();
+
+  if (buyingQuantity >= 0) {
+    $(event.target).parent()[0]['lastElementChild']['value'] = "";
+    $('.process-bg').show();
+
+    buyOrSellStock(symbol, totalQuantity, "buy");
+  } else {
+    alert("Please enter quantity");
+  }
+});
+
+$('.portfolio').on('click', '.sell', function(event) {
+  event.preventDefault();
+
+  let sellingQuantity = Number($(event.target).parent()[0]['lastElementChild']['value']);
+  let currentQuantity = Number($(event.target).parent().parent().find('.quantity').text());
+  let totalQuantity = 0;
+  let symbol = $(event.target).parent().parent().find('.stock').text();
+
+  if (sellingQuantity > currentQuantity) {
+    alert("Invalid: Your are selling more than you have");
+  } else {
+    if (sellingQuantity >= 0) {
+      totalQuantity = currentQuantity - sellingQuantity;
+
+      $(event.target).parent()[0]['lastElementChild']['value'] = "";
+      $('.process-bg').show();
+
+      buyOrSellStock(symbol, totalQuantity, "sell");
+    } else {
+      alert("Please enter quantity");
+    }       
+  }
+});
+
+(function(){
+  let marketOpen = new Date();
+  let day = marketOpen.getDay();
+  let hour = marketOpen.getHours();
+
+  if (day == 6 || day == 0 || hour < 9 || hour > 16) {
+    $('input').prop('readonly', true);
+    $("button").prop("disabled", true);
+    alert("Warning! Current market is closed. You cannot buy and sell the stock. ")
+  } 
+
+  // Hide processing icon;
+  $('.process-bg').hide();
+}());
+
+
+function getLatestPriceFromAPI(searchTerm, quantity) {
+  return new Promise((resolve, reject) => {
+    let url = "https://marketdata.websol.barchart.com/getQuote.jsonp"; 
+    $.ajax({
+      data: { 
+        symbols: searchTerm,
+        key: "2fa1f157fb3ce032ffbb1d9fc16b687f"
+      },
+      url: url,
+      dataType: "jsonp",
+      success: function(data) {
+        // Get the price from API
+        if (data.results === null) reject("No results");
+
+        let price = data.results[0].lastPrice;
+
+        if (data.status.code !== 200 || data.results[0].lastPrice === null) {
+          reject("Unable to find the symbol.");
+        } else if (portfolio.checkIfEnoughMoney(price * quantity)) {
+          reject("Not enough money!");
+        } else {      
+          resolve(data);
+        }
+      },
+      error: function(error) {
+        reject(error);
+      }
+    }); 
   });
 }
 
-function callBarchartOnDemandApi(searchTerm, quantity, access_token) {
-  let url = "https://marketdata.websol.barchart.com/getQuote.jsonp"; 
-  $.ajax({
-    data: { 
-      symbols: searchTerm,
-      key: "2fa1f157fb3ce032ffbb1d9fc16b687f"
-    },
-    url: url,
-    dataType: "jsonp",
-    success: function(data) {
-      // console.log(data);
-      // console.log("data", data.results); 
-      if (data.results == null) {
-        handleError();
-      }
+/* Need to fix buying power*/
+function updateAllStocks() {
+  let promisesList = [];
 
-      let buyingPower = +($('#available-money').text().replace('$', ''));
-      let price = data.results[0].lastPrice;
-      let checkEnough = buyingPower - (price*quantity);      
-      if (data.status.code != 200 || data.results[0].lastPrice == null) {
-        $('.process-bg').hide();
-        alert("Unable to find the symbol."); /* TODO Symbo Finder */
-      } else if (checkEnough < 0) {
-        $('.process-bg').hide();
-        alert("Not enough money!")
+  for (let i = 0; i < portfolio.stocks.length; i++) {
+    promisesList.push(new Promise ((resolve, reject) => {
+      let symbol = portfolio.stocks[i].symbol;
+      let url = "https://marketdata.websol.barchart.com/getQuote.jsonp"; 
 
-      } else {
-        // console.log(data)
+      $.ajax({
+        data: { 
+          symbols: symbol,
+          key: "2fa1f157fb3ce032ffbb1d9fc16b687f"
+        },
+        url: url,
+        dataType: "jsonp",
+        success: function(data) {
+          // Find and update the price that matches the symbol
+          portfolio.stocks
+            .find(stock => stock.symbol === symbol)
+            .currentPrice = data.results[0].lastPrice;
 
-        price = data.results[0].lastPrice;
-                // console.log("Price", price)
-        $.ajax({
-          url: '/account/'+user+'/stock',
-          method: 'POST',
-          data: {
-            symbol: searchTerm,
-            quantity: quantity,
-            price: price
-          },
-          dataType: "json"
-        }).done(function(result) {
-          getLatestStockUpdates();
-        }).fail(function(err) {
-          $('.process-bg').hide();
-          console.log("Update price error: " + err)
-        }); 
-      }
-    },
-    error: handleError
-  }); 
+            resolve();
+        },
+        error: handleError
+      }); 
+    }));
+  }
+
+  Promise.all(promisesList)
+    .then(() => {
+      portfolio.calcEarningAndTotal();
+      displayLatestStockUpdates(portfolio);          
+    })
+    .catch(error => {
+      $('.process-bg').hide();
+      console.log("Error: " + error);
+      handleError(error);
+    })  
 }
 
-function sellOrBuyStock(symbol, quantity, newPrice, operate) {
-  let url = "https://marketdata.websol.barchart.com/getQuote.jsonp"; 
-  $.ajax({
-    data: { 
-      symbols: symbol,
-      key: "2fa1f157fb3ce032ffbb1d9fc16b687f"
-    },
-    url: url,
-    dataType: "jsonp",
-    success: function(data) {
-      let buyingPower = +($('#available-money').text().replace('$', ''));
-      // console.log("POWER",buyingPower)
-      let price = data.results[0].lastPrice;
-      let checkEnough = buyingPower - (price*quantity);
+function addStock(symbol, quantity) {
+  // Check if it is already owned
+  if (portfolio.checkIfOwned(symbol)) {
+    alert(symbol + " already in your portfolio.");
+    $('.process-bg').hide();
+  } else {
+    // Call Promise
+    getLatestPriceFromAPI(symbol, quantity)
+      .then(data => {
+          return new Promise((resolve, reject) => {
+            $.ajax({
+              url: '/account/'+user+'/stock',
+              method: 'POST',
+              data: {
+                symbol: symbol,
+                quantity: quantity,
+                price: data.results[0].lastPrice
+              },
+              dataType: "json"
+            }).done(function(result) {
+              resolve(result);
+            }).fail(function(err) {
+              reject(err);
+            }); 
+          });
+      })
+      .then(result => {
+        portfolio.addStock({
+          symbol: symbol,
+          quantity: quantity,
+          price: result.price,
+          currentPrice: result.price       
+        });
 
-      if (data.status.code != 200) {
+        displayLatestStockUpdates(portfolio);
+      })
+      .catch(error => {
         $('.process-bg').hide();
-        alert("Unable to find the symbol."); /* TODO Symbo Finder */
-      } else if (operate=="buy" && checkEnough < 0) {
-        $('.process-bg').hide();
-        alert("Not enough money!")
-      } else {
-        price = data.results[0].lastPrice;
+        console.log("Error: " + error);
+        handleError(error);
+      })    
+  }
+}
 
+function buyOrSellStock(symbol, quantity, operate) {
+  getLatestPriceFromAPI(symbol, quantity)
+    .then(data => {
+      return new Promise((resolve, reject) =>{
         $.ajax({
           url: '/account/'+user+'/stock/' + symbol + '/' + operate,
           method: 'PUT',
           data: {
             symbol: symbol,
             quantity: quantity,
-            price: price
+            price: data.results[0].lastPrice
           },
           dataType: "json"
         }).done(function(result) {
-          getLatestStockUpdates();
+          resolve(result);
         }).fail(function(err) {
           $('.process-bg').hide();
-          console.log("Sell or buy error: " + err)
-        });          
-      }
-    },
-    error: handleError
-  }); 
-}
+          reject(err);
+        });        
+      })
+    })
+    .then(result => {
+      // Update portfolio
+      let findStock = portfolio.stocks.find(stock => stock.symbol === result.symbol);
 
-function handleError(err) {
-  console.log(err);
-  $('.process-bg').hide();
-  alert("Invalid. Please try again.");
+      findStock.quantity = quantity;
+      findStock.buyInPrice = result.price;
+      
+      portfolio.refresh(result.earned);
+      displayLatestStockUpdates(portfolio);
+    })
 }
 
 function displayLatestStockUpdates(state) {
   $('.list').remove();    
-  // console.log(state);
   $('.process-bg').hide();
+  
   let marketOpen = new Date();
   let day = marketOpen.getDay();
   let hour = marketOpen.getHours();
@@ -144,7 +367,7 @@ function displayLatestStockUpdates(state) {
       <input class="list-button-quantity" type="number" placeholder="Quantity" />`;
   }
 
-  for (let i=state.stocks.length-1; i >=0; i--) {
+  for (let i=state.stocks.length-1; i >= 0; i--) {
     $('.portfolio').append(`
       <div class="list">
         <div class="col-4 stock stockInfo">${state.stocks[i].symbol}</div>
@@ -157,113 +380,17 @@ function displayLatestStockUpdates(state) {
       </div>`);
   }
 
-  // $("button").prop("disabled", true);
-
   $('#available-money').text("$"+state.buyingPower);
   $('#total-value').text("$"+state.totalValue);
+  $('#earning').text("$"+state.earning);
   $('#earned').text("$"+state.earned);
   $('#invested').text("$"+state.invested);
 }
 
-$('#addStock').on('click', function(event) {
-  event.preventDefault();
-
-  let symbol = $('#searchSymbol').val().toUpperCase();
-  let quantity = $('#enterQuantity').val();
-  $('.process-bg').show();
-  callBarchartOnDemandApi(symbol, +quantity);
-  $('#searchSymbol').val("");
-  $('#enterQuantity').val("");
-});
-
-$('.portfolio').on('click', '.buy-more',function(event) {
-  event.preventDefault();
-
-  let buyingQuantity = $(event.target).parent()[0]['lastElementChild']['value'];
-  let symbol = $(event.target).parent().parent().find('.stock').text();
-  let currentQuantity = $(event.target).parent().parent().find('.quantity').text();
-  let totalQuantity = +buyingQuantity + +currentQuantity;
-  if (buyingQuantity >= 0) {
-    //buyStock(symbol)
-    $(event.target).parent()[0]['lastElementChild']['value'] = "";
-    $('.process-bg').show();
-    sellOrBuyStock(symbol, totalQuantity, "", "buy")
-  } else {
-    alert("Please enter quantity");
-  }
-});
-
-$('.portfolio').on('click', '.sell',function(event) {
-  event.preventDefault();
-  let sellingQuantity = $(event.target).parent()[0]['lastElementChild']['value'];
-  let symbol = $(event.target).parent().parent().find('.stock').text();
-  let currentQuantity = $(event.target).parent().parent().find('.quantity').text();
-  if (+sellingQuantity > +currentQuantity) {
-    alert("Invalid: Your are selling more than you have");
-  } else {
-    let price = 30;
-    totalQuantity = +currentQuantity - +sellingQuantity;
-    if (sellingQuantity >= 0) {
-      //sellStock(symbol);
-      $(event.target).parent()[0]['lastElementChild']['value'] = "";
-      $('.process-bg').show();
-      sellOrBuyStock(symbol, totalQuantity, price, "sell");
-    } else {
-      alert("Please enter quantity");
-    }       
-  }
-});
-
-function clonePortfolio(stocks) {
-
-  let slicedStocks = stocks.slice();
-
-  let result = slicedStocks.map((stock) => 
-    Object.assign({}, {
-      _id: stock._id, 
-      stockId: Object.assign({}, { 
-        quantity: stock.stockId.quantity, 
-        stock: Object.assign({}, stock.stockId.stock)
-      })
-    })
-  );
-
-  return result;
-}
-
-function updateCurrentPrice(result) {
-  var initStocks = clonePortfolio(result.portfolio.investedStocks);
-
-  if (initStocks.length === 0) {
-    portfolio = makePortfolio(true, initStocks, 0);
-    displayLatestStockUpdates(portfolio.getPortfolio());  
-  } else {
-    for (let i=0; i<initStocks.length; i++) {
-      let symbol = initStocks[i].stockId.stock.symbol;
-      let url = "https://marketdata.websol.barchart.com/getQuote.jsonp"; 
-      $.ajax({
-        data: { 
-          symbols: symbol,
-          key: "2fa1f157fb3ce032ffbb1d9fc16b687f"
-        },
-        url: url,
-        dataType: "jsonp",
-        success: function(data) {
-          // Find and update the price that matches the symbol
-          initStocks
-            .find(stock => stock.stockId.stock.symbol == symbol)
-            .stockId.stock.currentPrice = data.results[0].lastPrice;
-
-          // Check if all current price are updated
-          if (i == initStocks.length - 1 || i === 0) {
-            portfolio = makePortfolio(false, initStocks, result.portfolio.earned);
-            displayLatestStockUpdates(portfolio.getPortfolio());          
-          }
-        },
-        error: handleError
-      }); 
-    }   
-  }
+function handleError(err) {
+  console.log(err);
+  $('.process-bg').hide();
+  alert("Invalid. Please try again.");
 }
 
 $(function() {
@@ -271,58 +398,10 @@ $(function() {
     url: '/account/'+user+'/stock',
     method: 'GET',
   }).done(function(result) {
-    updateCurrentPrice(result);  
+    $('.process-bg').show();
+    portfolio.init(result.portfolio);
+    updateAllStocks();
   }).fail(function(err) {
     throw err;
   });
-})
-
-
-/* Future optimization */
-function sellStock(symbol, quantity) {
-  // 1. Get the latest price
-  // 2. Get the buy-in price
-  // 3. Calculate the earning
-  // 4. Update quantity and earned
-  // 5. Update the state
-
-  // 1. GET the buy-in Price
-  $.ajax({
-    url: '/account/'+user+'/stock/' + symbol,
-    method: 'GET',
-    dataType: "json"
-  }).done(function(result) {
-    var buyInPrice = result.price;
-    // 2. GET the latest price
-    let url = "https://marketdata.websol.barchart.com/getQuote.jsonp"; 
-    $.ajax({
-      data: { 
-        symbols: symbol,
-        key: "2fa1f157fb3ce032ffbb1d9fc16b687f"
-      },
-      url: url,
-      dataType: "jsonp",
-      success: function(data) {
-        if (data.status.code != 200) {
-          alert("Unable to find the symbol. "); /* TODO Symbo Finder */
-        } else {
-          let currentPrice = data.results[0].lastPrice;  
-          let earning = (currentPrice - buyInPrice)*quantity     
-          // 3. Update quantity and earned
-        }
-      },
-      error: handleError
-    });     
-  }).fail(function(err) {
-    console.log("Sell or buy error: " + err)
-  });  
-}
-
-function buyMoreStock(symbol, quantity) {
-  // 1. Get the buy-price
-  // 2. Get the latest price
-  // 3. Calculate the average
-  // 4. Update the price
-  // 5. Update the quantity
-}
-/* End Here */
+});

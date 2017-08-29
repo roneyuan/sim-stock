@@ -6,20 +6,20 @@ class Stock {
     this.quantity = quantity;
   }
 
-  buy(quantity, price) {
-    this.quantity += quantity;
-    this.buyInPrice = price;
-  }
+  // buy(quantity, price) {
+  //   this.quantity += quantity;
+  //   this.buyInPrice = price;
+  // }
 
-  sell(quantity) {
-    this.quantity -= quantity;
-  }
+  // sell(quantity) {
+  //   this.quantity -= quantity;
+  // }
 
-  checkValidQuantity(quantity) {
-    if (quantity > this.quantity) {
-      return false;
-    } else {
-      return true;
-    }
-  }
+  // checkValidQuantity(quantity) {
+  //   if (quantity > this.quantity) {
+  //     return false;
+  //   } else {
+  //     return true;
+  //   }
+  // }
 }
