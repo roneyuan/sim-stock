@@ -48,7 +48,13 @@ function addStockPromise(searchTerm, quantity) {
         });
     })
     .then(result => {
-      updateAllStocks(result);
+      portfolio.addStock({
+        symbol: searchTerm,
+        quantity: quantity,
+        price: result.price,
+        currentPrice: result.price       
+      });
+      displayLatestStockUpdates(portfolio);
     })
     .catch(error => {
       $('.process-bg').hide();
@@ -60,8 +66,6 @@ function addStockPromise(searchTerm, quantity) {
 /* Need to fix buying power*/
 function updateAllStocks(result) {
   let promisesList = [];
-
-  portfolio.initOrRefresh(result.portfolio);
 
   for (let i = 0; i < portfolio.stocks.length; i++) {
     promisesList.push(new Promise ((resolve, reject) => {
@@ -76,6 +80,7 @@ function updateAllStocks(result) {
         dataType: "jsonp",
         success: function(data) {
           // Find and update the price that matches the symbol
+          console.log(data.results[0].lastPrice);
           portfolio.stocks
             .find(stock => stock.symbol === symbol)
             .currentPrice = data.results[0].lastPrice;
@@ -89,6 +94,7 @@ function updateAllStocks(result) {
 
   Promise.all(promisesList)
     .then(() => {
+      portfolio.calcEarningAndTotal();
       displayLatestStockUpdates(portfolio);          
     })
     .catch(error => {
@@ -181,6 +187,7 @@ $(function() {
     method: 'GET',
   }).done(function(result) {
     $('.process-bg').show();
+    portfolio.initOrRefresh(result.portfolio);
     updateAllStocks(result);
   }).fail(function(err) {
     throw err;

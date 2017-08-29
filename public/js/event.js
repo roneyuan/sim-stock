@@ -1,7 +1,7 @@
 $('#addStock').on('click', function(event) {
   event.preventDefault();
 
-  let symbol = $('#searchSymbol').val();
+  let symbol = $('#searchSymbol').val().toUpperCase();
   let quantity = Number($('#enterQuantity').val());
   $('.process-bg').show();
   addStock(symbol, quantity);
@@ -50,15 +50,15 @@ $('.portfolio').on('click', '.sell', function(event) {
 });
 
 (function(){
-  // let marketOpen = new Date();
-  // let day = marketOpen.getDay();
-  // let hour = marketOpen.getHours();
+  let marketOpen = new Date();
+  let day = marketOpen.getDay();
+  let hour = marketOpen.getHours();
 
-  // if (day == 6 || day == 0 || hour < 9 || hour > 16) {
-  //   $('input').prop('readonly', true);
-  //   $("button").prop("disabled", true);
-  //   alert("Warning! Current market is closed. You cannot buy and sell the stock. ")
-  // } 
+  if (day == 6 || day == 0 || hour < 9 || hour > 16) {
+    $('input').prop('readonly', true);
+    $("button").prop("disabled", true);
+    alert("Warning! Current market is closed. You cannot buy and sell the stock. ")
+  } 
 
   // Hide processing icon;
   $('.process-bg').hide();

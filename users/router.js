@@ -120,13 +120,16 @@ router.post('/:username/stock', passport.authenticate('mybearer', {session: fals
 				})
 				.exec()
 				.then(user => {
-						return User
-							.findOne({username: req.user.username}) //
-							.populate('portfolio.investedStocks.stockId.stock')   
-							.exec(function(err, user) {
-								res.json(user);
-						});
-					// res.status(201).json(user);
+						// return User
+						// 	.findOne({username: req.user.username}) //
+						// 	.populate('portfolio.investedStocks.stockId.stock')   
+						// 	.exec(function(err, user) {
+						// 		res.json(user);
+						// });
+					res.status(201).json({
+						symbol: stock.symbol,
+						price: stock.price
+					});
 				})
 				.catch(err => {
 					console.log(err);

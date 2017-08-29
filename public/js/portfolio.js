@@ -11,8 +11,9 @@ class Portfolio {
   }
 
   initOrRefresh(stocks) {
-    let currentTotal = 0;
+    // let currentTotal = 0;
     let currentInvested = 0;
+
     stocks.investedStocks.forEach(stock => {
       let stockObject = new Stock(stock.stockId.stock.symbol, stock.stockId.stock.price, stock.stockId.stock.currentPrice, stock.stockId.quantity); // WORK HERE ADD stock
 
@@ -25,19 +26,37 @@ class Portfolio {
       }
 
       currentInvested += stock.stockId.stock.price * stock.stockId.quantity;
-      currentTotal += stock.stockId.stock.currentPrice * stock.stockId.quantity;
     });
 
-    this.invested = Number(currentInvested.toFixed(2))
-    this.earning = Number((currentTotal - stocks.invested).toFixed(2));
+    // currentTotal += stock.stockId.stock.currentPrice * stock.stockId.quantity;
+
+    this.invested = Number(currentInvested.toFixed(2));
+    // this.earning = Number((currentTotal - currentInvested).toFixed(2));
     this.earned = Number((stocks.earned).toFixed(2));
-    this.totalValue = Number((1000000.00 + this.earning + stocks.earned).toFixed(2)); 
+    // this.totalValue = Number((1000000.00 + this.earning + stocks.earned).toFixed(2)); 
     this.buyingPower = Number((1000000.00 - this.invested).toFixed(2));    
   }
 
+  calcEarningAndTotal() {
+    let currentTotal = 0;
+
+    this.stocks.forEach(stock => {
+      currentTotal += stock.currentPrice * stock.quantity;
+    });
+
+    currentTotal = Number(currentTotal.toFixed(2));
+
+    this.earning = Number((currentTotal - this.invested).toFixed(2));
+    this.totalValue = Number((1000000.00 + this.earning + this.earned).toFixed(2)); 
+  }
+
   addStock(stock) {
-    let stockObject = new Stock(stock.stockId.stock.symbol, stock.stockId.stock.price, stock.stockId.stock.currentPrice, stock.stockId.quantity); // WORK HERE ADD stock
+    let stockObject = new Stock(stock.symbol, stock.price, stock.currentPrice, stock.quantity); // WORK HERE ADD stock
     this.currentOwnedStocks.push(stockObject);
+    this.stocks.push(stockObject);
+
+    this.invested += stock.price * stock.quantity;
+    this.buyingPower = Number((1000000.00 - this.invested).toFixed(2));  
   }
 
   // filterStocks() {
