@@ -31,7 +31,6 @@ function addStockPromise(searchTerm, quantity) {
   getStockPrice
     .then(data => {
         return new Promise((resolve, reject) => {
-          // Update backend
           $.ajax({
             url: 'users/username/stock?access_token='+access_token,
             method: 'POST',
@@ -42,16 +41,14 @@ function addStockPromise(searchTerm, quantity) {
             },
             dataType: "json"
           }).done(function(result) {
-            resolve(result.portfolio);
+            resolve(result);
           }).fail(function(err) {
             reject(err);
           }); 
         });
     })
     .then(result => {
-      // Reload every price of the stock for current price
-      portfolio.initOrRefresh(result);
-      displayLatestStockUpdates(portfolio);
+      updateAllStocks(result);
     })
     .catch(error => {
       $('.process-bg').hide();
@@ -60,8 +57,61 @@ function addStockPromise(searchTerm, quantity) {
     })
 }
 
-function updatePortfolioDOM(data) {
+/* Need to fix buying power*/
+function updateAllStocks(result) {
+  let promisesList = [];
 
+  portfolio.initOrRefresh(result.portfolio);
+
+  for (let i = 0; i < portfolio.stocks.length; i++) {
+    promisesList.push(new Promise ((resolve, reject) => {
+      let symbol = portfolio.stocks[i].symbol;
+      let url = "https://marketdata.websol.barchart.com/getQuote.jsonp"; 
+      $.ajax({
+        data: { 
+          symbols: symbol,
+          key: "2fa1f157fb3ce032ffbb1d9fc16b687f"
+        },
+        url: url,
+        dataType: "jsonp",
+        success: function(data) {
+          // Find and update the price that matches the symbol
+          portfolio.stocks
+            .find(stock => stock.symbol === symbol)
+            .currentPrice = data.results[0].lastPrice;
+
+            resolve();
+        },
+        error: handleError
+      }); 
+    }));
+  }
+
+  Promise.all(promisesList)
+    .then(() => {
+      displayLatestStockUpdates(portfolio);          
+    })
+    .catch(error => {
+      $('.process-bg').hide();
+      console.log("Error: " + error);
+      handleError(error);
+    })  
+}
+
+function clonePortfolio(stocks) {
+  let slicedStocks = stocks.slice();
+
+  let result = slicedStocks.map((stock) => 
+    Object.assign({}, {
+      _id: stock._id, 
+      stockId: Object.assign({}, { 
+        quantity: stock.stockId.quantity, 
+        stock: Object.assign({}, stock.stockId.stock)
+      })
+    })
+  );
+
+  return result;
 }
 
 function addStock(symbol, quantity) {
@@ -75,11 +125,11 @@ function addStock(symbol, quantity) {
 }
 
 function buyStock() {
-
+  /* TODO */
 }
 
 function sellStock() {
-
+  /* TODO */
 }
 
 function displayLatestStockUpdates(state) {
@@ -119,33 +169,23 @@ function displayLatestStockUpdates(state) {
   $('#invested').text("$"+state.invested);
 }
 
-$(function() {
-  $.ajax({
-    url: 'users/username/stock?access_token='+access_token,
-    method: 'GET',
-  }).done(function(result) {
-    portfolio.initOrRefresh(result.portfolio);
-
-    // GET UPDATE DATA in PROMISE
-    displayLatestStockUpdates(portfolio);
-  }).fail(function(err) {
-    throw err;
-  });
-});
-
 function handleError(err) {
   console.log(err);
   $('.process-bg').hide();
   alert("Invalid. Please try again.");
 }
 
-
-
-
-
-
-
-
+$(function() {
+  $.ajax({
+    url: 'users/username/stock?access_token='+access_token,
+    method: 'GET',
+  }).done(function(result) {
+    $('.process-bg').show();
+    updateAllStocks(result);
+  }).fail(function(err) {
+    throw err;
+  });
+});
 
 
 
