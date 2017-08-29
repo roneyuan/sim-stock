@@ -157,9 +157,16 @@ function displayLatestStockUpdates(state) {
   let inputTime;
 
   if (day == 6 || day == 0 || hour < 9 || hour > 16) {
-    inputTime = '<input class="list-button-quantity" type="number" placeholder="Closed" disabled />';
+    inputTime = `
+      <button id="buy-more" class="buy-more" disabled>More</button>
+      <button class="sell" disabled>Sell</button>
+      <input class="list-button-quantity" type="number" placeholder="Closed" disabled />`;
+
   } else {
-    inputTime = '<input class="list-button-quantity" type="number" placeholder="Quantity" />';
+    inputTime = `
+      <button id="buy-more" class="buy-more">More</button>
+      <button class="sell">Sell</button>
+      <input class="list-button-quantity" type="number" placeholder="Quantity" />`;
   }
 
   for (let i=state.stocks.length-1; i >= 0; i--) {
@@ -170,8 +177,6 @@ function displayLatestStockUpdates(state) {
         <div class="col-4 stockInfo">Buy in: <span class="buyinPrice">${state.stocks[i].buyInPrice}</span></div>
         <div class="col-4 stockInfo">Current: <span class="currentPrice">${state.stocks[i].currentPrice}</span></div>
         <div class="list-button">
-          <button id="buy-more" class="buy-more">More</button>
-          <button class="sell">Sell</button>
           ${inputTime}
         </div>
       </div>`);
