@@ -1,41 +1,41 @@
 * {
-	box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 .row {
-	max-width: 1000px;
-	padding-left: 20px;
-	padding-right: 20px;
-	margin: 0 auto;
+  max-width: 1000px;
+  padding-left: 20px;
+  padding-right: 20px;
+  margin: 0 auto;
 }
 
 .row::before,
 .row::after {
-	display: table;
-	content: '';
+  display: table;
+  content: '';
 }
 
 .row::after {
-	clear: both;
+  clear: both;
 }
 
 .col-4, .col-8 {
-	float: left;
-	padding-left: 1.04166666%;
-	padding-right: 1.04166666%; 
+  float: left;
+  padding-left: 1.04166666%;
+  padding-right: 1.04166666%; 
 }
 
 .col-4, .col-8 {
-	width: 100%;
+  width: 100%;
 }
 
 @media only screen and (min-width: 786px) {
-	.col-4 {
-		width: 25%;
-	}
+  .col-4 {
+    width: 25%;
+  }
 
-	.col-8 {
-		width: 75%;
-	}
+  .col-8 {
+    width: 75%;
+  }
 
 }

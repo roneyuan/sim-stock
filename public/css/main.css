@@ -1,53 +1,53 @@
 * {
-	font-family: 'Source Sans Pro', sans-serif;
+  font-family: 'Source Sans Pro', sans-serif;
 }
 
 header { 
-	background:     linear-gradient(
+  background:     linear-gradient(
       rgba(45, 100, 146, 0.55), 
       rgba(45, 100, 146, 0.55)
     ),
     /* bottom, image */
     url('../img/header.jpg');
-	/*background-image: url('../img/bg.jpg');*/
-	/*opacity: 0.5;*/
-	background-color: #2d6492; 
-	background-size: cover;
-	padding-top:50px;
-	padding-bottom: 50px;
-	color: white;
+  /*background-image: url('../img/bg.jpg');*/
+  /*opacity: 0.5;*/
+  background-color: #2d6492; 
+  background-size: cover;
+  padding-top:50px;
+  padding-bottom: 50px;
+  color: white;
 
 }
 
 footer { background-color: yellow; }
 
 body {
-	background-color: #f3f3f3;
-	margin: 0px;
+  background-color: #f3f3f3;
+  margin: 0px;
 }
 
 a {
-	text-decoration: none;
-	color: white;
+  text-decoration: none;
+  color: white;
 }
 
 button {
-	cursor: pointer;
-	color: white;
+  cursor: pointer;
+  color: white;
 }
 
 .process-bg {
-	width: 100%;
-	height: 100%;
-	background-color: rgba(255, 255, 255, 0.75);
-	position: fixed;
-	bottom: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.75);
+  position: fixed;
+  bottom: 0;
 }
 
 .process-pad {
-	width: 300px;
-	height: 300px;
-	margin: 20% auto;
+  width: 300px;
+  height: 300px;
+  margin: 20% auto;
 }
 
 .processing {
@@ -56,9 +56,9 @@ button {
   border-top: 16px solid #3498db;
   -webkit-animation: spin 2s linear infinite;
   animation: spin 2s linear infinite;
-	width: 150px;
-	height: 150px; 
-	margin-left: 75px;
+  width: 150px;
+  height: 150px; 
+  margin-left: 75px;
 }
 
 @-webkit-keyframes spin {
@@ -72,78 +72,78 @@ button {
 }
 
 .signup-form, .login-form {
-	margin: 5% auto;
-	width: 500px;
-	padding-left: 100px;
-	padding-right: 100px;
-	color: white;
+  margin: 5% auto;
+  width: 500px;
+  padding-left: 100px;
+  padding-right: 100px;
+  color: white;
 }
 
 .signup-login-land {
-	background-image: url('../img/bg.jpg');
-	background-size: cover;
+  background-image: url('../img/bg.jpg');
+  background-size: cover;
 }
 
 .form-group {
-	padding-top: 5px;
-	padding-bottom: 5px;
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
 
 .land {
-	width:100%;
-	height: 100%;
-	color: white;
-	text-align: center;
-	padding-top: 50px;
-	background-image: url('../img/bg.jpg');
-	background-size: cover;
+  width:100%;
+  height: 100%;
+  color: white;
+  text-align: center;
+  padding-top: 50px;
+  background-image: url('../img/bg.jpg');
+  background-size: cover;
 }
 
 .inner-land {
-	width: 550px;
-	height: 550px;
-	background-color: rgba(147, 178, 232, 0.55);
-	border-radius: 5px;
-	margin: 50px 30px;
-	padding-top: 20px;
+  width: 550px;
+  height: 550px;
+  background-color: rgba(147, 178, 232, 0.55);
+  border-radius: 5px;
+  margin: 50px 30px;
+  padding-top: 20px;
 }
 
 .inner-land h1, .inner-land h2, .inner-land h3 {
-	font-family: 'Raleway', sans-serif;
+  font-family: 'Raleway', sans-serif;
 }
 
 .credit {
-	font-size: 9px;
-	position: absolute;
-	bottom: 0;
-	right: 0;
+  font-size: 9px;
+  position: absolute;
+  bottom: 0;
+  right: 0;
 }
 
 .creditHome {
-	position: absolute;
-	right: 0;
-	font-size: 8px;
-	margin-top: 40px;	
+  position: absolute;
+  right: 0;
+  font-size: 8px;
+  margin-top: 40px; 
 }
 
 .land-button {
-	margin: auto;
-	width: 300px;
-	padding-top: 10px;
-	text-align: center;
+  margin: auto;
+  width: 300px;
+  padding-top: 10px;
+  text-align: center;
 }
 
 .google-button {
-	margin: auto;
-	background: #DD4B39;
-	border: none;
-	border-radius: 5px;
-	font-size: 18px;
-	color: white;
-	text-align: left;
+  margin: auto;
+  background: #DD4B39;
+  border: none;
+  border-radius: 5px;
+  font-size: 18px;
+  color: white;
+  text-align: left;
   position: relative;
-	padding: 0 30px 0 50px;
-	line-height: 36px;
+  padding: 0 30px 0 50px;
+  line-height: 36px;
 }
 
 .google-button:before {
@@ -157,166 +157,166 @@ button {
 }
 
 .intro {
-	text-align: left;
-	padding-left: 30px;
+  text-align: left;
+  padding-left: 30px;
 }
 
 .current-value { 
-	text-align: center;
-	padding-top: 30px;
-	font-size: 20px;
+  text-align: center;
+  padding-top: 30px;
+  font-size: 20px;
 }
 
 .invested {
-	text-align: center;
+  text-align: center;
 }
 
 .earned {
-	text-align: center;
+  text-align: center;
 }
 .portfolio, .control { 
-	background-color: white;
-	border-radius: 2px;
-	padding: 10px 10px;
-	margin-top: 20px;
+  background-color: white;
+  border-radius: 2px;
+  padding: 10px 10px;
+  margin-top: 20px;
 }
 
 .control {
-	padding-bottom: 30px;
+  padding-bottom: 30px;
 }
 
 .searchSymbol, .enterAmount {
-	width: 150px;
-	height: 30px;
-	margin-top: 10px;
-	font-size: 25px;
-	padding-left: 5px;
-	border-radius: 5px;
-	outline: none;
-	box-shadow: none;
-	background-color: rgba(241, 241, 241, 0.80);
-	border: 1px solid black;
+  width: 150px;
+  height: 30px;
+  margin-top: 10px;
+  font-size: 25px;
+  padding-left: 5px;
+  border-radius: 5px;
+  outline: none;
+  box-shadow: none;
+  background-color: rgba(241, 241, 241, 0.80);
+  border: 1px solid black;
 }
 
 .amount, .search {
-	padding-top: 20px;
-	padding-bottom: 10px;
+  padding-top: 20px;
+  padding-bottom: 10px;
 }
 
 .amount {
-	padding-bottom: 30px;
+  padding-bottom: 30px;
 }
 
 .buyNew {
-	width: 80px;
-	height: 36px;
-	font-size: 20px;
-	background-color: aqua;
-	padding: 5px 5px;
-	border-radius: 5px;
-	border: 0.5px solid black;
-	background-color: rgba(33, 206, 133, 0.75);
-	color:white;
-	cursor: pointer;
+  width: 80px;
+  height: 36px;
+  font-size: 20px;
+  background-color: aqua;
+  padding: 5px 5px;
+  border-radius: 5px;
+  border: 0.5px solid black;
+  background-color: rgba(33, 206, 133, 0.75);
+  color:white;
+  cursor: pointer;
 }
 
 .list { 
-	padding-top: 20px; 
-	padding-bottom: 20px; 
-	padding-left: 25px;
-	padding-right: 25px;
-	border-bottom: solid 1px;
+  padding-top: 20px; 
+  padding-bottom: 20px; 
+  padding-left: 25px;
+  padding-right: 25px;
+  border-bottom: solid 1px;
 }
 
 .list-button {
-	text-align: center;
-	margin-top: 30px;
+  text-align: center;
+  margin-top: 30px;
 }
 
 .stockInfo {
-	padding: 5px 0;
+  padding: 5px 0;
 }
 
 .buy-more, .sell {
-	width: 80px;
-	height: 30px;
-	font-size: 18px;
-	background-color: aqua;
-	margin: auto 10px;
-	border-radius: 5px;
-	border: none;
-	background-color: rgba(84, 98, 199, 0.88);
-	color:white;
-	outline: none;
-	cursor: pointer;
+  width: 80px;
+  height: 30px;
+  font-size: 18px;
+  background-color: aqua;
+  margin: auto 10px;
+  border-radius: 5px;
+  border: none;
+  background-color: rgba(84, 98, 199, 0.88);
+  color:white;
+  outline: none;
+  cursor: pointer;
 }
 
 .list-button-quantity {
-	margin-top: 10px;
-	width: 120px;
-	font-size: 20px;
-	padding-left: 5px;
-	border-radius: 5px;
-	outline: none;
-	box-shadow: none;
-	background-color: rgba(241, 241, 241, 0.80);
-	border: 1px solid black;
-	font: black;
-	margin-left: 10px;
+  margin-top: 10px;
+  width: 120px;
+  font-size: 20px;
+  padding-left: 5px;
+  border-radius: 5px;
+  outline: none;
+  box-shadow: none;
+  background-color: rgba(241, 241, 241, 0.80);
+  border: 1px solid black;
+  font: black;
+  margin-left: 10px;
 }
 
 .buying-power { 
-	padding-top: 10px; 
-	/*padding-bottom: 10px; */
-	padding-left: 20px;
+  padding-top: 10px; 
+  /*padding-bottom: 10px; */
+  padding-left: 20px;
 }
 .add { 
-/*	padding-top: 20px; 
-	padding-bottom: 20px; */
+/*  padding-top: 20px; 
+  padding-bottom: 20px; */
 }
 
 .right-box {
-	text-align: center;
+  text-align: center;
 }
 
 .login {
-	/*width: 120px !important;*/
-	background-color: #308cde !important;
+  /*width: 120px !important;*/
+  background-color: #308cde !important;
 }
 
 .demo {
-	/*width: 120px !important;*/
-	background-color: #ff8010 !important;
+  /*width: 120px !important;*/
+  background-color: #ff8010 !important;
 }
 
 .login, .signup, .demo {
-	/*margin: 20% auto;*/
+  /*margin: 20% auto;*/
   width: 220px;
   height: 32px;
   border: none;
   background-color: #45c156;
   font-size: 15px;
-  border-radius: 5px;	
+  border-radius: 5px; 
 }
 
 .index-button {
-	padding-bottom: 10px;
-	padding-top: 10px;
+  padding-bottom: 10px;
+  padding-top: 10px;
 }
 
 form {
-	text-align: center;
+  text-align: center;
 }
 
 @media only screen and (max-width: 786px ) {
-	.inner-land {
-		margin: 50px auto;
-		width: 80%;
-		border-radius: 5px;
-		padding-top: 20px;
-	}
+  .inner-land {
+    margin: 50px auto;
+    width: 80%;
+    border-radius: 5px;
+    padding-top: 20px;
+  }
 
-	.process-pad {
-		margin: 50% auto;
-	}
+  .process-pad {
+    margin: 50% auto;
+  }
 }

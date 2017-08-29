@@ -130,11 +130,18 @@ function displayLatestStockUpdates(state) {
   let day = marketOpen.getDay();
   let hour = marketOpen.getHours();
   let inputTime;
+
   if (day == 6 || day == 0 || hour < 9 || hour > 16) {
-    inputTime = '<input class="list-button-quantity" type="number" placeholder="Closed" disabled/>';
-    // $("button").prop("disabled", true);
+    inputTime = `
+      <button id="buy-more" class="buy-more" disabled>More</button>
+      <button class="sell" disabled>Sell</button>
+      <input class="list-button-quantity" type="number" placeholder="Closed" disabled />`;
+
   } else {
-    inputTime = '<input class="list-button-quantity" type="number" placeholder="Quantity" />';
+    inputTime = `
+      <button id="buy-more" class="buy-more">More</button>
+      <button class="sell">Sell</button>
+      <input class="list-button-quantity" type="number" placeholder="Quantity" />`;
   }
 
   for (let i=state.stocks.length-1; i >=0; i--) {
@@ -145,8 +152,6 @@ function displayLatestStockUpdates(state) {
         <div class="col-4 stockInfo">Buy in: <span class="buyinPrice">${state.stocks[i].buyInPrice}</span></div>
         <div class="col-4 stockInfo">Current: <span class="currentPrice">${state.stocks[i].currentPrice}</span></div>
         <div class="list-button">
-          <button id="buy-more" class="buy-more">More</button>
-          <button class="sell">Sell</button>
           ${inputTime}
         </div>
       </div>`);
@@ -163,7 +168,7 @@ function displayLatestStockUpdates(state) {
 $('#addStock').on('click', function(event) {
   event.preventDefault();
 
-  let symbol = $('#searchSymbol').val();
+  let symbol = $('#searchSymbol').val().toUpperCase();
   let quantity = $('#enterQuantity').val();
   $('.process-bg').show();
   callBarchartOnDemandApi(symbol, +quantity);
@@ -229,31 +234,36 @@ function clonePortfolio(stocks) {
 function updateCurrentPrice(result) {
   var initStocks = clonePortfolio(result.portfolio.investedStocks);
 
-  for (let i=0; i<initStocks.length; i++) {
-    let symbol = initStocks[i].stockId.stock.symbol;
-    let url = "https://marketdata.websol.barchart.com/getQuote.jsonp"; 
-    $.ajax({
-      data: { 
-        symbols: symbol,
-        key: "2fa1f157fb3ce032ffbb1d9fc16b687f"
-      },
-      url: url,
-      dataType: "jsonp",
-      success: function(data) {
-        // Find and update the price that matches the symbol
-        initStocks
-          .find(stock => stock.stockId.stock.symbol == symbol)
-          .stockId.stock.currentPrice = data.results[0].lastPrice;
+  if (initStocks.length === 0) {
+    portfolio = makePortfolio(true, initStocks, 0);
+    displayLatestStockUpdates(portfolio.getPortfolio());  
+  } else {
+    for (let i=0; i<initStocks.length; i++) {
+      let symbol = initStocks[i].stockId.stock.symbol;
+      let url = "https://marketdata.websol.barchart.com/getQuote.jsonp"; 
+      $.ajax({
+        data: { 
+          symbols: symbol,
+          key: "2fa1f157fb3ce032ffbb1d9fc16b687f"
+        },
+        url: url,
+        dataType: "jsonp",
+        success: function(data) {
+          // Find and update the price that matches the symbol
+          initStocks
+            .find(stock => stock.stockId.stock.symbol == symbol)
+            .stockId.stock.currentPrice = data.results[0].lastPrice;
 
-        // Check if all current price are updated
-        if (i == initStocks.length - 1 || i === 0) {
-          portfolio = makePortfolio(false, initStocks, result.portfolio.earned);
-          displayLatestStockUpdates(portfolio.getPortfolio());          
-        }
-      },
-      error: handleError
-    }); 
-  }  
+          // Check if all current price are updated
+          if (i == initStocks.length - 1 || i === 0) {
+            portfolio = makePortfolio(false, initStocks, result.portfolio.earned);
+            displayLatestStockUpdates(portfolio.getPortfolio());          
+          }
+        },
+        error: handleError
+      }); 
+    }   
+  }
 }
 
 $(function() {

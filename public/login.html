@@ -1,51 +1,51 @@
 <html>
-	<head>
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<link rel="stylesheet" href="css/grid.css">
-		<link rel="stylesheet" href="css/main.css">	
-		<link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">		
-		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
-	</head>
-	<body class="signup-login-land">
-		<div class="login-form">
-			<!-- <form action='/account/login' method='POST'> -->
-				<div class="form-group">
-					<label> Username: </label>
-					<input type="text" class="form-control" name="username" id="username" required />
-				</div>
-				<div class="form-group">
-					<label> Password: </label>
-					<input type="password" class="form-control" name="password" id="password" required />
-				</div>
-				<div class="form-group">
-					<button id="submit" class="btn btn-primary" id="login"> Login </button>
-				</div>
-			<!-- </form> -->
-				<div class="response"></div>
-		</div>
-	</body>
-	<script src="https://code.jquery.com/jquery-3.0.0.js"></script>
-	<script type="text/javascript">
-		$('#submit').on('click', function(event) {
-			event.preventDefault();
-			let username = $('#username').val();
-			let password = $('#password').val();
-			$.ajax({
-				data: {
-					username: username,
-					password: password
-				},
-				method: 'POST',
-				url: '/account/login'
-			}).done(function(result) {
-				// console.log(data);
-				window.location = result.url;
-			}).fail(function(error) {
-				// console.log(error.responseJSON.message)
-				$('.response').html("");
-				$('.response').append(error.responseJSON.message);
-			});
-		});
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/grid.css">
+    <link rel="stylesheet" href="css/main.css"> 
+    <link href="https://fonts.googleapis.com/css?family=Raleway" rel="stylesheet">    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+  </head>
+  <body class="signup-login-land">
+    <div class="login-form">
+      <!-- <form action='/account/login' method='POST'> -->
+        <div class="form-group">
+          <label> Username: </label>
+          <input type="text" class="form-control" name="username" id="username" required />
+        </div>
+        <div class="form-group">
+          <label> Password: </label>
+          <input type="password" class="form-control" name="password" id="password" required />
+        </div>
+        <div class="form-group">
+          <button id="submit" class="btn btn-primary" id="login"> Login </button>
+        </div>
+      <!-- </form> -->
+        <div class="response"></div>
+    </div>
+  </body>
+  <script src="https://code.jquery.com/jquery-3.0.0.js"></script>
+  <script type="text/javascript">
+    $('#submit').on('click', function(event) {
+      event.preventDefault();
+      let username = $('#username').val();
+      let password = $('#password').val();
+      $.ajax({
+        data: {
+          username: username,
+          password: password
+        },
+        method: 'POST',
+        url: '/account/login'
+      }).done(function(result) {
+        // console.log(data);
+        window.location = result.url;
+      }).fail(function(error) {
+        // console.log(error.responseJSON.message)
+        $('.response').html("");
+        $('.response').append(error.responseJSON.message);
+      });
+    });
 
-	</script>	
+  </script> 
 </html> 
