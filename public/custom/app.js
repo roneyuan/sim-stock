@@ -130,10 +130,14 @@ $('#addStock').on('click', function(event) {
 
   let symbol = $('#searchSymbol').val().toUpperCase();
   let quantity = Number($('#enterQuantity').val());
-  $('.process-bg').show();
 
-  addStock(symbol, quantity);
-  
+  if (quantity <= 0) {
+    alert("Invalid Quantity. Please Try again.");
+  } else {
+    $('.process-bg').show();
+    addStock(symbol, quantity);    
+  }
+
   $('#searchSymbol').val("");
   $('#enterQuantity').val("");
 });
