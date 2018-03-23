@@ -4,7 +4,7 @@ function getLatestPriceFromAPI(searchTerm, quantity) {
     $.ajax({
       data: { 
         symbols: searchTerm,
-        key: "2fa1f157fb3ce032ffbb1d9fc16b687f"
+        key: "2fa1f157fb3ce032ffbb1d9fc16b687g"
       },
       url: url,
       dataType: "jsonp",
